@@ -44,13 +44,13 @@ Edit `.env` and add your `OPENAI_API_KEY`.
   <Step title="Start AgentOS">
 ```bash
 ./scripts/venv_setup.sh && source .venv/bin/activate
-ag infra up
+ag infra up --env dev
 ```
   </Step>
 
   <Step title="Load knowledge">
 ```bash
-docker exec -it ai-api python -m agents.knowledge_agent
+docker exec -it agentos-aws-template-api python -m agents.knowledge_agent
 ```
 
 This loads the default documents into the Knowledge Agent's vector database.
@@ -82,7 +82,6 @@ Deploy to AWS when you're ready to go live.
 - [AWS account](https://aws.amazon.com/free/)
 - [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) installed and configured
 - VPC subnets for ECS and RDS
-- ECR repository for your image
 
 <Steps>
   <Step title="Verify AWS credentials">
@@ -98,15 +97,14 @@ Update `infra/settings.py`:
 ```python infra/settings.py
 infra_settings = InfraSettings(
     aws_region="us-east-1",
-    subnet_ids=["subnet-xxx", "subnet-yyy"],
-    image_repo="[ACCOUNT_ID].dkr.ecr.us-east-1.amazonaws.com",
+    aws_subnet_ids=["subnet-xxx", "subnet-yyy"],
 )
 ```
   </Step>
 
   <Step title="Deploy">
 ```bash
-ag infra up prd:aws
+ag infra up --env prd
 ```
 
 Takes about 5 minutes. The command builds and pushes your image, provisions RDS PostgreSQL, creates ECS resources, and configures an application load balancer.
@@ -118,15 +116,15 @@ Takes about 5 minutes. The command builds and pushes your image, provisions RDS 
 Use ECS Exec to load documents into the Knowledge Agent's vector database:
 
 ```bash
-aws ecs execute-command \
-  --cluster agentos-prd-cluster \
-  --task <task-id> \
-  --container ai-api \
+ECS_CLUSTER=agentos-aws-template-prd
+TASK_ARN=$(aws ecs list-tasks --cluster $ECS_CLUSTER --query "taskArns[0]" --output text)
+
+aws ecs execute-command --cluster $ECS_CLUSTER \
+  --task $TASK_ARN \
+  --container agentos-aws-template \
   --interactive \
   --command "python -m agents.knowledge_agent"
 ```
-
-Find the task ID with `aws ecs list-tasks --cluster agentos-prd-cluster`.
 
   </Step>
 

@@ -8,17 +8,13 @@ description: "Manage, customize, and troubleshoot your AWS deployment."
 
 | Task | Command |
 | :--- | :--- |
-| Deploy updates | `ag infra patch prd:aws` |
-| Stop deployment | `ag infra down prd:aws` |
-| Build production image | `ag infra up prd:docker` |
-| Force rebuild image | `ag infra up prd:docker -f` |
-| Update task definition | `ag infra patch -e prd -i aws -n td` |
-| Redeploy ECS service | `ag infra patch -e prd -i aws -n service` |
-| Restart local containers | `ag infra restart -e dev -c docker -t container` |
-| Recreate local resources | `ag infra up dev:docker -f` |
+| Deploy updates | `ag infra patch --env prd` |
+| Stop deployment | `ag infra down --env prd` |
+| Force rebuild | `ag infra up --env dev -f` |
+| Restart local | `ag infra up --env dev` |
 
 <Warning>
-  `ag infra down prd:aws` removes all AWS resources, including the database. Back up your data first.
+  `ag infra down --env prd` removes all AWS resources, including the database. Back up your data first.
 </Warning>
 
 ## Customize
@@ -53,7 +49,7 @@ agent_os = AgentOS(
 
 Restart locally:
 ```bash
-ag infra up dev:docker -f
+ag infra up --env dev
 ```
 
   </Accordion>
@@ -80,17 +76,17 @@ my_agent = Agent(
   Load documents for the Knowledge Agent:
 ```bash
 # Local
-docker exec -it ai-api python -m agents.knowledge_agent
+docker exec -it agentos-aws-template-api python -m agents.knowledge_agent
 ```
 
 For production (ECS):
 ```bash
-ECS_CLUSTER=ai-app-prd-cluster
+ECS_CLUSTER=agentos-aws-template-prd
 TASK_ARN=$(aws ecs list-tasks --cluster $ECS_CLUSTER --query "taskArns[0]" --output text)
 
 aws ecs execute-command --cluster $ECS_CLUSTER \
   --task $TASK_ARN \
-  --container ai-api-prd \
+  --container agentos-aws-template \
   --interactive \
   --command "python -m agents.knowledge_agent"
 ```
@@ -118,7 +114,7 @@ my_agent = Agent(
   Add the dependency to `pyproject.toml` and regenerate requirements:
 ```bash
 ./scripts/generate_requirements.sh
-ag infra up dev:docker -f
+ag infra up --env dev
 ```
 
   </Accordion>
@@ -127,8 +123,7 @@ ag infra up dev:docker -f
 
 1. Edit `pyproject.toml`
 2. Regenerate requirements: `./scripts/generate_requirements.sh`
-3. Rebuild development image: `ag infra up -e dev -i docker -t image`
-4. Rebuild production image: `ag infra up -e prd -i docker -t image`
+3. Rebuild: `ag infra up --env dev`
 
 To upgrade all libraries:
 ```bash
