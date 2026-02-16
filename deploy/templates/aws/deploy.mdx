@@ -107,6 +107,21 @@ infra_settings = InfraSettings(
 For ECR, use `image_repo="[ACCOUNT_ID].dkr.ecr.[REGION].amazonaws.com"`.
   </Step>
 
+  <Step title="Authenticate to your registry">
+
+For Docker Hub:
+```bash
+docker login
+```
+
+For ECR, create the repository and authenticate:
+```bash
+aws ecr create-repository --repository-name agentos-aws-template --region us-east-1
+aws ecr get-login-password --region us-east-1 | \
+  docker login --username AWS --password-stdin [ACCOUNT_ID].dkr.ecr.us-east-1.amazonaws.com
+```
+  </Step>
+
   <Step title="Set production secrets">
 
 ```bash
