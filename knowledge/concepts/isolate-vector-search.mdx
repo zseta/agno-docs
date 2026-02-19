@@ -91,25 +91,26 @@ Enabling `isolate_vector_search=True` with vector databases that don't have exis
 
 ## Combining with Manual Filters
 
-When `isolate_vector_search=True`, the `linked_to` filter is merged with any filters you pass explicitly:
+When `isolate_vector_search=True`, the `linked_to` filter is automatically merged with any filters you pass, regardless of filter format:
 
 ```python
-# Searches for documents with linked_to="hr-docs" AND department="legal"
+# Dict-based filters: linked_to is merged automatically
 results = hr_knowledge.search(
     query="vacation policy",
     filters={"department": "legal"},
 )
+# Searches for: linked_to="hr-docs" AND department="legal"
 ```
 
-If you use list-based filters (e.g., `EQ`, `IN`), the `linked_to` filter is **not** automatically injected. Add it manually:
-
 ```python
+# List-based filters (FilterExpr): linked_to is also injected automatically
 from agno.filters import EQ
 
 results = hr_knowledge.search(
     query="vacation policy",
-    filters=[EQ("linked_to", "hr-docs"), EQ("department", "legal")],
+    filters=[EQ("department", "legal")],
 )
+# Searches for: linked_to="hr-docs" AND department="legal"
 ```
 
 ## Instance Uniqueness
