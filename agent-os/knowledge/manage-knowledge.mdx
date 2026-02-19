@@ -100,6 +100,53 @@ The screenshots below show how you can access and manage your different Knowledg
 <img src="/images/agno_knowledge_db.png" alt="llm-app-aidev-run" />
 <img src="/images/agno_faq_db.png" alt="llm-app-aidev-run" />
 
+## Knowledge ID
+
+Each Knowledge instance registered with AgentOS gets a deterministic `knowledge_id`. This ID is generated from the combination of the instance's `name`, database ID, and table name. The same inputs always produce the same ID, so it is stable across restarts.
+
+Use `knowledge_id` in API calls to target a specific Knowledge instance:
+
+```bash
+# List content sources
+curl http://localhost:7777/v1/knowledge/{knowledge_id}/sources
+
+# Browse files in an S3 source
+curl "http://localhost:7777/v1/knowledge/{knowledge_id}/sources/{source_id}/files?prefix=reports/"
+
+# Upload content
+curl -X POST http://localhost:7777/v1/knowledge/{knowledge_id}/content \
+  -F "file=@report.pdf" \
+  -F "name=Q4 Report"
+```
+
+### Finding your Knowledge ID
+
+The `/knowledge/config` endpoint returns all registered Knowledge instances with their IDs:
+
+```bash
+curl http://localhost:7777/v1/knowledge/config | jq '.knowledge_instances'
+```
+
+```json
+[
+  {
+    "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "name": "documents_knowledge",
+    "db_id": "agno_knowledge_db",
+    "table": "agno_knowledge_contents"
+  },
+  {
+    "id": "f9e8d7c6-b5a4-3210-fedc-ba0987654321",
+    "name": "faq_knowledge",
+    "db_id": "agno_faq_db",
+    "table": "agno_faq_contents"
+  }
+]
+```
+
+### Backward compatibility
+
+If you have a single Knowledge instance, you can omit `knowledge_id` from API calls. For multiple instances, you can also use the `db_id` query parameter, but `knowledge_id` is preferred as it uniquely identifies the instance even when multiple instances share the same database.
 
 ## Best Practices
 
