@@ -89,38 +89,6 @@ Documents indexed before this flag existed do not have `linked_to` in their vect
 Enabling `isolate_vector_search=True` on a Knowledge instance with existing data will cause those documents to disappear from search results. You must re-index or manually update the metadata to restore them.
 </Warning>
 
-### Migrating existing data
-
-You have two options:
-
-**Option 1: Re-index your data**
-
-Re-insert all content with `isolate_vector_search=True` enabled. This adds `linked_to` metadata to every document.
-
-```python
-knowledge = Knowledge(
-    name="support-docs",
-    vector_db=vector_db,
-    isolate_vector_search=True,
-)
-
-# Re-insert all content. New documents will include linked_to="support-docs".
-knowledge.insert(path="support-documents/")
-```
-
-**Option 2: Update metadata directly in the vector database**
-
-If re-indexing is expensive, update the `linked_to` field directly in your vector database. Set it to the Knowledge instance's `name` for all relevant rows.
-
-```sql
--- Example for PgVector (PostgreSQL)
-UPDATE shared_vectors
-SET meta_data = jsonb_set(meta_data, '{linked_to}', '"support-docs"')
-WHERE meta_data->>'linked_to' IS NULL;
-```
-
-The exact query depends on your vector database. The key is that each document's metadata must contain `"linked_to": "<knowledge-instance-name>"` to be found by isolated searches.
-
 ## Combining with Manual Filters
 
 When `isolate_vector_search=True`, the `linked_to` filter is merged with any filters you pass explicitly:
