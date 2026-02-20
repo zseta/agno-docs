@@ -66,13 +66,6 @@ print(run_output.content)
 | `confirmation_message` | `str` | Message shown to the user |
 | `on_reject` | `OnReject` | Action when rejected: `skip` (default), `cancel` |
 
-## OnReject Options
-
-| Value | Behavior |
-|-------|----------|
-| `OnReject.skip` | Skip the loop and continue (default) |
-| `OnReject.cancel` | Cancel the workflow |
-
 ## Loop Behavior
 
 The confirmation happens once before the loop starts. Individual iterations do not pause for confirmation.
@@ -99,30 +92,6 @@ Loop(
     confirmation_message="Start quality improvement loop?",
 )
 ```
-
-## Nested Loops
-
-Loops can contain other loops. Each pauses independently:
-
-```python
-Loop(
-    name="outer_loop",
-    steps=[
-        Loop(
-            name="inner_loop",
-            steps=[Step(name="process", ...)],
-            max_iterations=3,
-            requires_confirmation=True,
-            confirmation_message="Run inner loop?",
-        ),
-    ],
-    max_iterations=2,
-    requires_confirmation=True,
-    confirmation_message="Run outer loop?",
-)
-```
-
-The outer loop pauses first. If confirmed, it runs. When the inner loop is reached, it pauses for its own confirmation.
 
 ## Streaming
 

@@ -75,13 +75,6 @@ print(run_output.content)
 | `confirmation_message` | `str` | Message shown to the user |
 | `on_reject` | `OnReject` | Action when rejected: `skip` (default), `cancel` |
 
-## OnReject Options
-
-| Value | Behavior |
-|-------|----------|
-| `OnReject.skip` | Skip the pipeline and continue (default) |
-| `OnReject.cancel` | Cancel the workflow |
-
 ## Pipeline Behavior
 
 The confirmation happens once before the pipeline starts. Individual steps within the pipeline do not pause for confirmation (unless they have their own HITL configuration).
@@ -90,57 +83,6 @@ The confirmation happens once before the pipeline starts. Individual steps withi
 |-------------|--------|
 | Confirm | Execute all steps in sequence |
 | Reject | Skip all steps in the pipeline |
-
-## Steps with Individual HITL
-
-Steps within a pipeline can have their own HITL configuration:
-
-```python
-Steps(
-    name="processing_pipeline",
-    steps=[
-        Step(name="validate", executor=validate),
-        Step(
-            name="transform",
-            executor=transform,
-            requires_confirmation=True,
-            confirmation_message="Transform data?",
-        ),
-        Step(name="save", executor=save),
-    ],
-    requires_confirmation=True,
-    confirmation_message="Run processing pipeline?",
-)
-```
-
-The pipeline pauses first. If confirmed, it starts executing. When the `transform` step is reached, it pauses again for its own confirmation.
-
-## Nested Pipelines
-
-Pipelines can be nested:
-
-```python
-Steps(
-    name="outer_pipeline",
-    steps=[
-        Step(name="prepare", executor=prepare),
-        Steps(
-            name="inner_pipeline",
-            steps=[
-                Step(name="process_a", executor=process_a),
-                Step(name="process_b", executor=process_b),
-            ],
-            requires_confirmation=True,
-            confirmation_message="Run inner pipeline?",
-        ),
-        Step(name="finalize", executor=finalize),
-    ],
-    requires_confirmation=True,
-    confirmation_message="Run outer pipeline?",
-)
-```
-
-Each pipeline pauses independently when reached.
 
 ## Streaming
 

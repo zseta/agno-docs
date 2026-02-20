@@ -55,14 +55,14 @@ print(run_output.content)
 |-----------|------|-------------|
 | `requires_confirmation` | `bool` | Pause for user confirmation before execution |
 | `confirmation_message` | `str` | Message shown to the user |
-| `on_reject` | `OnReject` | Action when rejected: `skip`, `cancel` (default) |
+| `on_reject` | `OnReject` | Action when rejected: `skip` (default), `cancel` |
 
 ### OnReject Options
 
 | Value | Behavior |
 |-------|----------|
-| `OnReject.cancel` | Cancel the entire workflow (default) |
-| `OnReject.skip` | Skip this step and continue with the next |
+| `OnReject.skip` | Skip this step and continue with the next (default) |
+| `OnReject.cancel` | Cancel the entire workflow |
 
 ## User Input
 

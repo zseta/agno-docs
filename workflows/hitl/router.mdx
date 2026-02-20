@@ -158,7 +158,7 @@ for req in run_output.steps_requiring_confirmation:
 |-----------|------|-------------|
 | `requires_confirmation` | `bool` | Pause for user to confirm routing decision |
 | `confirmation_message` | `str` | Message shown to the user |
-| `on_reject` | `OnReject` | Action when rejected: `skip`, `cancel` (default) |
+| `on_reject` | `OnReject` | Action when rejected: `skip` (default), `cancel` |
 
 ## User Selection vs Confirmation
 
@@ -168,30 +168,6 @@ for req in run_output.steps_requiring_confirmation:
 | Confirmation | Function | Approves/rejects | Oversight of automated decisions |
 
 Use **user selection** when the user should decide the path. Use **confirmation** when the system decides but needs human approval.
-
-## Nested Routers
-
-Routers can contain other routers or complex steps:
-
-```python
-Router(
-    name="outer_router",
-    choices=[
-        Router(
-            name="analysis_options",
-            choices=[
-                Step(name="quick", executor=quick),
-                Step(name="deep", executor=deep),
-            ],
-            requires_user_input=True,
-        ),
-        Step(name="skip_analysis", executor=skip),
-    ],
-    requires_user_input=True,
-)
-```
-
-Each router pauses independently. Handle nested requirements in sequence.
 
 ## Streaming
 

@@ -74,7 +74,7 @@ print(run_output.content)
 
 | Value | Behavior |
 |-------|----------|
-| `OnReject.else_branch` | Execute `else_steps` (default for Condition) |
+| `OnReject.else_branch` | Execute `else_steps` (default) |
 | `OnReject.skip` | Skip the entire condition |
 | `OnReject.cancel` | Cancel the workflow |
 
@@ -109,48 +109,13 @@ When `requires_confirmation=True`, the `evaluator` is ignored. The user's decisi
 ```python
 Condition(
     name="user_controlled",
-    evaluator=lambda step_input: True,  # Ignored when requires_confirmation=True
+    # evaluator is ignored when requires_confirmation=True
     steps=[Step(name="if_branch", ...)],
     else_steps=[Step(name="else_branch", ...)],
     requires_confirmation=True,
     confirmation_message="Proceed with if branch?",
 )
 ```
-
-To use programmatic evaluation without HITL, set `requires_confirmation=False` (default):
-
-```python
-Condition(
-    name="auto_evaluated",
-    evaluator=lambda step_input: "urgent" in step_input.input.lower(),
-    steps=[Step(name="urgent_path", ...)],
-    else_steps=[Step(name="normal_path", ...)],
-)
-```
-
-## Nested Conditions
-
-Conditions can be nested. Each pauses independently:
-
-```python
-Condition(
-    name="outer",
-    steps=[
-        Condition(
-            name="inner",
-            steps=[Step(name="deep", ...)],
-            else_steps=[Step(name="shallow", ...)],
-            requires_confirmation=True,
-            confirmation_message="Go deeper?",
-        ),
-    ],
-    else_steps=[Step(name="skip_all", ...)],
-    requires_confirmation=True,
-    confirmation_message="Enter analysis?",
-)
-```
-
-Handle nested requirements in sequence as the workflow progresses.
 
 ## Streaming
 
