@@ -5048,7 +5048,6 @@
                   "examples/tools/shell-tools",
                   "examples/tools/shopify-tools",
                   "examples/tools/sleep-tools",
-                  "examples/tools/tool-calls-accesing-agent",
                   "examples/tools/valyu-tools",
                   "examples/tools/x-tools"
                 ]

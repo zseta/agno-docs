@@ -1,8 +1,8 @@
 ---
-title: "Zoom Tools"
-description: "Use ZoomTools with an Agno agent."
+title: "Zoom"
+description: "Use Zoom tools with an Agno agents."
 ---
-This example demonstrates how to create an agent that can: 
+Enable Agno agents with Zoom and allow them to: 
 
 - Schedule new meetings
 - Get meeting details
@@ -11,31 +11,29 @@ This example demonstrates how to create an agent that can:
 - Delete meetings
 - Get meeting recordings
 
-For details, see [ZoomTools](https://github.com/agno-agi/agno/blob/main/cookbook/91_tools/toolkits/social/zoom_tools.py).
 
 ## Prerequisites
+<AccordionGroup>
+    <Accordion title="Create a Server-to-Server OAuth app in Zoom Marketplace:">
+        - Visit https://marketplace.zoom.us/
+        - Create a new app. Go to Develop -> Build App -> Server-to-Server OAuth.
+        - Add required scopes:
+            * meeting:write:admin
+            * meeting:read:admin
+            * cloud_recording:read:admin
+    - Copy Account ID, Client ID, and Client Secret
+    </Accordion>
 
-1. Create a Server-to-Server OAuth app in Zoom Marketplace:
-   - Visit https://marketplace.zoom.us/
-   - Create a new app. Go to Develop -> Build App -> Server-to-Server OAuth.
-   - Add required scopes:
-     * meeting:write:admin
-     * meeting:read:admin
-     * cloud_recording:read:admin
-   - Copy Account ID, Client ID, and Client Secret
-
-2. Set environment variables:
-   export ZOOM_ACCOUNT_ID=your_account_id
-   export ZOOM_CLIENT_ID=your_client_id
-   export ZOOM_CLIENT_SECRET=your_client_secret
+    <Accordion title="Set environment variables:">
+   ```bash
+    export ZOOM_ACCOUNT_ID=your_account_id
+    export ZOOM_CLIENT_ID=your_client_id
+    export ZOOM_CLIENT_SECRET=your_client_secret
+    ```
+    </Accordion>
+</AccordionGroup>
 
 ```python
-"""
-Usage:
-------
-Run this script with proper environment variables set to interact with
-the Zoom API through natural language commands.
-"""
 
 import os
 
@@ -127,3 +125,4 @@ export ZOOM_CLIENT_SECRET="***"
 
 python zoom_tools.py
 ```
+For details, see [Zoom tools cookbook](https://github.com/agno-agi/agno/blob/main/cookbook/91_tools/zoom_tools.py).
