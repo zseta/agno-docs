@@ -1306,7 +1306,8 @@
                   "run-cancellation/team-cancel-run",
                   "run-cancellation/workflow-cancel-run"
                 ]
-              }
+              },
+              "scheduler/overview"
             ]
           },
           {
@@ -2858,6 +2859,7 @@
               },
               "agent-os/config",
               "agent-os/background-tasks/overview",
+              "agent-os/scheduler/overview",
               "agent-os/lifespan",
               {
                 "group": "Clients",
