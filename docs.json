@@ -3019,23 +3019,48 @@
                     "group": "Configure",
                     "pages": [
                       "deploy/templates/aws/reference/configure/overview",
-                      "deploy/templates/aws/reference/configure/infra-settings",
-                      "deploy/templates/aws/reference/configure/development-app",
-                      "deploy/templates/aws/reference/configure/local",
-                      "deploy/templates/aws/reference/configure/ci-cd",
-                      "deploy/templates/aws/reference/configure/production-app",
-                      "deploy/templates/aws/reference/configure/install",
-                      "deploy/templates/aws/reference/configure/database-tables",
-                      "deploy/templates/aws/reference/configure/database",
-                      "deploy/templates/aws/reference/configure/secrets",
-                      "deploy/templates/aws/reference/configure/env-vars",
-                      "deploy/templates/aws/reference/configure/python-packages",
-                      "deploy/templates/aws/reference/configure/efs",
-                      "deploy/templates/aws/reference/configure/ssh-access",
-                      "deploy/templates/aws/reference/configure/git-repo",
-                      "deploy/templates/aws/reference/configure/new-users",
-                      "deploy/templates/aws/reference/configure/code-quality",
-                      "deploy/templates/aws/reference/configure/format-and-validate"
+                      {
+                        "group": "Setup",
+                        "pages": [
+                          "deploy/templates/aws/reference/configure/install",
+                          "deploy/templates/aws/reference/configure/infra-settings",
+                          "deploy/templates/aws/reference/configure/git-repo",
+                          "deploy/templates/aws/reference/configure/new-users"
+                        ]
+                      },
+                      {
+                        "group": "Application",
+                        "pages": [
+                          "deploy/templates/aws/reference/configure/development-app",
+                          "deploy/templates/aws/reference/configure/production-app",
+                          "deploy/templates/aws/reference/configure/local",
+                          "deploy/templates/aws/reference/configure/python-packages"
+                        ]
+                      },
+                      {
+                        "group": "Database & Secrets",
+                        "pages": [
+                          "deploy/templates/aws/reference/configure/database",
+                          "deploy/templates/aws/reference/configure/database-tables",
+                          "deploy/templates/aws/reference/configure/secrets",
+                          "deploy/templates/aws/reference/configure/env-vars"
+                        ]
+                      },
+                      {
+                        "group": "Quality & CI",
+                        "pages": [
+                          "deploy/templates/aws/reference/configure/code-quality",
+                          "deploy/templates/aws/reference/configure/format-and-validate",
+                          "deploy/templates/aws/reference/configure/ci-cd"
+                        ]
+                      },
+                      {
+                        "group": "Advanced",
+                        "pages": [
+                          "deploy/templates/aws/reference/configure/efs",
+                          "deploy/templates/aws/reference/configure/ssh-access"
+                        ]
+                      }
                     ]
                   },
                   {
