@@ -107,7 +107,7 @@ for run_event in agent.run("Perform sensitive operation", stream=True):
 
 ## Teams
 
-HITL works the same way for Teams. When a member agent's tool requires confirmation, user input, or external execution, the team run pauses until the requirement is resolved. The requirement includes `member_agent_name` so you know which member triggered it.
+HITL works the same way for Teams. If a member agent calls a tool that requires confirmation, user input, or external execution, the team run pauses until the requirement is resolved. Each requirement includes `member_agent_name`, so you know which agent triggered it.
 
 ```python
 run_response = team.run("What is the weather in Tokyo?")
