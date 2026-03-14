@@ -1,92 +1,117 @@
 ---
-title: Confirmation Required with History
+title: User Confirmation with History
 sidebarTitle: Confirmation with History
-keywords: [confirmation, history, conversation context, add_history_to_context]
-description: This example demonstrates human-in-the-loop functionality while maintaining conversation history. It shows how user confirmation works when the agent has access to previous conversation context.
+keywords: [confirmation, history, conversation context, add_history_to_context, continue run]
+description: This example demonstrates how user confirmation preserves conversation history when using continue_run(). When an agent pauses for tool confirmation, it retains all previous context including user introductions and earlier messages.
 mode: wide
 ---
+
+This example shows how conversation history is preserved across tool confirmation pauses. When `continue_run()` is called after a confirmation, the agent maintains full context from previous interactions.
 
 <Steps>
 
   <Step title="Create a Python file">
-    ```python confirmation_required_with_history.py
-    import json
-
-    import httpx
+    ```python confirmation_with_history.py
     from agno.agent import Agent
-    from agno.db.sqlite import SqliteDb
     from agno.models.openai import OpenAIResponses
     from agno.tools import tool
-    from agno.utils import pprint
+    from agno.db.sqlite import SqliteDb
     from rich.console import Console
     from rich.prompt import Prompt
 
     console = Console()
 
-
+    # Define a tool that requires confirmation
     @tool(requires_confirmation=True)
-    def get_top_hackernews_stories(num_stories: int) -> str:
-        """Fetch top stories from Hacker News.
-
+    def send_notification(recipient: str, message: str, priority: str = "normal") -> str:
+        """Send a notification to a user.
+        
         Args:
-            num_stories (int): Number of stories to retrieve
-
+            recipient (str): The recipient's email or username
+            message (str): The notification message
+            priority (str): Priority level (low, normal, high, urgent)
+            
         Returns:
-            str: JSON string containing story details
+            str: Confirmation of sent notification
         """
-        # Fetch top story IDs
-        response = httpx.get("https://hacker-news.firebaseio.com/v0/topstories.json")
-        story_ids = response.json()
+        console.print(f"\n📧 Sending {priority} priority notification to {recipient}")
+        console.print(f"Message: {message}")
+        return f"Notification sent to {recipient} with {priority} priority"
 
-        # Yield story details
-        all_stories = []
-        for story_id in story_ids[:num_stories]:
-            story_response = httpx.get(
-                f"https://hacker-news.firebaseio.com/v0/item/{story_id}.json"
-            )
-            story = story_response.json()
-            if "text" in story:
-                story.pop("text", None)
-            all_stories.append(story)
-        return json.dumps(all_stories)
-
-
+    # Create agent with history enabled
     agent = Agent(
-        model=OpenAIResponses(id="gpt-5.2"),
-        tools=[get_top_hackernews_stories],
-        add_history_to_context=True,
-        num_history_runs=2,
+        model=OpenAIResponses(id="gpt-4o"),
+        tools=[send_notification],
+        add_history_to_context=True,  # Enable history preservation
+        num_history_runs=5,  # Keep last 5 conversation runs
+        instructions=[
+            "You are a helpful notification assistant.",
+            "Always address users by their name if they've introduced themselves.",
+            "Remember context from previous messages when composing notifications.",
+            "When users mention urgency or importance, set appropriate priority levels."
+        ],
         markdown=True,
-        db=SqliteDb(db_file="tmp/example.db"),
+        db=SqliteDb(db_file="tmp/notification_agent.db"),  # Persist history
     )
 
-    agent.run("What can you do?")
+    console.print("💬 [bold green]Notification Assistant[/bold green]")
+    console.print("I can help you send notifications. Type 'exit' to quit.\n")
 
-    run_response = agent.run("Fetch the top 2 hackernews stories.")
+    # First interaction - user introduces themselves
+    console.print("[bold]You:[/bold] Hi, I'm Alice from the DevOps team. We're having some server issues.")
+    response = agent.run("Hi, I'm Alice from the DevOps team. We're having some server issues.")
+    console.print(f"[bold cyan]Assistant:[/bold cyan] {response.content}\n")
+
+    # Second interaction - provide more context
+    console.print("[bold]You:[/bold] The production database is showing high latency since 2pm.")
+    response = agent.run("The production database is showing high latency since 2pm.")
+    console.print(f"[bold cyan]Assistant:[/bold cyan] {response.content}\n")
+
+    # Third interaction - request that will trigger confirmation
+    console.print("[bold]You:[/bold] Please notify the backend team lead about this issue immediately.")
+    run_response = agent.run("Please notify the backend team lead about this issue immediately.")
+
+    # Handle confirmation
     if run_response.is_paused:
+        console.print("\n⚠️  [bold yellow]Tool confirmation required:[/bold yellow]")
+        
         for requirement in run_response.active_requirements:
             if requirement.needs_confirmation:
-                # Ask for confirmation
-                console.print(
-                    f"Tool name [bold blue]{requirement.tool_execution.tool_name}({requirement.tool_execution.tool_args})[/] requires confirmation."
-                )
-                message = (
-                    Prompt.ask("Do you want to continue?", choices=["y", "n"], default="y")
-                    .strip()
-                    .lower()
-                )
-
-                if message == "n":
-                    requirement.reject()
-                else:
+                tool_call = requirement.tool_execution
+                console.print(f"Tool: [bold]{tool_call.tool_name}[/bold]")
+                console.print(f"Arguments: {tool_call.tool_args}")
+                
+                # Get user confirmation
+                confirm = Prompt.ask("\nApprove this notification?", choices=["y", "n"], default="y")
+                
+                if confirm == "y":
                     requirement.confirm()
+                    console.print("✅ [green]Notification approved[/green]")
+                else:
+                    requirement.reject()
+                    requirement.confirmation_note = "User declined to send the notification"
+                    console.print("❌ [red]Notification rejected[/red]")
+        
+        # Continue the run - the agent remembers:
+        # 1. User is Alice from DevOps
+        # 2. The issue is about production database latency since 2pm
+        # 3. The context about server issues
+        console.print("\n[dim]Continuing execution...[/dim]")
+        final_response = agent.continue_run(
+            run_id=run_response.run_id,
+            requirements=run_response.requirements
+        )
+        
+        # The agent's response will maintain all context
+        console.print(f"\n[bold cyan]Assistant:[/bold cyan] {final_response.content}")
+        # Expected: "Alice, I've sent an urgent notification to the backend team lead about 
+        # the production database latency issue that started at 2pm..."
 
-    run_response = agent.continue_run(
-        run_id=run_response.run_id,
-        requirements=run_response.requirements,
-    )
-    pprint.pprint_run_response(run_response)
-
+    # Show conversation history is maintained
+    console.print("\n[bold]You:[/bold] Can you also notify the on-call engineer?")
+    response = agent.run("Can you also notify the on-call engineer?")
+    # The agent still knows about Alice, the database issue, and previous notifications
+    console.print(f"[bold cyan]Assistant:[/bold cyan] {response.content}")
     ```
   </Step>
 
@@ -94,27 +119,51 @@ mode: wide
 
   <Step title="Install dependencies">
     ```bash
-    uv pip install -U agno openai httpx rich
+    uv pip install -U agno openai rich
     ```
   </Step>
 
   <Step title="Export your OpenAI API key">
-
     <CodeGroup>
-
     ```bash Mac/Linux
-      export OPENAI_API_KEY="your_openai_api_key_here"
+    export OPENAI_API_KEY="your_openai_api_key_here"
     ```
 
     ```bash Windows
-      $Env:OPENAI_API_KEY="your_openai_api_key_here"
+    $Env:OPENAI_API_KEY="your_openai_api_key_here"
     ```
     </CodeGroup>
   </Step>
 
-  <Step title="Run Agent">
+  <Step title="Run the agent">
     ```bash
-    python confirmation_required_with_history.py
+    python confirmation_with_history.py
     ```
   </Step>
 </Steps>
+
+## Example Output
+
+```
+💬 Notification Assistant
+I can help you send notifications. Type 'exit' to quit.
+
+You: Hi, I'm Alice from the DevOps team. We're having some server issues.
+Assistant: Hi Alice! I'm here to help with notifications regarding the server issues. Can you tell me more about what's happening?
+
+You: The production database is showing high latency since 2pm.
+Assistant: That sounds concerning. High latency on the production database can definitely impact users. Would you like me to notify anyone about this issue?
+
+You: Please notify the backend team lead about this issue immediately.
+
+⚠️  Tool confirmation required:
+Tool: send_notification
+Arguments: {'recipient': 'backend-team-lead', 'message': 'Urgent: Production database experiencing high latency since 2pm. Reported by Alice from DevOps team.', 'priority': 'urgent'}
+
+Approve this notification? [y/n] (y): y
+✅ Notification approved
+
+📧 Sending urgent priority notification to backend-team-lead
+Message: Urgent: Production database experiencing high latency since 2pm. Reported by Alice from DevOps team.
+
+Continuing execution...
