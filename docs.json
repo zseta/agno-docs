@@ -627,6 +627,7 @@
                         "group": "Readers",
                         "pages": [
                           "knowledge/concepts/readers/pdf-reader",
+                          "knowledge/concepts/readers/docling-reader",
                           "knowledge/concepts/readers/csv-reader",
                           "knowledge/concepts/readers/json-reader",
                           "knowledge/concepts/readers/markdown-reader",
@@ -5355,6 +5356,10 @@
                       "examples/knowledge/readers/csv-reader-custom-encodings",
                       "examples/knowledge/readers/csv-reader-url-async",
                       "examples/knowledge/readers/doc-kb-async",
+                      "examples/knowledge/readers/docling-reader",
+                      "examples/knowledge/readers/docling-reader-async",
+                      "examples/knowledge/readers/docling-reader-multiple-format",
+                      "examples/knowledge/readers/docling-reader-url",
                       "examples/knowledge/readers/excel-legacy-xls",
                       "examples/knowledge/readers/excel-reader",
                       "examples/knowledge/readers/firecrawl-reader",
