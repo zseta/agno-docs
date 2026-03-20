@@ -113,7 +113,8 @@
                       "agents/usage/agent-with-structured-output",
                       "agents/usage/agent-with-storage",
                       "agents/usage/agent-with-memory",
-                      "agents/usage/agent-with-knowledge"
+                      "agents/usage/agent-with-knowledge",
+                      "agents/usage/agent-with-followup-suggestions"
                     ]
                   }
                 ]
@@ -131,7 +132,8 @@
                     "pages": [
                       "teams/usage/basic-team",
                       "teams/usage/streaming",
-                      "teams/usage/respond-directly"
+                      "teams/usage/respond-directly",
+                      "teams/usage/team-with-followup-suggestions"
                     ]
                   }
                 ]
