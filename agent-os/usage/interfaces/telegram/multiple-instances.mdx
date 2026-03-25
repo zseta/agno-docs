@@ -1,11 +1,13 @@
 ---
 title: "Multiple Instances"
-description: "Two agents behind one bot using prefix-based routing"
+description: "Multiple Telegram bots on a single AgentOS server"
 ---
 
 ## Code
 
 ```python multiple_instances.py
+import os
+
 from agno.agent import Agent
 from agno.db.sqlite import SqliteDb
 from agno.models.openai import OpenAIChat
@@ -35,16 +37,13 @@ web_research_agent = Agent(
     add_datetime_to_context=True,
 )
 
-# Each Telegram interface can use a different prefix (and optionally a different bot token).
-# If you want truly separate bots, pass token= to each instance:
-#   Telegram(agent=basic_agent, prefix="/basic", token="BOT_TOKEN_1"),
-#   Telegram(agent=web_research_agent, prefix="/web-research", token="BOT_TOKEN_2"),
-# When token is omitted, TELEGRAM_TOKEN env var is used for all instances.
+# Telegram only supports one webhook per bot token, so each interface needs its own bot.
+# Create two bots via @BotFather and pass each token explicitly.
 agent_os = AgentOS(
     agents=[basic_agent, web_research_agent],
     interfaces=[
-        Telegram(agent=basic_agent, prefix="/basic"),
-        Telegram(agent=web_research_agent, prefix="/web-research"),
+        Telegram(agent=basic_agent, prefix="/basic", token=os.getenv("TELEGRAM_TOKEN_BASIC")),
+        Telegram(agent=web_research_agent, prefix="/web-research", token=os.getenv("TELEGRAM_TOKEN_RESEARCH")),
     ],
 )
 app = agent_os.get_app()
@@ -60,7 +59,8 @@ if __name__ == "__main__":
 
   <Step title="Set Environment Variables">
     ```bash
-    export TELEGRAM_TOKEN=your-bot-token-from-botfather
+    export TELEGRAM_TOKEN_BASIC=bot-token-for-basic-agent
+    export TELEGRAM_TOKEN_RESEARCH=bot-token-for-research-agent
     export OPENAI_API_KEY=your-openai-api-key
     export APP_ENV=development
     ```
@@ -79,10 +79,10 @@ if __name__ == "__main__":
   </Step>
 
   <Step title="Register Webhooks">
-    Register a separate webhook for each prefix:
+    Register a webhook for each bot token:
     ```bash
-    curl "https://api.telegram.org/bot${TELEGRAM_TOKEN}/setWebhook?url=${NGROK_URL}/basic/webhook"
-    curl "https://api.telegram.org/bot${TELEGRAM_TOKEN}/setWebhook?url=${NGROK_URL}/web-research/webhook"
+    curl "https://api.telegram.org/bot${TELEGRAM_TOKEN_BASIC}/setWebhook?url=${NGROK_URL}/basic/webhook"
+    curl "https://api.telegram.org/bot${TELEGRAM_TOKEN_RESEARCH}/setWebhook?url=${NGROK_URL}/web-research/webhook"
     ```
   </Step>
 </Steps>
@@ -91,5 +91,5 @@ if __name__ == "__main__":
 
 - **Prefix-Based Routing**: Each agent gets its own webhook path (`/basic/webhook`, `/web-research/webhook`)
 - **Shared Server**: Both agents run on a single AgentOS instance
-- **Optional Token Isolation**: Pass `token=` per instance to use separate bot tokens for full isolation
+- **Separate Bot Tokens**: Each interface uses its own BotFather bot (Telegram allows only one webhook per token)
 - **Shared Database**: Both agents share the same SQLite database
