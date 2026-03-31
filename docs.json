@@ -113,7 +113,8 @@
                       "agents/usage/agent-with-structured-output",
                       "agents/usage/agent-with-storage",
                       "agents/usage/agent-with-memory",
-                      "agents/usage/agent-with-knowledge"
+                      "agents/usage/agent-with-knowledge",
+                      "agents/usage/agent-with-followup-suggestions"
                     ]
                   }
                 ]
@@ -131,7 +132,8 @@
                     "pages": [
                       "teams/usage/basic-team",
                       "teams/usage/streaming",
-                      "teams/usage/respond-directly"
+                      "teams/usage/respond-directly",
+                      "teams/usage/team-with-followup-suggestions"
                     ]
                   }
                 ]
@@ -1918,6 +1920,7 @@
                           "tools/toolkits/search/hackernews",
                           "tools/toolkits/search/linkup",
                           "tools/toolkits/search/parallel",
+                          "tools/toolkits/search/perplexity",
                           "tools/toolkits/search/pubmed",
                           "tools/toolkits/search/searxng",
                           "tools/toolkits/search/seltz",
@@ -2035,6 +2038,7 @@
                           "tools/toolkits/others/google-maps",
                           "tools/toolkits/others/googlecalendar",
                           "tools/toolkits/others/google-sheets",
+                          "tools/toolkits/others/google-slides",
                           "tools/toolkits/others/jira",
                           "tools/toolkits/others/knowledge",
                           "tools/toolkits/others/linear",
@@ -4273,13 +4277,15 @@
                   "agent-os/interfaces/whatsapp/introduction",
                   "agent-os/interfaces/a2a/introduction",
                   "agent-os/interfaces/ag-ui/introduction",
-                  "agent-os/interfaces/slack/introduction"
+                  "agent-os/interfaces/slack/introduction",
+                  "agent-os/interfaces/telegram/introduction"
                 ]
               },
               {
                 "group": "Tracing",
                 "pages": [
                   "agent-os/tracing/overview",
+                  "agent-os/tracing/filter-options",
                   {
                     "group": "Usage",
                     "pages": [
@@ -4393,6 +4399,20 @@
                       "agent-os/usage/interfaces/slack/agent-with-user-memory",
                       "agent-os/usage/interfaces/slack/reasoning-agent",
                       "agent-os/usage/interfaces/slack/research-workflow"
+                    ]
+                  },
+                  {
+                    "group": "Telegram",
+                    "pages": [
+                      "agent-os/usage/interfaces/telegram/basic",
+                      "agent-os/usage/interfaces/telegram/streaming",
+                      "agent-os/usage/interfaces/telegram/team",
+                      "agent-os/usage/interfaces/telegram/agent-with-media",
+                      "agent-os/usage/interfaces/telegram/agent-with-user-memory",
+                      "agent-os/usage/interfaces/telegram/reasoning-agent",
+                      "agent-os/usage/interfaces/telegram/workflow",
+                      "agent-os/usage/interfaces/telegram/streaming-workflow",
+                      "agent-os/usage/interfaces/telegram/multiple-instances"
                     ]
                   }
                 ]

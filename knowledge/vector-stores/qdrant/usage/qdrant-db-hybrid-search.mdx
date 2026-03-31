@@ -48,6 +48,23 @@ if __name__ == "__main__":
     typer.run(qdrantdb_agent)
 ```
 
+<Note>
+To use hybrid search without internet access, 
+pre-cache the model and pass `fastembed_kwargs={"local_files_only": True, "cache_dir": "/path/to/local/model/cache"}` 
+to load models from the cache and disable downloads:
+
+  ```python
+  Qdrant(
+      collection="my_collection",
+      search_type=SearchType.hybrid,
+      fastembed_kwargs={
+          "local_files_only": True,
+          "cache_dir": "/path/to/cached/models",
+      },
+  )
+```
+</Note>
+
 ## Usage
 
 <Steps>
