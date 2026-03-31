@@ -13,12 +13,7 @@ AgentOS supports two security mechanisms:
 
 ## Basic Authentication
 
-Set `OS_SECURITY_KEY` in your `.env` file:
-```bash
-OS_SECURITY_KEY="your-secret-key"
-```
-
-Or export it directly in your terminal:
+Set the `OS_SECURITY_KEY` environment variable in your `.env` file or export it directly in your terminal:
 ```bash
 export OS_SECURITY_KEY="your-secret-key"
 ```
@@ -38,12 +33,7 @@ agent_os = AgentOS(
 )
 ```
 
-Copy your public verification key and set it as `JWT_VERIFICATION_KEY` in your `.env` file:
-```bash
-JWT_VERIFICATION_KEY="your-public-key"
-```
-
-Or export it directly in your terminal:
+Set the `JWT_VERIFICATION_KEY` environment variable to your public key in your `.env` file or export it directly in your terminal:
 ```bash
 export JWT_VERIFICATION_KEY="your-public-key"
 ```
