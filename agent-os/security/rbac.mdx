@@ -44,7 +44,12 @@ agent_os = AgentOS(
 app = agent_os.get_app()
 ```
 
-Set the `JWT_VERIFICATION_KEY` environment variable to your public key:
+Copy your public verification key and set it as `JWT_VERIFICATION_KEY` in your `.env` file:
+```bash
+JWT_VERIFICATION_KEY="your-public-key"
+```
+
+Or export it directly in your terminal:
 ```bash
 export JWT_VERIFICATION_KEY="your-public-key"
 ```
