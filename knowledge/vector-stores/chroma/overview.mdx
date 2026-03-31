@@ -108,6 +108,12 @@ vector_db = ChromaDb(
   </div>
 </Card>
 
+<Note>
+ChromaDB has a batch size limit due to SQLite constraints. 
+When inserting documents that exceed this limit, Agno automatically splits them into smaller batches.
+The batch size is auto-detected from ChromaDB's server configuration. Set `batch_size` to override the auto-detected value.
+</Note>
+
 ## ChromaDb Params
 
 <Snippet file="vectordb_chromadb_params.mdx" />
