@@ -4617,6 +4617,12 @@
                 ]
               }
             ]
+          },
+          {
+            "group": "Agno Infra",
+            "pages": [
+              "deploy/infra/overview"
+            ]
           }
         ]
       },
@@ -7623,21 +7629,15 @@
             ]
           },
           {
-            "group": "Agno Infra Reference",
+            "group": "Agno Infra CLI",
             "pages": [
-              "infra/overview",
-              {
-                "group": "CLI Reference",
-                "pages": [
-                  "reference/agno-infra/cli/ws/create",
-                  "reference/agno-infra/cli/ws/up",
-                  "reference/agno-infra/cli/ws/down",
-                  "reference/agno-infra/cli/ws/restart",
-                  "reference/agno-infra/cli/ws/patch",
-                  "reference/agno-infra/cli/ws/config",
-                  "reference/agno-infra/cli/ws/delete"
-                ]
-              }
+              "reference/agno-infra/cli/ws/create",
+              "reference/agno-infra/cli/ws/up",
+              "reference/agno-infra/cli/ws/down",
+              "reference/agno-infra/cli/ws/restart",
+              "reference/agno-infra/cli/ws/patch",
+              "reference/agno-infra/cli/ws/config",
+              "reference/agno-infra/cli/ws/delete"
             ]
           }
         ]
@@ -14699,7 +14699,11 @@
     },
     {
       "source": "/deploy/agno-infra",
-      "destination": "/infra/overview"
+      "destination": "/deploy/infra/overview"
+    },
+    {
+      "source": "/infra/overview",
+      "destination": "/deploy/infra/overview"
     },
     {
       "source": "/deploy/templates/aws/customize/ci-cd",
