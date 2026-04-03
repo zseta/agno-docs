@@ -1,18 +1,22 @@
 ---
-title: "Slack Bot"
-description: "Create a Slack App, configure OAuth scopes and event subscriptions, and deploy an Agno agent."
+title: Slack Bot
+description: Create a Slack App, configure OAuth scopes and event subscriptions, and deploy an Agno agent.
 keywords: [slack, deploy, setup, oauth, scopes, events, ngrok, bot]
 ---
 
 ```python slack_bot.py
 from agno.agent import Agent
+from agno.db.sqlite import SqliteDb
 from agno.models.openai import OpenAIChat
 from agno.os.app import AgentOS
 from agno.os.interfaces.slack import Slack
 
+agent_db = SqliteDb(session_table="agent_sessions", db_file="tmp/persistent_memory.db")
+
 basic_agent = Agent(
     name="Basic Agent",
     model=OpenAIChat(id="gpt-4o"),
+    db=agent_db,
     add_history_to_context=True,
     num_history_runs=3,
     add_datetime_to_context=True,
@@ -152,6 +156,7 @@ Add scopes based on the features your bot uses.
 | --- | --- |
 | `app_mentions:read` | Receive @mention events in channels |
 | `assistant:write` | Streaming task cards, suggested prompts, thread titles |
+| `channels:read` | Resolve channel names (called on every inbound event) |
 | `chat:write` | Send messages and stream responses |
 | `im:history` | Read DM history for thread context |
 
@@ -166,10 +171,14 @@ Add scopes based on the features your bot uses.
 
 | Scope | Required For |
 | --- | --- |
-| `channels:read` | `list_channels()` |
+| `channels:read` | `list_channels()`, `get_channel_info()` |
 | `channels:history` | `get_channel_history()`, `get_thread()` in public channels |
+| `groups:read` | `list_channels()` for private channels |
 | `groups:history` | `get_channel_history()`, `get_thread()` in private channels |
-| `search:read` | `search_messages()` |
+| `search:read` | `search_messages()` (requires user token) |
+| `search:read.public` | `search_workspace()` messages and channels |
+| `search:read.files` | `search_workspace()` files |
+| `search:read.users` | `search_workspace()` users |
 | `users:read` | `list_users()`, `get_user_info()` |
 | `users:read.email` | `get_user_info()` with email field |
 

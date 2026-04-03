@@ -1,7 +1,7 @@
 ---
 title: Slack Reference
-sidebarTitle: "Reference"
-description: "Interface parameters, endpoints, and event handling for the Slack interface."
+sidebarTitle: Reference
+description: Interface parameters, endpoints, and event handling for the Slack interface.
 keywords: [slack, reference, parameters, endpoints, events, api]
 ---
 
@@ -48,6 +48,7 @@ Receives all Slack events (URL verification, messages, app mentions, thread star
 | **200** | Event acknowledged. Processing happens in the background so Slack gets a response within 3 seconds. |
 | **400** | Missing `X-Slack-Request-Timestamp` or `X-Slack-Signature` headers. |
 | **403** | Invalid Slack signing signature. |
+| **500** | `SLACK_SIGNING_SECRET` is not set (checked on each request, not at startup). |
 
 ### Built-in Event Handling
 

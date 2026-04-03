@@ -2,7 +2,7 @@
 title: Slack
 ---
 
-**SlackTools** enable an Agent to interact with the Slack API. 10 methods cover messaging, channels, file management, search, threads, and user lookup.
+**SlackTools** enable an Agent to interact with the Slack API. 12 methods cover messaging, channels, file management, search, threads, and user lookup.
 
 ## Prerequisites
 
@@ -51,10 +51,12 @@ agent.print_response("Get the last 10 messages from the channel 1231241", markdo
 | `enable_get_channel_history` | `bool` | `True` | Enable `get_channel_history` tool. |
 | `enable_upload_file` | `bool` | `True` | Enable `upload_file` tool. |
 | `enable_download_file` | `bool` | `True` | Enable `download_file` tool. |
-| `enable_search_messages` | `bool` | `False` | Enable `search_messages` tool. Requires the `search:read` OAuth scope. |
+| `enable_search_messages` | `bool` | `False` | Enable `search_messages` tool. Requires a user token and the `search:read` OAuth scope. |
+| `enable_search_workspace` | `bool` | `False` | Enable `search_workspace` tool. Uses Slack's `assistant.search.context` API. Requires `search:read.public`, `search:read.files`, and `search:read.users` bot scopes. Only works through the Slack interface (needs `action_token`). |
 | `enable_get_thread` | `bool` | `False` | Enable `get_thread` tool. |
 | `enable_list_users` | `bool` | `False` | Enable `list_users` tool. |
 | `enable_get_user_info` | `bool` | `False` | Enable `get_user_info` tool. |
+| `enable_get_channel_info` | `bool` | `False` | Enable `get_channel_info` tool. |
 | `all` | `bool` | `False` | Enable all tools. Overrides individual flags. |
 | `ssl` | `Optional[SSLContext]` | `None` | SSL context for the Slack WebClient. |
 | `max_file_size` | `int` | `1073741824` | Maximum file size in bytes for uploads and downloads (default 1 GB). |
@@ -70,10 +72,12 @@ agent.print_response("Get the last 10 messages from the channel 1231241", markdo
 | `get_channel_history(channel, limit=100)` | Get message history from a channel. |
 | `upload_file(channel, content, filename, title?, initial_comment?, thread_ts?)` | Upload a file to a channel with optional caption. |
 | `download_file(file_id, dest_path?)` | Download a file by file ID. Returns path or base64 content. |
-| `search_messages(query, limit=20)` | Search messages across the workspace. |
+| `search_messages(query, limit=20)` | Search messages across the workspace. Requires a user token (bot tokens return `not_allowed_token_type`). |
+| `search_workspace(query, content_types?, channel_types?, limit=10, include_context_messages=True)` | Search messages, files, channels, and users across the workspace using Slack's Real-Time Search API. Only works through the Slack interface. |
 | `get_thread(channel, thread_ts, limit=20)` | Get all messages in a thread by parent timestamp. Capped by `thread_message_limit`. |
 | `list_users(limit=100)` | List all users in the workspace. |
 | `get_user_info(user_id)` | Get detailed info about a user by user ID. |
+| `get_channel_info(channel)` | Get channel metadata: name, topic, purpose, member count, and visibility. |
 
 <Tip>
 `search_messages` supports Slack search modifiers: `from:@user`, `in:#channel`, `has:link`, `before:2024-01-01`, `after:2024-01-01`. Combine them to narrow results.

@@ -4410,7 +4410,6 @@
                       "agent-os/usage/interfaces/slack/multiple-instances",
                       "agent-os/usage/interfaces/slack/agent-with-user-memory",
                       "agent-os/usage/interfaces/slack/reasoning-agent",
-                      "agent-os/usage/interfaces/slack/research-workflow",
                       "agent-os/usage/interfaces/slack/file-analyst",
                       "agent-os/usage/interfaces/slack/multi-bot",
                       "agent-os/usage/interfaces/slack/multimodal-team",

@@ -1,7 +1,7 @@
 ---
 title: Slack
-sidebarTitle: "Slack"
-description: "Deploy agents, teams, or workflows as interactive Slack bots."
+sidebarTitle: Slack
+description: Deploy agents, teams, or workflows as interactive Slack bots.
 keywords: [slack, bot, interface, events, streaming, team, workflow, media, tools, task cards]
 ---
 
@@ -62,14 +62,14 @@ from agno.models.openai import OpenAIChat
 from agno.os.app import AgentOS
 from agno.os.interfaces.slack import Slack
 from agno.team import Team
-from agno.tools.duckduckgo import DuckDuckGoTools
 from agno.tools.slack import SlackTools
+from agno.tools.websearch import WebSearchTools
 
 tech_support = Agent(
     name="Technical Support",
     role="Handle technical questions and troubleshooting",
     model=OpenAIChat(id="gpt-4o"),
-    tools=[DuckDuckGoTools()],
+    tools=[WebSearchTools()],
 )
 
 docs_specialist = Agent(
@@ -104,13 +104,13 @@ from agno.db.sqlite import SqliteDb
 from agno.models.openai import OpenAIChat
 from agno.os.app import AgentOS
 from agno.os.interfaces.slack import Slack
-from agno.tools.duckduckgo import DuckDuckGoTools
+from agno.tools.websearch import WebSearchTools
 from agno.workflow import Step, Workflow
 
 researcher = Agent(
     name="Researcher",
     model=OpenAIChat(id="gpt-4o"),
-    tools=[DuckDuckGoTools()],
+    tools=[WebSearchTools()],
 )
 
 writer = Agent(
@@ -194,6 +194,10 @@ agent = Agent(
 `search_messages` supports Slack search modifiers: `from:@user`, `in:#channel`, `has:link`, `before:2024-01-01`, `after:2024-01-01`. Combine them to narrow results.
 </Tip>
 
+<Warning>
+`search_messages` requires a **user token**, not a bot token. Using a bot token returns `not_allowed_token_type`. See the [Slack API docs](https://api.slack.com/methods/search.messages) for details.
+</Warning>
+
 For parameters and methods, see the [SlackTools reference](/tools/toolkits/social/slack).
 
 ## Multi-Instance
@@ -272,7 +276,7 @@ If `SLACK_SIGNING_SECRET` is not set, the server returns a 500 error. Always con
   </Accordion>
 
   <Accordion title="Bot responds to its own messages">
-    **Cause:** Bot events not being filtered correctly.
+    **Cause:** Slack events missing `bot_id` or misidentified bot user.
 
     **Fix:** The interface filters these automatically. If it still happens, verify your Slack app's bot user has a `bot_id` in events. Reinstalling the app usually resolves this.
   </Accordion>
