@@ -5,58 +5,16 @@ description: Host agents as WhatsApp applications.
 
 Use the WhatsApp interface to serve Agents, Teams, or Workflows on WhatsApp. It mounts webhook routes on a FastAPI app, processes incoming messages (text, images, video, audio, documents), and sends responses back to WhatsApp users.
 
-## Setup Steps
+## Setup
 
-### 1. Create a Meta App
+Follow the [WhatsApp Bot setup guide](/deploy/interfaces/whatsapp/overview) for full step-by-step instructions.
 
-1. Go to the [Meta Developer Portal](https://developers.facebook.com/) and create a developer account.
-2. Create a new app at the [Apps Dashboard](https://developers.facebook.com/apps/). Select **Business** as the app type. If you don't see it, choose **Other** and then **Business** on the next screen.
-3. In the app dashboard, find **WhatsApp** in the product list and click **Set up** to add it to your app.
+Required configuration:
 
-### 2. Get Your Credentials
-
-1. In your app dashboard, go to **WhatsApp > API Setup**.
-2. Note your **Phone Number ID**, shown below the test phone number.
-3. Generate a **Temporary Access Token** from the same page. This token expires in ~24 hours and is only suitable for development.
-4. Add test recipient numbers under the **To** field to send messages during development.
-
-<Note>
-For production, create a **permanent access token** via a System User instead of using temporary tokens. Go to [Meta Business Manager](https://business.facebook.com/) > **Business Settings > System Users**, create an admin system user, assign your app and WhatsApp Business Account, then generate a token with `whatsapp_business_messaging` permission.
-</Note>
-
-5. Find your **App Secret** at **App Settings > Basic** in the developer dashboard. You'll need this for webhook signature validation in production.
-
-### 3. Set Environment Variables
-
-```shell
-export WHATSAPP_ACCESS_TOKEN=your_access_token
-export WHATSAPP_PHONE_NUMBER_ID=your_phone_number_id
-export WHATSAPP_VERIFY_TOKEN=your_custom_verify_token    # Any string you choose
-```
-
-For production, also set your App Secret to enable webhook signature validation:
-
-```shell
-export WHATSAPP_APP_SECRET=your_app_secret
-```
-
-For local development without signature validation:
-
-```shell
-export WHATSAPP_SKIP_SIGNATURE_VALIDATION=true
-```
-
-### 4. Set Up a Webhook
-
-Meta requires webhook endpoints to use **HTTPS**. For local development, use a tunnel like [ngrok](https://ngrok.com/) which provides HTTPS automatically.
-
-1. Start your app locally (see example below).
-2. Expose it via ngrok: `ngrok http 8000`
-3. In the Meta app dashboard, go to **WhatsApp > Configuration**.
-4. Set the **Callback URL** to `https://<your-ngrok-url>/whatsapp/webhook`.
-5. Set the **Verify Token** to the same value as your `WHATSAPP_VERIFY_TOKEN` environment variable.
-6. Click **Verify and save**. Meta will send a GET request to your endpoint, so it must be running.
-7. Under **Webhook fields**, subscribe to the **messages** field.
+- `WHATSAPP_ACCESS_TOKEN` (from Meta App Dashboard > WhatsApp > API Setup)
+- `WHATSAPP_PHONE_NUMBER_ID` (from Meta App Dashboard > WhatsApp > API Setup)
+- `WHATSAPP_VERIFY_TOKEN` (any string you choose for webhook verification)
+- An [ngrok](https://ngrok.com/) tunnel (for local development) with the callback URL pointing to `/whatsapp/webhook`
 
 ## Example Usage
 
@@ -225,15 +183,8 @@ Each bot needs its own Meta app and phone number. Set each app's webhook callbac
 
 ## Testing the Integration
 
-1. Run the app locally: `python basic.py` (ensure ngrok is running).
-2. Open WhatsApp and send a message to your test phone number.
-3. Send `/new` to reset the session.
-4. Send an image or document to test media handling.
-
-## Troubleshooting
-
-- **No messages received**: Verify the webhook callback URL and that you subscribed to the `messages` field in Meta's dashboard.
-- **403 on webhook**: Check that `WHATSAPP_APP_SECRET` is set correctly, or set `WHATSAPP_SKIP_SIGNATURE_VALIDATION=true` for local development.
-- **Webhook verification fails**: Ensure `WHATSAPP_VERIFY_TOKEN` matches the value in Meta's dashboard.
-- **Media not sending**: Check `WHATSAPP_ACCESS_TOKEN` has the required permissions and hasn't expired. Temporary tokens expire after ~24 hours. Use a [System User token](#get-your-credentials) for production.
-- **Bot not replying**: Review application logs. Common causes: missing env vars, expired access token, or agent errors.
+1. Follow the [setup guide](/deploy/interfaces/whatsapp/overview) to configure your Meta App and webhook.
+2. Run the app locally: `python basic.py` (ensure ngrok is running).
+3. Open WhatsApp and send a message to your test phone number.
+4. Send `/new` to reset the session.
+5. Send an image or document to test media handling.
