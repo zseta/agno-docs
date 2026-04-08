@@ -1,9 +1,7 @@
 ---
 title: Nested Workflow
-description: Use a workflow as a step inside another workflow for composable, reusable pipelines
+description: Run a workflow as a step inside another workflow for complex multi-level pipelines.
 ---
-
-**Key Benefits**: Composable pipelines, reusable sub-workflows, hierarchical execution with shared session state
 
 Pass a `Workflow` as a step inside another `Workflow`. The inner workflow runs as a single step in the outer workflow, with output chained to the next step.
 
@@ -86,92 +84,18 @@ steps=[Step(name="Research Workflow", workflow=inner_workflow)]
 steps=[inner_workflow]
 ```
 
-## Nested Workflows with Primitives
+## Inner workflows and primitives
 
-Inner workflows can contain any workflow primitive: `Condition`, `Loop`, `Router`, `Parallel`.
+An inner workflow can use the same primitives and combinations as any top-level workflow in Agno: agents, executors, nested `Step`s, `Condition`, `Loop`, `Router`, and `Parallel`, mixed however your pipeline needs.
 
-### With Condition
+The [basic example](#basic-example) uses agent and executor steps inside the inner workflow. [Deep nesting](#deep-nesting) shows multiple levels with `Parallel` and sub-workflows.
 
-```python nested_with_condition.py
-from agno.workflow import Condition
-
-def needs_fact_check(step_input: StepInput) -> bool:
-    prev = step_input.previous_step_content or ""
-    return any(char.isdigit() for char in prev)
-
-inner_workflow = Workflow(
-    name="Research with Fact Check",
-    steps=[
-        Step(name="research", agent=researcher),
-        Condition(
-            name="fact_check_gate",
-            evaluator=needs_fact_check,
-            steps=[Step(name="fact_check", agent=fact_checker)],
-            else_steps=[Step(name="pass_through", executor=format_for_writer)],
-        ),
-    ],
-)
-
-outer_workflow = Workflow(
-    name="Research, Check, and Write",
-    steps=[
-        Step(name="research_phase", workflow=inner_workflow),
-        Step(name="writing_phase", agent=writer),
-    ],
-)
-```
-
-### With Loop
-
-```python nested_with_loop.py
-from agno.workflow import Loop
-
-def is_detailed_enough(outputs: List[StepOutput]) -> bool:
-    if not outputs:
-        return False
-    return len(str(outputs[-1].content)) > 200
-
-inner_workflow = Workflow(
-    name="Iterative Research",
-    steps=[
-        Loop(
-            name="research_loop",
-            steps=[Step(name="research_pass", agent=researcher)],
-            end_condition=is_detailed_enough,
-            max_iterations=3,
-        ),
-    ],
-)
-```
-
-### With Router
-
-```python nested_with_router.py
-from agno.workflow import Router
-
-def topic_router(step_input: StepInput) -> List[Step]:
-    text = (step_input.input or "").lower()
-    if any(kw in text for kw in ["code", "programming", "api"]):
-        return [Step(name="tech_research", agent=tech_specialist)]
-    elif any(kw in text for kw in ["history", "ancient", "century"]):
-        return [Step(name="history_research", agent=history_specialist)]
-    return [Step(name="general_research", agent=general_specialist)]
-
-inner_workflow = Workflow(
-    name="Routed Research",
-    steps=[
-        Router(
-            name="specialist_router",
-            selector=topic_router,
-            choices=[
-                Step(name="tech_research", agent=tech_specialist),
-                Step(name="history_research", agent=history_specialist),
-                Step(name="general_research", agent=general_specialist),
-            ],
-        ),
-    ],
-)
-```
+| Primitive | Role |
+|-----------|------|
+| `Condition` | Branch on a boolean evaluator |
+| `Loop` | Repeat steps until an end condition or max iterations |
+| `Router` | Choose a branch from a selector |
+| `Parallel` | Run branches concurrently |
 
 ## Deep Nesting
 
