@@ -5,7 +5,7 @@ description: Consolidate all human-in-the-loop settings into a single config obj
 keywords: [workflow, HITL, human-review, config, confirmation, output review, iteration review, timeout]
 ---
 
-`HumanReview` groups all HITL settings into a single object instead of passing them as separate parameters on Step, Loop, or Router.
+`HumanReview` groups all HITL settings into a single object instead of passing them as separate parameters. All workflow primitives accept `human_review=HumanReview(...)`: Step, Loop, Router, Condition, Steps, and Parallel.
 
 ```python
 from agno.workflow.step import Step
@@ -67,25 +67,28 @@ If both `human_review` and flat parameters are provided, `human_review` takes pr
 
 Not every field works on every component. Passing an unsupported field raises a `ValueError` at construction time.
 
-| Field | Step | Loop | Router |
-|-------|------|------|--------|
-| `requires_confirmation` | ✓ | ✓ | ✓ |
-| `requires_user_input` | ✓ | - | ✓ |
-| `requires_output_review` | ✓ | - | ✓ |
-| `requires_iteration_review` | - | ✓ | - |
-| `on_reject` | ✓ | ✓ | ✓ |
-| `on_error` | ✓ | - | - |
-| `max_retries` | ✓ | ✓ | ✓ |
-| `timeout` | ✓ | ✓ | ✓ |
-| `on_timeout` | ✓ | ✓ | ✓ |
+| Field | Step | Loop | Router | Condition | Steps | Parallel |
+|-------|------|------|--------|-----------|-------|----------|
+| `requires_confirmation` | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| `requires_user_input` | ✓ | - | ✓ | - | - | - |
+| `requires_output_review` | ✓ | - | ✓ | - | - | - |
+| `requires_iteration_review` | - | ✓ | - | - | - | - |
+| `on_reject` | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| `on_error` | ✓ | - | - | - | - | - |
+| `max_retries` | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| `timeout` | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| `on_timeout` | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+
+Condition, Steps, and Parallel only support `requires_confirmation`. Passing unsupported fields raises a clear error:
 
 ```python
-from agno.workflow.loop import Loop
+from agno.workflow.condition import Condition
 from agno.workflow.types import HumanReview
 
-# This raises ValueError: requires_output_review is not supported on Loop
-Loop(
-    name="my_loop",
+# This raises ValueError: requires_output_review is not supported on Condition.
+# Supported: requires_confirmation.
+Condition(
+    name="my_condition",
     steps=[...],
     human_review=HumanReview(requires_output_review=True),
 )
@@ -195,4 +198,6 @@ restored = HumanReview.from_dict(data)
 - [Step HITL](/workflows/hitl/step)
 - [Loop HITL](/workflows/hitl/loop)
 - [Router HITL](/workflows/hitl/router)
+- [Condition HITL](/workflows/hitl/condition)
+- [Steps HITL](/workflows/hitl/steps)
 - [Workflow HITL overview](/workflows/hitl/overview)

@@ -2,10 +2,12 @@
 title: Steps HITL
 sidebarTitle: Steps (Pipeline)
 description: Confirm before executing a pipeline of grouped steps.
-keywords: [workflow, steps, pipeline, HITL, confirmation]
+keywords: [workflow, steps, pipeline, HITL, confirmation, human review]
 ---
 
 The `Steps` component groups multiple steps into a pipeline. It supports confirmation HITL, pausing before the entire pipeline executes.
+
+All HITL settings are configured via [`HumanReview`](/workflows/hitl/human-review). Steps only supports `requires_confirmation`. Passing unsupported fields (like `requires_output_review`) raises a `ValueError`.
 
 ## Pipeline Confirmation
 
@@ -17,7 +19,7 @@ When `requires_confirmation=True`, the pipeline pauses before executing any of i
 from agno.workflow import Workflow
 from agno.workflow.step import Step
 from agno.workflow.steps import Steps
-from agno.workflow.types import StepInput, StepOutput
+from agno.workflow.types import HumanReview, StepInput, StepOutput
 from agno.db.sqlite import SqliteDb
 
 def validate_data(step_input: StepInput) -> StepOutput:
@@ -41,8 +43,10 @@ workflow = Workflow(
                 Step(name="transform", executor=transform_data),
                 Step(name="enrich", executor=enrich_data),
             ],
-            requires_confirmation=True,
-            confirmation_message="Run advanced processing pipeline?",
+            human_review=HumanReview(
+                requires_confirmation=True,
+                confirmation_message="Run advanced processing pipeline?",
+            ),
         ),
         Step(name="report", executor=generate_report),
     ],
@@ -111,6 +115,7 @@ while run_output.is_paused:
 
 ## Developer Resources
 
+- [HumanReview Config](/workflows/hitl/human-review)
 - [Workflow HITL overview](/workflows/hitl/overview)
 - [Steps reference](/reference/workflows/steps-step)
 - [Grouped steps workflow pattern](/workflows/workflow-patterns/grouped-steps-workflow)
