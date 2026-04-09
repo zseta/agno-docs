@@ -2,10 +2,12 @@
 title: Loop HITL
 sidebarTitle: Loop
 description: Confirm before starting loops and review output between iterations.
-keywords: [workflow, loop, HITL, confirmation, iteration, iteration review]
+keywords: [workflow, loop, HITL, confirmation, iteration, iteration review, human review]
 ---
 
 Loops support two HITL modes: start confirmation (pause before the first iteration) and iteration review (pause between iterations for human feedback).
+
+All HITL settings are configured via [`HumanReview`](/workflows/hitl/human-review).
 
 ## Start Confirmation
 
@@ -17,7 +19,7 @@ When `requires_confirmation=True`, the loop pauses before executing:
 from agno.workflow import Workflow
 from agno.workflow.loop import Loop
 from agno.workflow.step import Step
-from agno.workflow.types import StepInput, StepOutput
+from agno.workflow.types import HumanReview, StepInput, StepOutput
 from agno.db.sqlite import SqliteDb
 
 def refine_analysis(step_input: StepInput) -> StepOutput:
@@ -32,8 +34,10 @@ workflow = Workflow(
             name="refinement_loop",
             steps=[Step(name="refine", executor=refine_analysis)],
             max_iterations=5,
-            requires_confirmation=True,
-            confirmation_message="Start refinement loop? (up to 5 iterations)",
+            human_review=HumanReview(
+                requires_confirmation=True,
+                confirmation_message="Start refinement loop? (up to 5 iterations)",
+            ),
         ),
         Step(name="finalize", executor=finalize_results),
     ],
@@ -58,15 +62,15 @@ if run_output.is_paused:
 print(run_output.content)
 ```
 
-## Parameters
+### Parameters
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
+| Field | Type | Description |
+|-------|------|-------------|
 | `requires_confirmation` | `bool` | Pause before first iteration |
 | `confirmation_message` | `str` | Message shown to the user |
 | `on_reject` | `OnReject` | Action when rejected: `skip` (default), `cancel` |
 
-## Loop Behavior
+### Loop Behavior
 
 The confirmation happens once before the loop starts. Individual iterations do not pause for confirmation. For per-iteration pauses, see [Iteration Review](#iteration-review).
 
@@ -74,24 +78,6 @@ The confirmation happens once before the loop starts. Individual iterations do n
 |-------------|--------|
 | Confirm | Execute all iterations (up to `max_iterations` or until `should_continue` returns `False`) |
 | Reject | Skip the loop entirely |
-
-## With should_continue
-
-The `should_continue` function controls iteration. Confirmation happens before any iteration:
-
-```python
-def check_quality(step_input: StepInput, iteration: int) -> bool:
-    # Continue if quality threshold not met
-    return iteration < 3  # Example: max 3 iterations
-
-Loop(
-    name="quality_loop",
-    steps=[Step(name="improve", executor=improve_quality)],
-    should_continue=check_quality,
-    requires_confirmation=True,
-    confirmation_message="Start quality improvement loop?",
-)
-```
 
 ## Iteration Review
 
@@ -101,6 +87,7 @@ Set `requires_iteration_review=True` to pause between loop iterations. After eac
 from agno.workflow import Workflow, OnReject
 from agno.workflow.loop import Loop
 from agno.workflow.step import Step
+from agno.workflow.types import HumanReview
 from agno.db.sqlite import SqliteDb
 
 refine_agent = Agent(
@@ -121,9 +108,11 @@ workflow = Workflow(
             steps=[Step(name="refine", agent=refine_agent)],
             max_iterations=5,
             forward_iteration_output=True,
-            requires_iteration_review=True,
-            iteration_review_message="Review this iteration.",
-            on_reject=OnReject.retry,
+            human_review=HumanReview(
+                requires_iteration_review=True,
+                iteration_review_message="Review this iteration.",
+                on_reject=OnReject.retry,
+            ),
         ),
     ],
 )
@@ -165,6 +154,50 @@ while run_output.is_paused:
 
 Iteration review requirements appear in `run_output.steps_requiring_output_review`, the same property used for step output review.
 
+<Note>
+`requires_iteration_review` is only supported on Loop. Passing it to Step or Router raises a `ValueError`.
+</Note>
+
+## With should_continue
+
+The `should_continue` function controls iteration. Confirmation happens before any iteration:
+
+```python
+def check_quality(step_input: StepInput, iteration: int) -> bool:
+    return iteration < 3
+
+Loop(
+    name="quality_loop",
+    steps=[Step(name="improve", executor=improve_quality)],
+    should_continue=check_quality,
+    human_review=HumanReview(
+        requires_confirmation=True,
+        confirmation_message="Start quality improvement loop?",
+    ),
+)
+```
+
+## Timeout
+
+Set a deadline for user responses during loop HITL pauses. See the dedicated [Timeout](/workflows/hitl/timeout) page for full details.
+
+```python
+from agno.workflow import OnTimeout
+
+Loop(
+    name="review_loop",
+    steps=[Step(name="generate", executor=generate_fn)],
+    max_iterations=3,
+    human_review=HumanReview(
+        requires_iteration_review=True,
+        iteration_review_message="Review this iteration.",
+        on_reject=OnReject.retry,
+        timeout=120,  # 2 minutes per pause
+        on_timeout=OnTimeout.approve,
+    ),
+)
+```
+
 ## Streaming
 
 Handle loop HITL in streaming workflows:
@@ -192,6 +225,7 @@ while run_output.is_paused:
 
 ## Developer Resources
 
+- [HumanReview Config](/workflows/hitl/human-review)
 - [Output Review](/workflows/hitl/output-review)
 - [Workflow HITL overview](/workflows/hitl/overview)
 - [Loop reference](/reference/workflows/loop-steps)

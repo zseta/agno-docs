@@ -2,10 +2,12 @@
 title: Condition HITL
 sidebarTitle: Condition
 description: Let users decide which branch to execute in conditional workflows.
-keywords: [workflow, condition, HITL, confirmation, branching, decision]
+keywords: [workflow, condition, HITL, confirmation, branching, decision, human review]
 ---
 
 Conditions support confirmation HITL, allowing users to decide which branch to execute at runtime.
+
+All HITL settings are configured via [`HumanReview`](/workflows/hitl/human-review). Conditions only support `requires_confirmation`. Passing unsupported fields (like `requires_output_review`) raises a `ValueError`.
 
 ## User-Controlled Branching
 
@@ -17,7 +19,7 @@ When `requires_confirmation=True`, the condition pauses for user decision:
 from agno.workflow import Workflow, OnReject
 from agno.workflow.condition import Condition
 from agno.workflow.step import Step
-from agno.workflow.types import StepInput, StepOutput
+from agno.workflow.types import HumanReview, StepInput, StepOutput
 from agno.db.sqlite import SqliteDb
 
 def detailed_analysis(step_input: StepInput) -> StepOutput:
@@ -35,9 +37,11 @@ workflow = Workflow(
             name="analysis_depth",
             steps=[Step(name="detailed", executor=detailed_analysis)],
             else_steps=[Step(name="quick", executor=quick_summary)],
-            requires_confirmation=True,
-            confirmation_message="Perform detailed analysis?",
-            on_reject=OnReject.else_branch,
+            human_review=HumanReview(
+                requires_confirmation=True,
+                confirmation_message="Perform detailed analysis?",
+                on_reject=OnReject.else_branch,
+            ),
         ),
         Step(name="report", executor=generate_report),
     ],
@@ -96,9 +100,11 @@ Condition(
     name="optional_processing",
     steps=[Step(name="process", executor=process)],
     # No else_steps defined
-    requires_confirmation=True,
-    confirmation_message="Run optional processing?",
-    on_reject=OnReject.else_branch,  # Will skip if rejected
+    human_review=HumanReview(
+        requires_confirmation=True,
+        confirmation_message="Run optional processing?",
+        on_reject=OnReject.else_branch,  # Will skip if rejected
+    ),
 )
 ```
 
@@ -112,8 +118,10 @@ Condition(
     # evaluator is ignored when requires_confirmation=True
     steps=[Step(name="if_branch", ...)],
     else_steps=[Step(name="else_branch", ...)],
-    requires_confirmation=True,
-    confirmation_message="Proceed with if branch?",
+    human_review=HumanReview(
+        requires_confirmation=True,
+        confirmation_message="Proceed with if branch?",
+    ),
 )
 ```
 
@@ -144,6 +152,7 @@ while run_output.is_paused:
 
 ## Developer Resources
 
+- [HumanReview Config](/workflows/hitl/human-review)
 - [Workflow HITL overview](/workflows/hitl/overview)
 - [Condition reference](/reference/workflows/conditional-steps)
 - [Conditional workflow pattern](/workflows/workflow-patterns/conditional-workflow)
