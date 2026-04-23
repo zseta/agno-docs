@@ -3,59 +3,87 @@ title: Welcome to Agno
 description: Build, run, and manage agents at scale.
 ---
 
-Agno is a runtime that turns agents into production services.
+Agno turns agents into production services.
+
+- **Build** your agent in any framework.
+- **Run** it as a production service using AgentOS.
+- **Interact** via the AgentOS UI, Slack, Discord, or your own client.
 
 <CodeGroup>
 
 ```python Agno SDK
 from agno.agent import Agent
-from agno.models.openai import OpenAIResponses
+from agno.db.sqlite import SqliteDb
 from agno.os import AgentOS
+from agno.tools.hackernews import HackerNewsTools
 
 agent = Agent(
     name="Agno Agent",
-    model=OpenAIResponses(id="gpt-5.4"),
+    model="openai:gpt-5.4",
+    tools=[HackerNewsTools()],
 )
 
-agent_os = AgentOS(agents=[agent])
+agent_os = AgentOS(
+    agents=[agent],
+    tracing=True,
+    db=SqliteDb(db_file="tmp/agentos.db"),
+)
 app = agent_os.get_app()
+
+if __name__ == "__main__":
+    agent_os.serve(app="agno_agent:app", reload=True)
 ```
 
 ```python Claude Agent SDK
 from agno.agents.claude import ClaudeAgent
+from agno.db.sqlite import SqliteDb
 from agno.os import AgentOS
 
-claude_agent = ClaudeAgent(
-    agent_id="claude-assistant",
-    agent_name="Claude Assistant",
-    model="claude-sonnet-4-20250514",
+agent = ClaudeAgent(
+    name="Claude Agent",
+    model="claude-opus-4-7",
     allowed_tools=["Read", "Bash"],
     permission_mode="acceptEdits",
 )
 
-agent_os = AgentOS(agents=[claude_agent])
+agent_os = AgentOS(
+    agents=[agent],
+    tracing=True,
+    db=SqliteDb(db_file="tmp/agentos.db"),
+)
 app = agent_os.get_app()
+
+if __name__ == "__main__":
+    agent_os.serve(app="claude_agent:app", reload=True)
 ```
 
 ```python DSPy
 import dspy
 from agno.agents.dspy import DSPyAgent
+from agno.db.sqlite import SqliteDb
 from agno.os import AgentOS
 
 dspy.configure(lm=dspy.LM("openai/gpt-5.4"))
 
-dspy_agent = DSPyAgent(
-    agent_id="dspy-assistant",
-    agent_name="DSPy Assistant",
+agent = DSPyAgent(
+    name="DSPy Assistant",
     program=dspy.ChainOfThought("question -> answer"),
 )
 
-agent_os = AgentOS(agents=[dspy_agent])
+agent_os = AgentOS(
+    agents=[agent],
+    tracing=True,
+    db=SqliteDb(db_file="tmp/agentos.db"),
+)
 app = agent_os.get_app()
+
+if __name__ == "__main__":
+    agent_os.serve(app="dspy_agent:app", reload=True)
 ```
 
 ```python LangGraph
 from agno.agents.langgraph import LangGraphAgent
+from agno.db.sqlite import SqliteDb
 from agno.os import AgentOS
 from langchain_openai import ChatOpenAI
 from langgraph.graph import MessagesState, StateGraph
@@ -68,14 +96,20 @@ graph.add_node("chatbot", chatbot)
 graph.set_entry_point("chatbot")
 compiled = graph.compile()
 
-langgraph_agent = LangGraphAgent(
-    agent_id="langgraph-chatbot",
-    agent_name="LangGraph Chatbot",
+agent = LangGraphAgent(
+    name="LangGraph Chatbot",
     graph=compiled,
 )
 
-agent_os = AgentOS(agents=[langgraph_agent])
+agent_os = AgentOS(
+    agents=[agent],
+    tracing=True,
+    db=SqliteDb(db_file="tmp/agentos.db"),
+)
 app = agent_os.get_app()
+
+if __name__ == "__main__":
+    agent_os.serve(app="langgraph_agent:app", reload=True)
 ```
 
 </CodeGroup>
