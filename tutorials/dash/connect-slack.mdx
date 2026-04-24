@@ -1,0 +1,108 @@
+---
+title: Connect to Slack
+description: "Put Dash in Slack so it can answer data questions and post results."
+---
+
+A data agent is most useful where the questions get asked. For most teams, that's Slack. Putting Dash there means MRR questions get answered in `#growth`, churn questions in `#cs`, all without anyone leaving the channel they're already in.
+
+The full setup, including the Slack app manifest and the complete scope list, lives in the Dash repo: [SLACK_CONNECT.md](https://github.com/agno-agi/dash/blob/main/docs/SLACK_CONNECT.md). This page walks through what you'll do and why each step matters.
+
+## What lights up
+
+`SLACK_TOKEN` powers two things at once:
+
+| Component | What it does |
+|-----------|--------------|
+| **Slack interface** (receiving) | Dash receives DMs, `@mentions`, and thread replies. Each thread is its own session. |
+| **SlackTools** (sending) | The team leader can post insights into channels, including scheduled results. |
+
+The interface only loads when both `SLACK_TOKEN` and `SLACK_SIGNING_SECRET` are set. SlackTools loads on `SLACK_TOKEN` alone.
+
+## Prerequisites
+
+- Dash running locally ([setup](/tutorials/dash/setup)) or [deployed](/tutorials/dash/deploy-to-railway)
+- A Slack workspace where you can install apps
+- [ngrok](https://ngrok.com/download) (local development only)
+
+## Step 1: Give Slack a URL it can reach
+
+**Why:** Slack delivers events (DMs, mentions, channel messages) by POSTing to a URL. That URL has to be reachable from Slack's servers.
+
+For local development, expose port 8000 with ngrok:
+
+```bash
+ngrok http 8000
+```
+
+For production, use your deployed Railway URL.
+
+<Note>
+  🎥 **Add video:** Starting ngrok and copying the public URL.
+</Note>
+
+## Step 2: Register the Slack app from a manifest
+
+**Why:** Slack apps are configured by a JSON manifest that declares the app's identity, scopes (what it's allowed to do), and event subscriptions (what events Slack should send you). Doing it via manifest makes the configuration explicit and reproducible.
+
+Scopes follow the principle of least privilege. Dash asks for `search:read.public` to search messages, `chat:write` to reply, `users:read` to address you by name. It doesn't ask for admin scopes or to read DMs from people who haven't talked to it.
+
+The full manifest is in [SLACK_CONNECT.md](https://github.com/agno-agi/dash/blob/main/docs/SLACK_CONNECT.md). Copy it, paste into Slack's "Create New App → From a manifest" flow, replace the placeholder URL with your URL from Step 1.
+
+<Note>
+  📷 **Add screenshot:** Slack's "Create New App > From manifest" page with the JSON pasted in.
+</Note>
+
+## Step 3: Install Dash into your workspace
+
+**Why:** Install creates the bot identity in your workspace and issues the credentials Dash needs to authenticate every request.
+
+Two values to copy:
+
+| What | Where in Slack | Becomes |
+|------|----------------|---------|
+| **Bot User OAuth Token** | Install App page | `SLACK_TOKEN` (`xoxb-...`) |
+| **Signing Secret** | Basic Information → App Credentials | `SLACK_SIGNING_SECRET` |
+
+The signing secret is what Slack uses to sign every incoming event. Dash verifies the signature on every request, so an attacker spoofing your endpoint can't trigger runs.
+
+<Note>
+  📷 **Add screenshot:** The Install App page showing the Bot User OAuth Token, with the Basic Information sidebar visible.
+</Note>
+
+## Step 4: Wire credentials and restart
+
+```bash
+# .env
+SLACK_TOKEN="xoxb-..."
+SLACK_SIGNING_SECRET="..."
+```
+
+```bash
+docker compose up -d --build
+```
+
+## Step 5: Confirm the event subscription is verified
+
+**Why:** Slack verifies your endpoint with a `challenge` request when the app is created. If Dash wasn't running at that exact moment, verification fails silently and events stop being delivered.
+
+Open your Dash app at [api.slack.com/apps](https://api.slack.com/apps) → **Event Subscriptions**. If the Request URL shows "Your URL didn't respond", click **Retry**. Confirm it shows **Verified** with a green check, then **Save Changes**.
+
+## Verify
+
+| Surface | Try |
+|---------|-----|
+| **DM** | Open a direct message to Dash and ask `what's our MRR?` |
+| **Channel** | `@Dash which plan has the highest churn rate?` |
+| **Thread** | Reply in a thread. Dash continues with full context. |
+
+<Note>
+  🎥 **Add video:** Asking Dash a metric question in a Slack channel and watching the response.
+</Note>
+
+## Going further
+
+For ngrok URL changes, scope updates, or other troubleshooting, see [SLACK_CONNECT.md](https://github.com/agno-agi/dash/blob/main/docs/SLACK_CONNECT.md).
+
+For the underlying [Agno Slack interface](/agent-os/interfaces/slack/introduction): each thread timestamp becomes a session ID, so threads stay isolated and conversation history carries forward.
+
+Next: [Deploy to Railway →](/tutorials/dash/deploy-to-railway)

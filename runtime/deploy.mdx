@@ -1,0 +1,143 @@
+---
+title: Deploy
+description: "Ship your AgentOS to Docker, Railway, AWS, or any container host."
+---
+
+AgentOS is a FastAPI app. If you can deploy a Dockerfile, you can deploy AgentOS.
+
+```python
+from agno.os import AgentOS
+
+agent_os = AgentOS(agents=[agent], db=db, tracing=True)
+app = agent_os.get_app()
+
+if __name__ == "__main__":
+    agent_os.serve(app="my_app:app", reload=False)
+```
+
+That's the entrypoint. Anything that can run `uvicorn my_app:app` can run AgentOS.
+
+## What you need to ship
+
+| Resource | Why |
+|----------|-----|
+| **Container host** | Runs the FastAPI process |
+| **PostgreSQL** | Sessions, memory, knowledge, traces, schedules |
+| **Public hostname** | Required for Slack/Telegram/WhatsApp interfaces |
+| **Env vars** | At minimum `OPENAI_API_KEY` and `JWT_VERIFICATION_KEY` (in prod) |
+
+That's it. No queue, no worker pool, no background scheduler service, no separate auth server. AgentOS handles all of that in-process.
+
+## Local with Docker Compose
+
+The fastest local setup:
+
+```yaml
+services:
+  agentos:
+    build: .
+    ports:
+      - "8000:8000"
+    env_file: .env
+    depends_on:
+      - db
+
+  db:
+    image: agnohq/pgvector:18
+    environment:
+      POSTGRES_USER: ai
+      POSTGRES_PASSWORD: ai
+      POSTGRES_DB: ai
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
+```
+
+`agnohq/pgvector` is Postgres 18 with the pgvector extension preinstalled, which knowledge needs.
+
+```bash
+docker compose up -d --build
+curl http://localhost:8000/health
+```
+
+The [Scout](/tutorials/scout/setup), [Dash](/tutorials/dash/setup), and [Coda](/tutorials/coda/setup) tutorials all start here.
+
+## Railway
+
+Railway is the fastest one-command deploy. Each tutorial template ships with `scripts/railway_*.sh`:
+
+```bash
+railway login
+./scripts/railway_up.sh        # provision Postgres + app, get a domain
+./scripts/railway_env.sh       # sync .env.production to the service
+./scripts/railway_redeploy.sh  # push code updates
+```
+
+`up.sh` provisions the project, adds `pgvector` with a persistent volume, creates the app service with env vars, and assigns a public domain. The whole thing takes under five minutes (the domain takes ~5 more to resolve).
+
+Walkthroughs:
+- [Scout deploy](/tutorials/scout/deploy-to-railway)
+- [Dash deploy](/tutorials/dash/deploy-to-railway) (includes JWT key setup)
+- [Coda deploy](/tutorials/coda/deploy-to-railway) (includes JWT key setup)
+
+## AWS, GCP, Azure
+
+Any container platform works. The shape:
+
+| Service | What it is | What runs in it |
+|---------|-----------|-----------------|
+| **App service** | ECS Fargate, Cloud Run, App Service | The AgentOS container, port 8000 |
+| **Postgres** | RDS, Cloud SQL, Postgres Flexible Server | Sessions, memory, knowledge, traces |
+| **Load balancer / ingress** | ALB, Cloud Load Balancing, Application Gateway | Public HTTPS |
+| **Secret manager** | Secrets Manager, Secret Manager, Key Vault | `OPENAI_API_KEY`, `JWT_VERIFICATION_KEY` |
+
+Health check the `/health` endpoint. AgentOS responds `{"status":"ok"}` when the app is ready.
+
+## Scaling
+
+AgentOS is stateless. State lives in `db`. Scale horizontally:
+
+| Concern | Solution |
+|---------|----------|
+| Throughput | Add app replicas behind a load balancer |
+| LLM rate limits | Use a queue or rate limiter in front of the model client |
+| Long-running runs | Run as background hooks (`run_in_background=True`) so the response returns immediately |
+| Schedule fan-out | The scheduler polls a single replica's lifespan; for HA, use leader election or pin scheduling to one replica |
+| Trace volume | Use a separate `trace_db` to keep the primary lean (see [Observability](/runtime/observability)) |
+
+For the leader-election pattern with multiple replicas, see [Scheduler HA](/agent-os/scheduler/overview).
+
+## Production checklist
+
+- [ ] `RUNTIME_ENV=prd`. Enables JWT auth.
+- [ ] `JWT_VERIFICATION_KEY` set. See [Security & Auth](/runtime/security-and-auth).
+- [ ] `OPENAI_API_KEY` (or other model keys) in a secret manager, not in source
+- [ ] Postgres has a persistent volume / managed backup
+- [ ] Health check pointed at `/health`
+- [ ] Tracing on (`tracing=True`) so you can debug bad runs
+- [ ] At least one [interface](/runtime/interfaces) wired up (Slack, custom HTTP, etc.)
+- [ ] [Pre-hooks](/runtime/human-approval) for PII / injection guarding if you handle untrusted input
+- [ ] `requires_confirmation` on irreversible tools
+
+## Updating your deployment
+
+Code change:
+
+```bash
+git push                       # if your CI auto-deploys
+# or
+./scripts/railway_redeploy.sh
+```
+
+Env var change:
+
+```bash
+./scripts/railway_env.sh
+# Railway auto-redeploys when env values change.
+```
+
+Database migration: AgentOS creates the tables it needs on first boot. Schema changes are additive (new columns, new tables) and forward-compatible. No migration tool required for stock AgentOS tables. Your own tables you migrate however you like.
+
+Next: [Build a Product →](/runtime/build-a-product)

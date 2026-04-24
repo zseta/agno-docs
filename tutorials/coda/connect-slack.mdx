@@ -1,0 +1,116 @@
+---
+title: Connect to Slack
+description: "Put Coda in Slack as a code teammate."
+---
+
+Coda is designed to live in Slack. The whole product makes more sense once it's there: you ask a code question in a channel, the answer comes back in the channel, the conversation continues in a thread.
+
+The full setup, including the Slack app manifest and the complete scope list, lives in the Coda repo: [SLACK_CONNECT.md](https://github.com/agno-agi/coda/blob/main/docs/SLACK_CONNECT.md). This page walks through what you'll do and why each step matters.
+
+## Prerequisites
+
+- Coda running locally ([setup](/tutorials/coda/setup)) or [deployed](/tutorials/coda/deploy-to-railway)
+- A Slack workspace where you can install apps
+- [ngrok](https://ngrok.com) (local development only)
+
+## Step 1: Give Slack a URL it can reach
+
+**Why:** Slack delivers events (DMs, mentions, channel messages) by POSTing to a URL. That URL has to be reachable from Slack's servers.
+
+For local development, expose port 8000 with ngrok:
+
+```bash
+ngrok http 8000
+```
+
+For production, use your deployed Railway URL.
+
+<Note>
+  🎥 **Add video:** Starting ngrok and copying the public URL.
+</Note>
+
+## Step 2: Register the Slack app from a manifest
+
+**Why:** Slack apps are configured by a JSON manifest that declares the app's identity, scopes (what it's allowed to do), and event subscriptions (what events Slack should send you). The manifest makes the configuration explicit and reproducible.
+
+Coda asks for read access to channels and messages (so it can answer questions about conversations), `chat:write` to reply, and `users:read` to address you by name. It doesn't ask for admin scopes.
+
+The full manifest is in [SLACK_CONNECT.md](https://github.com/agno-agi/coda/blob/main/docs/SLACK_CONNECT.md). Copy it, paste into Slack's "Create New App → From a manifest" flow, replace the placeholder URL with your URL from Step 1.
+
+<Note>
+  📷 **Add screenshot:** Slack's "Create New App > From manifest" page with the JSON pasted in.
+</Note>
+
+## Step 3: Install Coda into your workspace
+
+**Why:** Install creates the bot identity in your workspace and issues the credentials Coda needs to authenticate every request.
+
+Two values to copy:
+
+| What | Where in Slack | Becomes |
+|------|----------------|---------|
+| **Bot User OAuth Token** | Install App page | `SLACK_TOKEN` (`xoxb-...`) |
+| **Signing Secret** | Basic Information → App Credentials | `SLACK_SIGNING_SECRET` |
+
+The signing secret is what Slack uses to sign every incoming event. Coda verifies the signature on every request, so an attacker can't trigger code reviews or PR comments by spoofing your endpoint.
+
+<Note>
+  📷 **Add screenshot:** The Install App page showing the Bot User OAuth Token, with the Basic Information sidebar visible.
+</Note>
+
+## Step 4: Wire credentials and restart
+
+```bash
+# .env
+SLACK_TOKEN="xoxb-..."
+SLACK_SIGNING_SECRET="..."
+```
+
+```bash
+docker compose up -d
+```
+
+The Slack interface only loads when both env vars are set. If you only have `SLACK_TOKEN`, Coda won't appear as a bot.
+
+## Verify
+
+Find Coda under **Apps** in the Slack sidebar:
+
+```
+what repos are available?
+walk me through the auth flow
+```
+
+Or invite it to a channel:
+
+```
+/invite @Coda
+@Coda what are the open PRs on agno?
+@Coda review PR #42
+```
+
+Each thread is a separate session. Follow-ups don't need to re-mention `@Coda`. Coda carries the conversation forward.
+
+<Note>
+  🎥 **Add video:** Asking Coda to review a PR in Slack and watching it post inline comments back to GitHub.
+</Note>
+
+## What Coda does once it's in Slack
+
+| Ask | What happens |
+|-----|--------------|
+| `@Coda where is the webhook handler for Stripe events?` | **Explorer** reads the code, traces the call chain, returns paths and line numbers |
+| `@Coda review PR #42` | **Coder** pulls the PR, reads the diff, leaves inline comments |
+| `@Coda triage the open issues and label them` | **Triager** categorizes, labels, posts a summary |
+| `@Coda plan adding webhook support to payments` | **Planner** breaks it down into ordered GitHub issues |
+| `@Coda add rate limiting to /api/v1/users using the same pattern as /orders` | **Coder** writes in an isolated worktree and opens a PR |
+
+## Troubleshooting
+
+The most common failure is "Your URL didn't respond" during Slack's verification challenge. That happens when Coda isn't running at the moment Slack POSTs the challenge. Restart Coda, then retry from your Slack app's **Event Subscriptions** page.
+
+For ngrok URL changes (free ngrok URLs rotate on restart), update the **Request URL** in **Event Subscriptions** and click **Retry**.
+
+For everything else, see [SLACK_CONNECT.md](https://github.com/agno-agi/coda/blob/main/docs/SLACK_CONNECT.md).
+
+Next: [Deploy to Railway →](/tutorials/coda/deploy-to-railway)

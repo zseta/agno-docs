@@ -1,0 +1,158 @@
+---
+title: Context
+description: "Knowledge, dependencies, and live context providers feed your agent on every run."
+---
+
+Context is what the model sees when it generates the next response. The user's message is the obvious part. The interesting part is everything else: the documentation it can cite, the runtime config it should respect, the live systems it can pull from.
+
+AgentOS gives you three primitives for non-message context:
+
+| Primitive | Shape | When it loads |
+|-----------|-------|---------------|
+| **Knowledge** | Indexed content (RAG) | Auto-searched before each run, or via tool |
+| **Dependencies** | A dict you pass in | Injected into the prompt and into tools |
+| **Context providers** | Live external systems | Tools the agent calls when it needs them |
+
+```python
+from agno.agent import Agent
+from agno.context.web.parallel_mcp import ParallelMCPBackend
+from agno.context.web.provider import WebContextProvider
+from agno.knowledge import Knowledge
+
+agent = Agent(
+    model="openai:gpt-5.4",
+    db=db,
+    knowledge=Knowledge(vector_db=...),       # static content (RAG)
+    add_knowledge_to_context=True,
+    dependencies={"tenant": "acme"},           # per-request config
+    add_dependencies_to_context=True,
+    context_providers=[                        # live systems
+        WebContextProvider(backend=ParallelMCPBackend()),
+    ],
+)
+```
+
+## Knowledge
+
+Knowledge is what the agent looks up. Documentation, policies, code conventions, table schemas. It lives in your database with embeddings and surfaces via similarity search.
+
+```python
+from agno.knowledge import Knowledge
+from agno.vector_db.pgvector import PgVector
+
+agent = Agent(
+    model=...,
+    db=db,
+    knowledge=Knowledge(
+        vector_db=PgVector(table_name="my_kb", db_url="postgresql://..."),
+    ),
+    add_knowledge_to_context=True,      # auto-search before each run
+    search_knowledge=True,              # also expose as a callable tool
+)
+
+agent.knowledge.add_content_from_path("docs/")
+agent.knowledge.add_content_from_url("https://example.com/policies")
+```
+
+| Flag | Behavior |
+|------|----------|
+| `add_knowledge_to_context=True` | AgentOS runs `knowledge.search(message)` before each turn and injects the top-k chunks into the prompt. |
+| `search_knowledge=True` | The agent gets a `search_knowledge_base(query)` tool. Useful for follow-up retrieval mid-run. |
+
+Knowledge supports hybrid search (semantic + keyword), reranking, and chunking. The [Pal](/demo-os/rag) and [Dash](/demo-os/multi-agent-teams/text-to-sql) agents in the demo use it heavily. For the full surface, see [Knowledge](/knowledge/overview).
+
+## Dependencies
+
+Sometimes an agent needs runtime values that aren't in knowledge: a feature flag, a tenant ID, a per-request DB connection, an API key scoped to the caller. Pass them as `dependencies`:
+
+```python
+from agno.agent import Agent
+from agno.run import RunContext
+from agno.tools import tool
+
+@tool
+def get_config(run_context: RunContext, key: str) -> str:
+    return str(run_context.dependencies["config"].get(key, "not set"))
+
+agent = Agent(
+    model=...,
+    dependencies={
+        "config": {"region": "us-east-1", "max_retries": 3},
+        "feature_flags": {"beta_search": True},
+        "tenant_id": "acme-corp",
+    },
+    add_dependencies_to_context=True,
+    tools=[get_config],
+)
+```
+
+`add_dependencies_to_context=True` injects them into the system prompt. Tools that take a `RunContext` parameter get access via `run_context.dependencies`.
+
+Per-request dependencies override the agent-level ones for a single run:
+
+```python
+agent.run(
+    "What region am I in?",
+    dependencies={"region": "eu-west-1"},   # request-scoped
+    user_id="user-123",
+)
+```
+
+For a worked example, see the [Injector agent](/demo-os/context-providers).
+
+## Context providers
+
+Sometimes the context isn't in your database. It's in Slack. In Drive. In an MCP server. In the user's CRM. AgentOS exposes these through the `ContextProvider` abstraction.
+
+```python
+from agno.context.slack import SlackContextProvider
+from agno.context.gdrive import GDriveContextProvider
+from agno.context.mcp import MCPContextProvider
+from agno.context.web.parallel_mcp import ParallelMCPBackend
+from agno.context.web.provider import WebContextProvider
+
+agent = Agent(
+    model=...,
+    db=db,
+    context_providers=[
+        WebContextProvider(backend=ParallelMCPBackend()),
+        SlackContextProvider(),
+        GDriveContextProvider(),
+        MCPContextProvider(server_name="linear", transport="stdio",
+                           command="npx", args=["-y", "@linear/mcp"]),
+    ],
+)
+```
+
+Each provider exposes `query_<id>` (and optionally `update_<id>`) tools on the agent. The agent calls them like any other tool. The provider handles auth, navigation, and pagination on the way to the source.
+
+Built-in providers:
+
+| Provider | Tool surface | Source |
+|----------|--------------|--------|
+| `WebContextProvider` | `web_search`, `web_fetch` | Parallel SDK or Parallel's keyless MCP |
+| `FilesystemContextProvider` | `list_files`, `search_files`, `search_content`, `read_file` | A directory you scope at construction |
+| `SlackContextProvider` | `search_workspace`, `get_channel_history`, `get_thread`, `list_users` | Slack workspace via bot token |
+| `GDriveContextProvider` | `search_files`, `list_files`, `read_file` | Google Drive via service account |
+| `DatabaseContextProvider` | `query_<id>`, `update_<id>` | A SQL database (read engine + write sub-agent) |
+| `MCPContextProvider` | `query_mcp_<slug>` | Any MCP server (stdio, SSE, streamable-HTTP) |
+
+The [Scout tutorial](/tutorials/scout/setup) is built end-to-end on context providers. Read it for a worked example of registering, scoping, and querying providers.
+
+## Picking the right primitive
+
+| You want | Use |
+|----------|-----|
+| Static content the agent should retrieve and cite | `knowledge` |
+| Per-request config (feature flags, tenant ID, request scope) | `dependencies` |
+| Live access to an external system (Slack, Drive, MCP) | `context_providers` |
+
+The lines blur, but the rule of thumb:
+
+- **Knowledge** is durable and pre-loaded. You add content once, the agent searches it forever.
+- **Dependencies** are ephemeral and request-scoped. They never persist.
+- **Context providers** are dynamic and authenticated. They fetch on demand against a live source.
+
+Build a Scout-style agent? Lean on context providers. Build a Dash-style SQL agent? Lean on knowledge. Build a multi-tenant SaaS agent? Lean on dependencies. Most production agents use all three.
+
+Next: [Human Approval →](/runtime/human-approval)

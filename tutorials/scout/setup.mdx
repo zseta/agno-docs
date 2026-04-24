@@ -1,6 +1,94 @@
 ---
 title: Setup
-description: Coming soon.
+description: "Run Scout locally in five minutes."
 ---
 
-Coming soon.
+This page gets Scout running on your machine with a local Postgres and four always-on contexts: the web, the filesystem, your own CRM, and a `time` MCP server. New to Scout? Read [What is Scout?](/tutorials/scout/overview) first.
+
+## Prerequisites
+
+- Docker Desktop ([install](https://docs.docker.com/desktop/))
+- OpenAI API key
+
+<Tabs>
+  <Tab title="Manual">
+    <Steps>
+      <Step title="Clone and configure">
+        ```bash
+        git clone https://github.com/agno-agi/scout && cd scout
+        cp example.env .env
+        ```
+
+        Open `.env` and set `OPENAI_API_KEY`. Everything else has sensible defaults.
+      </Step>
+
+      <Step title="Start Scout">
+        ```bash
+        docker compose up -d --build
+        ```
+
+        First run pulls the base image and builds the Scout container. Takes a minute or two. Subsequent starts are instant.
+      </Step>
+
+      <Step title="Verify it's running">
+        ```bash
+        curl http://localhost:8000/health
+        ```
+
+        Expect `{"status":"ok"}`. Connection refused means the container is still starting. Check `docker compose logs -f scout-api` and wait for the Agno banner.
+      </Step>
+
+      <Step title="Chat with Scout">
+        1. Open [os.agno.com](https://os.agno.com) and log in.
+        2. Click **Add OS**, choose **Local**, enter `http://localhost:8000`, click **Connect**.
+        3. Try the pre-configured prompt: *"Which contexts are you connected to?"*
+
+        Scout calls `list_contexts` and reports back web, filesystem, CRM, and `mcp_time`.
+      </Step>
+    </Steps>
+  </Tab>
+
+  <Tab title="Agentic">
+    If you have a coding agent like [Claude Code](https://claude.com/product/claude-code) or [Codex](https://openai.com/index/introducing-codex/), paste this prompt into a fresh session in an empty directory. The agent clones the repo, starts Scout, and verifies it's running.
+
+    ````
+    Set up Scout locally for me.
+
+    Steps:
+    1. Clone https://github.com/agno-agi/scout into the current directory and cd into it.
+    2. Copy example.env to .env. Open .env in the user's editor (or print the path and tell them to open it). Tell the user: "Set OPENAI_API_KEY in .env, save the file, then tell me to continue." Wait for confirmation before proceeding. Do not ask the user to paste the key into this chat. Do not read the key from .env or print its value at any point.
+    3. Check that Docker Desktop is running (`docker info`). If not, tell me to start it and stop.
+    4. Run `docker compose up -d --build`. Stream the output so I can see progress.
+    5. Poll `curl -s http://localhost:8000/health` every 3 seconds for up to 60 seconds. Proceed once it returns `{"status":"ok"}`.
+    6. Run `curl -s http://localhost:8000/contexts | jq` and show me the output so I can see which contexts registered.
+    7. Print next steps: open os.agno.com, Add OS → Local → http://localhost:8000.
+
+    If any step fails, stop and show me the error. Don't try to fix it on your own.
+    ````
+
+    Once it finishes, follow the last step from the Manual tab to connect the AgentOS UI.
+  </Tab>
+</Tabs>
+
+## What you have now
+
+Scout is running with four always-on context providers:
+
+| Provider | Tools | Backed by |
+|----------|-------|-----------|
+| **Web** | `web_search`, `web_fetch` | Parallel's public MCP (keyless). Set `PARALLEL_API_KEY` to upgrade to the Parallel SDK. |
+| **Filesystem** | `list_files`, `search_files`, `search_content`, `read_file` | The Scout repo itself, read-only. |
+| **CRM** | `query_crm`, `update_crm` | Your own contacts, projects, and notes in the local Postgres. |
+| **Time MCP** | `get_current_time`, `convert_time` | The `mcp-server-time` stdio server, registered by default. |
+
+Try asking Scout to use them:
+
+> *"What time is it in Tokyo right now?"* calls the time MCP.
+>
+> *"Save Sarah Chen as a contact, she's the head of platform at Acme."* writes to the CRM.
+>
+> *"Look up the latest benchmark numbers for Claude Sonnet 4.6."* hits the web.
+>
+> *"Search the repo for where context providers get registered."* navigates the filesystem.
+
+Next: [Connect Slack →](/tutorials/scout/connect-slack)

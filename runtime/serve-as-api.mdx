@@ -1,0 +1,155 @@
+---
+title: Serve as an API
+description: "Your agent gets 50+ HTTP endpoints automatically when wrapped in AgentOS."
+---
+
+The single most important thing AgentOS does: it turns your agent into an API. No custom routes, no glue code, no thinking about request/response shapes. You define agents, you get endpoints.
+
+```python
+from agno.agent import Agent
+from agno.db.postgres import PostgresDb
+from agno.os import AgentOS
+
+agent = Agent(id="my-agent", name="My Agent", model="openai:gpt-5.4")
+
+agent_os = AgentOS(agents=[agent], db=PostgresDb(db_url="postgresql://..."))
+app = agent_os.get_app()
+```
+
+That `app` is a FastAPI application. Run it with `uvicorn`, deploy it anywhere, and every agent in `agents=[...]` becomes a set of HTTP endpoints scoped under `/agents/<id>/`.
+
+## The endpoints you get
+
+For every registered agent, team, and workflow:
+
+| Method | Path | Purpose |
+|--------|------|---------|
+| POST | `/agents/<id>/runs` | Run the agent. Send a message, get the response. SSE if `stream=true`. |
+| GET | `/agents/<id>/sessions` | List sessions for the authenticated user. |
+| GET | `/agents/<id>/sessions/<session_id>` | Get one session's metadata. |
+| GET | `/agents/<id>/sessions/<session_id>/runs` | Get every run in a session. |
+| POST | `/agents/<id>/runs/<run_id>/continue` | Continue a paused run (after HITL approval). |
+| GET | `/agents/<id>/runs/<run_id>` | Get a specific run by ID. |
+
+Same shape for teams (`/teams/<id>/...`) and workflows (`/workflows/<id>/...`).
+
+Plus the AgentOS-level endpoints:
+
+| Method | Path | Purpose |
+|--------|------|---------|
+| GET | `/health` | Liveness check. Returns `{"status":"ok"}`. |
+| GET | `/openapi.json` | Auto-generated OpenAPI schema for the whole service. |
+| GET | `/docs` | Interactive Swagger UI. |
+| GET | `/agents` | List registered agents. |
+| GET | `/teams` | List registered teams. |
+| GET | `/workflows` | List registered workflows. |
+
+That's 50+ endpoints from one `AgentOS(...)` call. You can browse them at `http://localhost:8000/docs`.
+
+## The most important call
+
+```bash
+curl -X POST http://localhost:8000/agents/my-agent/runs \
+  -H "Content-Type: application/json" \
+  -d '{"message":"Hello","user_id":"alice","session_id":"thread-42"}'
+```
+
+Returns:
+
+```json
+{
+  "run_id": "run_abc123",
+  "session_id": "thread-42",
+  "user_id": "alice",
+  "agent_id": "my-agent",
+  "status": "completed",
+  "content": "Hi Alice!",
+  "tool_calls": [],
+  "created_at": "2026-04-24T20:15:00Z"
+}
+```
+
+Same shape for every agent, every team, every workflow. The contract doesn't change.
+
+## Streaming
+
+Pass `stream=true` and you get Server-Sent Events instead of a single JSON response:
+
+```bash
+curl -X POST http://localhost:8000/agents/my-agent/runs \
+  -H "Content-Type: application/json" \
+  -d '{"message":"Tell me a story","stream":true}'
+```
+
+Each event is a JSON object: model token deltas, tool call starts, tool call results, the final completion. The [AG-UI interface](/agent-os/interfaces/ag-ui/introduction) consumes this stream directly to render typing indicators, intermediate tool results, and the final response.
+
+## Sessions in the URL
+
+Every run carries `user_id` and `session_id`. AgentOS uses them to scope memory and conversation history. Two patterns:
+
+**Continue an existing session.** Pass the same `session_id` again. History from previous runs is in scope.
+
+```bash
+curl -X POST http://localhost:8000/agents/my-agent/runs \
+  -d '{"message":"What did I just ask?","user_id":"alice","session_id":"thread-42"}'
+```
+
+**Start a new session.** Omit `session_id`. AgentOS mints a new one and returns it in the response.
+
+The interfaces map their native session concept to AgentOS sessions automatically. Slack uses thread timestamps. Telegram uses chat IDs. AG-UI uses browser session tokens. You don't manage this.
+
+## Adding your own routes
+
+The FastAPI app is yours. Register additional routes for webhooks, custom dashboards, integrations:
+
+```python
+app = agent_os.get_app()
+
+@app.post("/webhooks/stripe")
+async def handle_stripe(event: dict):
+    response = await agent.arun(
+        f"Process Stripe event: {event}",
+        user_id="system",
+    )
+    return {"ok": True, "agent_response": response.content}
+
+@app.get("/admin/runs/recent")
+async def recent_runs(limit: int = 50):
+    return {"runs": db.get_recent_sessions(limit=limit)}
+```
+
+The agent is exposed to your handlers as a regular Python object. Call `agent.run(...)` or `await agent.arun(...)` from anywhere.
+
+## Auth
+
+When `authorization=True`, every endpoint except `/health` and `/openapi.json` requires a valid JWT in the `Authorization: Bearer ...` header. The token's claims decide which agents the caller can run. See [Security & Auth](/runtime/security-and-auth).
+
+## What it doesn't do
+
+AgentOS doesn't:
+
+- **Pick your hosting.** It's a FastAPI app. Run it on Docker, Railway, ECS, Cloud Run, anything.
+- **Render UIs.** It serves JSON and SSE. The [AgentOS UI](https://os.agno.com) is a separate web app that connects to your service.
+- **Replace your application code.** Your routes, your handlers, your business logic stays where it is.
+
+## Try it
+
+```bash
+# Start AgentOS locally
+docker compose up -d --build
+
+# Inspect the API
+open http://localhost:8000/docs
+
+# Run an agent
+curl -X POST http://localhost:8000/agents/my-agent/runs \
+  -H "Content-Type: application/json" \
+  -d '{"message":"hello"}'
+
+# Stream a run
+curl -X POST http://localhost:8000/agents/my-agent/runs \
+  -H "Content-Type: application/json" \
+  -d '{"message":"hello","stream":true}'
+```
+
+Next: [Storage →](/runtime/storage)

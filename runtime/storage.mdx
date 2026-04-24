@@ -1,0 +1,130 @@
+---
+title: Storage
+description: "Pick a database for sessions, memory, knowledge, and traces."
+---
+
+Everything an agent persists lives in one `db` object. Sessions, memory, knowledge, traces, schedules, approvals. The `db` interface is identical across backends, so you choose by operational fit, not by feature parity.
+
+```python
+from agno.db.postgres import PostgresDb
+from agno.os import AgentOS
+
+db = PostgresDb(db_url="postgresql://user:pass@host:5432/agno")
+
+agent_os = AgentOS(agents=[agent], db=db)
+```
+
+That single line brings up every table AgentOS needs on first boot. No migrations to run, no schema to declare.
+
+## Pick a backend
+
+| Backend | When to use | Doc |
+|---------|-------------|-----|
+| `PostgresDb` | Production. The default for every tutorial template. Best for vector + relational on one box. | [Postgres](/database/postgres) |
+| `SqliteDb` | Local dev, single-user demos, edge deployments | [SQLite](/database/sqlite) |
+| `MongoDb` | Already on Mongo, want one less moving part | [MongoDB](/database/mongodb) |
+| `MysqlDb` | Already on MySQL | [MySQL](/database/mysql) |
+| `SinglestoreDb` | Vector + analytics on the same engine, high-throughput workloads | [SingleStore](/database/singlestore) |
+| `RedisDb` | Cache-friendly, ephemeral sessions, low-latency lookups | [Redis](/database/redis) |
+| `DynamoDb` | AWS-native, serverless, no Postgres in your stack | [DynamoDB](/database/dynamodb) |
+| `FirestoreDb` | GCP-native, serverless | [Firestore](/database/firestore) |
+| `GCSJsonDb` | Cheap, write-heavy, cold-storage. Knowledge as JSON in Cloud Storage. | [GCS](/database/gcs) |
+| `InMemoryDb` | Tests, ephemeral demos | [In-Memory](/database/in-memory) |
+
+The full list lives under [Database](/database/overview), with managed-service variants ([Neon](/database/neon), [Supabase](/database/supabase)) and async drivers ([async-postgres](/database/async-postgres), [async-sqlite](/database/async-sqlite), [async-mongo](/database/async-mongo)).
+
+## What gets stored
+
+AgentOS creates these tables on first boot:
+
+| Table | Holds |
+|-------|-------|
+| `agno_sessions` | Conversation history per `(user_id, session_id)` |
+| `agno_memories` | User memories the agent decides to keep |
+| `agno_knowledge` | RAG content with embeddings |
+| `agno_traces`, `agno_spans` | OpenTelemetry traces |
+| `agno_approvals` | Pending and resolved HITL requests |
+| `agno_schedules`, `agno_schedule_runs` | Cron jobs |
+| `agno_metrics`, `agno_evals` | Eval results |
+
+Backend-specific names may vary, but the conceptual layout holds. Schema changes are additive (new columns, new tables) and forward-compatible. No migration tool required for stock AgentOS tables.
+
+## Splitting concerns across databases
+
+For larger deployments, you'll often want different stores for different concerns. Pass dedicated databases per role:
+
+```python
+from agno.os import AgentOS
+
+agent_os = AgentOS(
+    agents=[agent],
+    db=PostgresDb(db_url="postgresql://primary/..."),       # sessions, memory, knowledge
+    trace_db=PostgresDb(db_url="postgresql://traces/..."),  # high-volume traces, separate retention
+    eval_db=PostgresDb(db_url="postgresql://evals/..."),    # eval results, separate access control
+)
+```
+
+Common splits:
+
+| Split | Why |
+|-------|-----|
+| Primary + trace DB | Traces are high-volume, write-heavy. Keep them off the read path. |
+| Primary + eval DB | Eval data has different access patterns and retention. |
+| Per-tenant DBs | Strict isolation for multi-tenant deployments. |
+
+See [Multi-DB tracing](/agent-os/tracing/overview) for the full pattern.
+
+## Vector storage
+
+`Knowledge` needs a vector store. The default is `PgVector` (Postgres + the pgvector extension), which keeps your relational data and embeddings on the same engine.
+
+```python
+from agno.knowledge import Knowledge
+from agno.vector_db.pgvector import PgVector
+
+agent = Agent(
+    db=db,
+    knowledge=Knowledge(
+        vector_db=PgVector(
+            table_name="my_kb",
+            db_url=DB_URL,
+            search_type="hybrid",   # vector + BM25
+        ),
+    ),
+)
+```
+
+Other vector store options: LanceDB, Qdrant, Weaviate, Pinecone, Chroma, MongoDB Atlas, Cosmos, Cassandra, ClickHouse, SurrealDB, Milvus. The full list lives under [Vector Stores](/knowledge/vector-stores/index).
+
+For most production AgentOS deployments, **PgVector + PostgresDb on the same Postgres** is the right default. One database, hybrid search, transactional reads, no extra service to operate.
+
+## File and blob storage
+
+For media assets that don't belong in the relational store (generated images, audio, large PDFs), store them in object storage and reference paths in `agno_knowledge` or `agno_sessions`. Agno doesn't ship a built-in blob abstraction. Use S3, GCS, or whatever your platform provides.
+
+The [Studio agent](https://github.com/agno-agi/demo-os/blob/main/agents/studio/agent.py) in the demo writes generated assets to disk and returns paths. Swap the local writes for an S3 client when you deploy.
+
+## Migrations
+
+AgentOS handles its own tables. Your application tables (the data the agent reads via SQL tools, the views the Engineer agent builds, your own schemas) you migrate however you like. Alembic, raw SQL, dbt, your call.
+
+The [Dash deploy tutorial](/tutorials/dash/deploy-to-railway) shows the pattern: AgentOS comes up, runs its DDL automatically, then a one-time `python scripts/generate_data.py` loads the application tables.
+
+## When `db` isn't enough
+
+Some agents need direct database connections in tools (SQL agents, BI agents, agents that update CRM tables). Pass them via `dependencies`:
+
+```python
+agent = Agent(
+    model=...,
+    db=db,                    # AgentOS state
+    dependencies={
+        "user_db": user_engine,   # the application database
+    },
+    add_dependencies_to_context=True,
+)
+```
+
+This is how [Dash](/demo-os/multi-agent-teams/text-to-sql) keeps the AgentOS database separate from the SaaS metrics database it queries. AgentOS state goes in one place, application data in another, neither leaks into the other.
+
+Next: [Context →](/runtime/context)

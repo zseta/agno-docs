@@ -1,0 +1,76 @@
+---
+title: Setup
+description: "Run Dash locally on a SaaS metrics dataset."
+---
+
+This page gets Dash running on your machine with a synthetic SaaS dataset (~900 customers, 2 years of data). New to Dash? Read [What is Dash?](/tutorials/dash/overview) first.
+
+## Prerequisites
+
+- Docker Desktop ([install](https://docs.docker.com/desktop/))
+- OpenAI API key
+
+<Steps>
+  <Step title="Clone and configure">
+    ```bash
+    git clone https://github.com/agno-agi/dash && cd dash
+    cp example.env .env
+    ```
+
+    Open `.env` and set `OPENAI_API_KEY`. Everything else has sensible defaults.
+  </Step>
+
+  <Step title="Start Dash">
+    ```bash
+    docker compose up -d --build
+    ```
+
+    First run builds the Dash image and boots a local Postgres. Takes a minute or two.
+  </Step>
+
+  <Step title="Load sample data and knowledge">
+    ```bash
+    docker exec -it dash-api python scripts/generate_data.py
+    docker exec -it dash-api python scripts/load_knowledge.py
+    ```
+
+    `generate_data.py` seeds the SaaS dataset (customers, subscriptions, invoices, usage, support tickets). `load_knowledge.py` loads the table metadata, query patterns, and business rules in `knowledge/`.
+  </Step>
+
+  <Step title="Verify it's running">
+    ```bash
+    curl http://localhost:8000/health
+    ```
+
+    Expect `{"status":"ok"}`. Connection refused means the container is still starting. Check `docker compose logs -f dash-api` and wait for the Agno banner.
+  </Step>
+
+  <Step title="Chat with Dash">
+    1. Open [os.agno.com](https://os.agno.com) and log in.
+    2. Click **Add OS**, choose **Local**, enter `http://localhost:8000`, click **Connect**.
+    3. Try a question:
+
+    ```
+    What's our current MRR?
+    Which plan has the highest churn rate?
+    Show me revenue trends by plan over the last 6 months.
+    Which customers are at risk of churning?
+    ```
+
+    Dash routes through its team: the **Analyst** introspects the schema and writes read-only SQL, the **Engineer** builds reusable views in the agent-managed `dash` schema, the **Leader** coordinates and answers.
+  </Step>
+</Steps>
+
+## What you have now
+
+| Component | Detail |
+|-----------|--------|
+| **Dash team** | Analyst (read-only `public`), Engineer (writes to `dash` schema), Leader (coordinator) |
+| **`public` schema** | Synthetic SaaS data: `customers`, `subscriptions`, `plan_changes`, `invoices`, `usage_metrics`, `support_tickets` |
+| **`dash` schema** | Agent-managed views and summary tables. Empty until the Engineer builds something. |
+| **Knowledge** | Table metadata, query patterns, and business rules from `knowledge/`. Powers the Analyst's grounding. |
+| **Learnings** | Error patterns and fixes captured by [Agno's Learning Machine](/learning/overview) as Dash works. |
+
+For the architectural deep dive (six layers of context, self-learning loop, dual schema enforcement), see [What is Dash?](/tutorials/dash/overview).
+
+Next: [Connect to Slack →](/tutorials/dash/connect-slack)

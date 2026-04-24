@@ -1,0 +1,122 @@
+---
+title: Connect to Slack
+description: "Put Scout in your Slack workspace as a teammate."
+---
+
+Slack is where your team already lives. Putting Scout there means questions about your enterprise context get answered in the channels people are already in. No new tool to adopt.
+
+The full setup, including the Slack app manifest and the complete scope list, lives in the Scout repo: [SLACK_CONNECT.md](https://github.com/agno-agi/scout/blob/main/docs/SLACK_CONNECT.md). This page walks through what you'll do and why each step matters.
+
+## What lights up
+
+Two things, depending on what env vars you set:
+
+| When you set | What you get |
+|--------------|--------------|
+| `SLACK_BOT_TOKEN` alone | Slack as a **context provider**. Scout can read workspace messages, channels, and threads to answer questions like *"what did engineering decide about the auth rewrite?"* |
+| `SLACK_BOT_TOKEN` + `SLACK_SIGNING_SECRET` | Slack as an **interface**. Scout shows up as a bot, responds to DMs and `@mentions`, treats each thread as its own session. |
+
+Most users want both. The flow below sets up both.
+
+## Prerequisites
+
+- Scout running locally ([setup](/tutorials/scout/setup)) or [deployed](/tutorials/scout/deploy-to-railway)
+- A Slack workspace with admin privileges
+- [ngrok](https://ngrok.com) (local development only)
+
+## Step 1: Give Slack a URL it can reach
+
+**Why:** Slack delivers events (DMs, mentions, channel messages) by POSTing to a URL. That URL has to be reachable from Slack's servers.
+
+For local development, ngrok exposes your local port to the internet:
+
+```bash
+ngrok http 8000
+```
+
+Copy the `https://...ngrok-free.app` URL. For production, use your deployed Railway URL.
+
+<Note>
+  🎥 **Add video:** Starting ngrok and copying the public URL.
+</Note>
+
+## Step 2: Register the Slack app from a manifest
+
+**Why:** Slack apps are configured by a JSON manifest that declares the app's identity, the scopes it asks for, and the events it should receive. Doing it via manifest (instead of clicking through the UI) means scopes are explicit and reproducible.
+
+Scopes follow the principle of least privilege. Scout asks for `search:read.public` to search messages, `channels:history` to read channel context, `chat:write` to reply. It doesn't ask for admin scopes or to read DMs from people who haven't talked to it.
+
+The full manifest is in [SLACK_CONNECT.md](https://github.com/agno-agi/scout/blob/main/docs/SLACK_CONNECT.md). Copy it, paste into Slack's "Create New App → From a manifest" flow, and replace the placeholder URL with your URL from Step 1.
+
+<Note>
+  📷 **Add screenshot:** Slack's "Create New App > From manifest" page with the JSON pasted in and the URL highlighted.
+</Note>
+
+## Step 3: Install Scout into your workspace
+
+**Why:** Install is what creates the bot identity in your workspace and issues the credentials Scout needs to authenticate every event and call.
+
+Two values to copy after install:
+
+| What | Where in Slack | Becomes |
+|------|----------------|---------|
+| **Bot User OAuth Token** | Install App page | `SLACK_BOT_TOKEN` (`xoxb-...`) |
+| **Signing Secret** | Basic Information → App Credentials | `SLACK_SIGNING_SECRET` |
+
+The signing secret is what Slack uses to sign every incoming event. Scout verifies the signature on every request, which is how it knows the event actually came from Slack and not someone spoofing your endpoint.
+
+<Note>
+  📷 **Add screenshot:** The Install App page showing the Bot User OAuth Token, with the Basic Information sidebar visible.
+</Note>
+
+## Step 4: Wire credentials and restart
+
+**Why:** The Slack interface only registers when both env vars are present. The bot token alone activates Scout's Slack context provider (read access). Both together activate the interface (Scout shows up as a bot).
+
+```bash
+# .env
+SLACK_BOT_TOKEN="xoxb-..."
+SLACK_SIGNING_SECRET="..."
+```
+
+Restart:
+
+```bash
+docker compose up -d
+```
+
+## Verify
+
+Find Scout under **Apps** in the Slack sidebar and DM it:
+
+```
+hi
+what contexts are registered?
+```
+
+Or invite it to a channel:
+
+```
+/invite @Scout
+@Scout what's the latest on model Sonnet 4.6 benchmarks?
+```
+
+Each Slack thread is its own session. Follow-ups in the same thread don't need to re-mention `@Scout`. Scout carries the conversation forward.
+
+<Note>
+  🎥 **Add video:** Sending a DM to Scout in Slack and seeing the response stream back.
+</Note>
+
+## Troubleshooting
+
+The most common failure is "Your URL didn't respond" during Slack's verification challenge. That happens when Scout isn't running at the moment Slack POSTs the challenge. Restart Scout, then retry from your Slack app's **Event Subscriptions** page.
+
+For ngrok URL changes (free ngrok URLs rotate on restart), update the **Request URL** in **Event Subscriptions** and click **Retry**.
+
+For everything else, see [SLACK_CONNECT.md](https://github.com/agno-agi/scout/blob/main/docs/SLACK_CONNECT.md).
+
+## How it works
+
+Scout uses [Agno's Slack interface](/agent-os/interfaces/slack/introduction). Each Slack thread timestamp becomes an AgentOS session ID, so threads stay isolated and conversation history carries forward. `resolve_user_identity=True` maps Slack user IDs to display names so Scout can address you by name.
+
+Next: [Deploy to Railway →](/tutorials/scout/deploy-to-railway)

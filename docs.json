@@ -85,42 +85,83 @@
               {
                 "group": "Tutorial: Scout",
                 "pages": [
+                  "tutorials/scout/overview",
                   "tutorials/scout/setup",
-                  "tutorials/scout/context-providers",
-                  "tutorials/scout/run-on-railway"
+                  "tutorials/scout/connect-slack",
+                  "tutorials/scout/deploy-to-railway",
+                  "tutorials/scout/next-steps"
+                ]
+              },
+              {
+                "group": "Tutorial: Dash",
+                "pages": [
+                  "tutorials/dash/overview",
+                  "tutorials/dash/setup",
+                  "tutorials/dash/connect-slack",
+                  "tutorials/dash/deploy-to-railway",
+                  "tutorials/dash/next-steps"
+                ]
+              },
+              {
+                "group": "Tutorial: Coda",
+                "pages": [
+                  "tutorials/coda/overview",
+                  "tutorials/coda/setup",
+                  "tutorials/coda/connect-slack",
+                  "tutorials/coda/deploy-to-railway",
+                  "tutorials/coda/next-steps"
                 ]
               }
             ]
           },
           {
-            "group": "Production",
+            "group": "Runtime",
             "pages": [
-              "production/overview",
-              "production/context-and-state",
-              "production/human-in-the-loop",
-              "production/scheduling-and-workflows",
-              "production/interfaces",
-              "production/observability",
-              "production/security-and-auth",
-              "production/deploy",
+              "runtime/overview",
+              "runtime/serve-as-api",
+              "runtime/storage",
+              "runtime/context",
+              "runtime/human-approval",
+              "runtime/observability",
+              "runtime/security-and-auth",
+              "runtime/interfaces",
+              "runtime/scheduling",
+              "runtime/deploy",
+              "runtime/build-a-product"
+            ]
+          },
+          {
+            "group": "Demo OS",
+            "pages": [
+              "demo-os/overview",
               {
-                "group": "Demo OS",
+                "group": "Knowledge & Memory",
                 "pages": [
-                  "production/demo-os/rag",
-                  "production/demo-os/mcp",
-                  "production/demo-os/context-providers",
-                  "production/demo-os/learning",
-                  "production/demo-os/knowledge",
-                  "production/demo-os/memory",
-                  "production/demo-os/session-state",
-                  "production/demo-os/human-in-the-loop",
-                  {
-                    "group": "Multi-Agent Teams",
-                    "pages": [
-                      "production/demo-os/multi-agent-teams/text-to-sql",
-                      "production/demo-os/multi-agent-teams/investment"
-                    ]
-                  }
+                  "demo-os/rag",
+                  "demo-os/knowledge",
+                  "demo-os/memory",
+                  "demo-os/learning"
+                ]
+              },
+              {
+                "group": "Tools & Integrations",
+                "pages": [
+                  "demo-os/mcp",
+                  "demo-os/context-providers"
+                ]
+              },
+              {
+                "group": "State & Patterns",
+                "pages": [
+                  "demo-os/session-state",
+                  "demo-os/human-in-the-loop"
+                ]
+              },
+              {
+                "group": "Multi-Agent Teams",
+                "pages": [
+                  "demo-os/multi-agent-teams/text-to-sql",
+                  "demo-os/multi-agent-teams/investment"
                 ]
               }
             ]

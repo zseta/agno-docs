@@ -1,0 +1,112 @@
+---
+title: What is Dash?
+description: "A self-learning data agent that grounds answers in six layers of context."
+---
+
+Ask a question in English, get a correct, meaningful answer. That's the goal of a data agent.
+
+But raw LLMs writing SQL hit a wall fast. Schemas lack meaning. Types mislead. Tribal knowledge isn't in the database. There's no way to learn from mistakes. Results lack interpretation. The model writes confident, wrong SQL, and the user has no way to know.
+
+**Dash solves this with six layers of grounded context and a self-learning loop that improves with every query.**
+
+## What you can ask it
+
+```
+What's our current MRR?
+Which plan has the highest churn rate?
+Show me revenue trends by plan over the last 6 months.
+Which customers are at risk of churning?
+Build me a view for monthly recurring revenue by plan.
+Why is churn high this quarter? Compare to last quarter.
+```
+
+The first four go to the **Analyst** (read-only SQL on company data). The fifth goes to the **Engineer** (builds reusable views in the agent-managed schema). The sixth uses both: Analyst queries, Engineer materializes if there's a reusable shape.
+
+<Note>
+  🎥 **Add video:** Asking Dash a metric question, watching it retrieve the matching query pattern, write SQL, execute, and explain.
+</Note>
+
+## Six layers of grounded context
+
+Each query the Analyst writes is grounded in six layers, so the model is rarely guessing:
+
+| Layer | Source | Example |
+|-------|--------|---------|
+| **Table usage** | `knowledge/tables/*.json` | "`signup_date` is DATE, no time component" |
+| **Human annotations** | `knowledge/business/*.json` | "MRR excludes trials" |
+| **Query patterns** | `knowledge/queries/*.sql` | A tested SQL template for monthly revenue |
+| **Institutional knowledge** | MCP (optional) | Wiki / docs / external references |
+| **Learnings** | Dash's `LearningMachine` | Error patterns and the fixes that worked |
+| **Runtime context** | `introspect_schema` tool | Live schema state at query time |
+
+The Analyst retrieves matching layers before writing SQL. The Engineer builds reusable views and records them back to knowledge. Both feed the same loop.
+
+## The self-learning loop
+
+```
+User Question
+     ↓
+Retrieve Knowledge + Learnings
+     ↓
+Generate grounded SQL
+     ↓
+Execute and interpret
+     ↓
+ ┌────┴────┐
+ ↓         ↓
+Success    Error → Diagnose → Fix → Save Learning
+ ↓                                    (never repeated)
+Return insight
+```
+
+Two complementary stores:
+
+| Store | Holds | Updated by |
+|-------|-------|------------|
+| **Knowledge** | Validated queries, table descriptions, business rules | You + Dash (curated) |
+| **Learnings** | Error patterns and fixes | Learning Machine (automatic) |
+
+After a few weeks of use on real questions, the same kinds of errors stop happening. The right shapes are already in the stores. Dash gets sharper.
+
+## Two agents, one team
+
+Dash is a coordinated team:
+
+| Member | Schema access | Tools |
+|--------|---------------|-------|
+| **Analyst** | `public` (read-only via `default_transaction_read_only=on`) | `SQLTools(read_only=True)`, `introspect_schema`, `save_validated_query`, `ReasoningTools` |
+| **Engineer** | `public` (read), `dash` (read+write) | `SQLTools` (full), `introspect_schema`, `update_knowledge`, `ReasoningTools` |
+| **Leader** | none directly | Routes the request, optional `SlackTools` for posting back |
+
+The boundary is enforced at the database engine, not in the prompt. The Analyst's connection physically cannot write. The Engineer's writes physically cannot touch `public`. These hold even if the model goes off-script.
+
+## Why this design
+
+Most "text-to-SQL" tools are one prompt and a model. They work in demos and break in production:
+
+- **Wrong SQL with confidence.** No grounding means the model invents columns and joins.
+- **Same mistakes forever.** No learning loop means the same error happens every Monday.
+- **Read/write blurred.** No structural separation means a hallucinated `DELETE` is one prompt away.
+- **Insights, not just SQL.** The user wants the answer, not the query.
+
+Dash addresses all four with infrastructure choices, not prompts. Knowledge for grounding. Learnings for memory. Dual schema for safety. Team for separation between answer and view-building.
+
+## How it's built
+
+Built on [Agno](https://github.com/agno-agi/agno) and [AgentOS](/runtime/overview). The whole repo: [github.com/agno-agi/dash](https://github.com/agno-agi/dash).
+
+Inspired by [OpenAI's in-house data agent](https://openai.com/index/inside-our-in-house-data-agent/).
+
+## Try it
+
+```bash
+git clone https://github.com/agno-agi/dash && cd dash
+cp example.env .env  # set OPENAI_API_KEY
+docker compose up -d --build
+docker exec -it dash-api python scripts/generate_data.py
+docker exec -it dash-api python scripts/load_knowledge.py
+```
+
+Then chat with it via [os.agno.com](https://os.agno.com). The default dataset is a synthetic SaaS metrics database (~900 customers, 2 years of data) so you have something concrete to ask about while you get set up.
+
+Next: [Setup →](/tutorials/dash/setup)

@@ -1,0 +1,106 @@
+---
+title: Setup
+description: "Run Coda locally and point it at a GitHub repo."
+---
+
+This page gets Coda running locally and connected to a GitHub repo. New to Coda? Read [What is Coda?](/tutorials/coda/overview) first.
+
+## Prerequisites
+
+- Docker Desktop ([install](https://docs.docker.com/desktop/))
+- OpenAI API key
+- GitHub account
+
+<Steps>
+  <Step title="Clone Coda">
+    Click **Use this template** on the [Coda repo](https://github.com/agno-agi/coda) to create your own, then clone it. Or clone directly:
+
+    ```bash
+    git clone https://github.com/agno-agi/coda && cd coda
+    ```
+  </Step>
+
+  <Step title="Configure API keys">
+    ```bash
+    cp example.env .env
+    ```
+
+    Set `OPENAI_API_KEY` and `GITHUB_ACCESS_TOKEN` in `.env`.
+
+    The GitHub token must be a **Fine-grained Personal Access Token** with these permissions on the repos you want Coda to work with:
+
+    | Permission | Access |
+    |------------|--------|
+    | Contents | Read and write |
+    | Pull requests | Read and write |
+    | Issues | Read and write |
+    | Metadata | Read-only |
+
+    Full setup: [GITHUB_ACCESS.md](https://github.com/agno-agi/coda/blob/main/docs/GITHUB_ACCESS.md). Don't use a Classic PAT, fine-grained tokens scope cleanly to specific repos.
+  </Step>
+
+  <Step title="Tell Coda which repos to learn">
+    Edit `repos.yaml`:
+
+    ```yaml
+    repos:
+      - url: https://github.com/your-org/your-repo
+        branch: main
+    ```
+
+    Repos in `repos.yaml` must also be granted in your GitHub token's repository selection. If you list a repo Coda can't access, the clone fails silently.
+
+    <Tip>
+      For your first run, point Coda at the [agno repo](https://github.com/agno-agi/agno). It gives you something concrete to ask questions about while you get set up.
+    </Tip>
+  </Step>
+
+  <Step title="Start Coda">
+    ```bash
+    docker compose up -d --build
+    ```
+
+    First run pulls the base image, builds Coda, and clones the repos in `repos.yaml` into `/repos/`. Takes a minute or two.
+  </Step>
+
+  <Step title="Verify it's running">
+    ```bash
+    curl http://localhost:8000/health
+    ```
+
+    Expect `{"status":"ok"}`. Connection refused means the container is still starting. Check `docker compose logs -f coda-api` and wait for the Agno banner.
+  </Step>
+
+  <Step title="Chat with Coda">
+    1. Open [os.agno.com](https://os.agno.com) and log in.
+    2. Click **Add OS**, choose **Local**, enter `http://localhost:8000`, click **Connect**.
+    3. Try a question:
+
+    ```
+    What repos are available?
+    Walk me through the auth flow in agno.
+    Where are MCP tools registered?
+    What changed in the last 5 commits on agno?
+    ```
+
+    Coda routes through its team: the **Explorer** reads code and traces call chains, the **Coder** writes in isolated worktrees, the **Planner** breaks features down into issues, the **Researcher** searches the web, the **Triager** labels and closes issues.
+  </Step>
+</Steps>
+
+## What you have now
+
+| Component | Detail |
+|-----------|--------|
+| **Coda team** | Explorer, Coder, Planner, Researcher, Triager. The Leader coordinates. |
+| **Repos** | Cloned to `/repos/<name>/` inside the container. Synced every 5 minutes. |
+| **Knowledge** | Conventions and patterns Coda discovers, stored via [Agno's Learning Machine](/learning/overview). |
+| **Memory** | User context held by the Leader (who you are, what you're working on). |
+| **Scheduled tasks** | Repo sync runs every 5 minutes. Daily digest and issue triage activate when their channels are configured. |
+
+## What Coda doesn't do
+
+- **Auto-merge.** Coda opens PRs. A human merges them.
+- **Touch your main branch.** All code work happens in isolated git worktrees.
+- **Send code outside your environment.** Coda runs in your infrastructure. The only external calls are to your configured LLM provider.
+
+Next: [Connect Slack →](/tutorials/coda/connect-slack)

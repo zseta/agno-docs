@@ -1,0 +1,99 @@
+---
+title: Investment Committee
+description: "Seven-agent investment committee using Gemini, YFinanceTools, and shared learnings."
+---
+
+The [Investment team](https://github.com/agno-agi/demo-os/tree/main/teams/investment) is the largest team in the demo. Seven specialists, all using `gemini-2.5-pro`, sharing one knowledge base and one learnings store.
+
+| Member | Role | Tools |
+|--------|------|-------|
+| **Committee Chair** | Leader, makes the final recommendation | none directly |
+| **Financial Analyst** | Fundamental valuation, balance sheet | `YFinanceTools` |
+| **Market Analyst** | Macro context, market sentiment | `YFinanceTools`, Exa MCP, optional `ParallelTools` |
+| **Technical Analyst** | Chart patterns, indicators | `YFinanceTools` |
+| **Risk Officer** | Risk profile, downside scenarios | `YFinanceTools` |
+| **Knowledge Agent** | Retrieves precedents from knowledge base | none directly (uses RAG) |
+| **Memo Writer** | Drafts the final memo to file | `FileTools` |
+
+## Why a team for this
+
+The single-agent failure mode for investment analysis: bullish bias. One model talks itself into a thesis. A multi-agent committee structurally avoids this. The Risk Officer is *required* to argue against. The Technical Analyst is *required* to look at chart-level evidence. The Chair has to weigh both.
+
+This is "agents as roles" rather than "agents as task fanout". Each member has a distinct charter that the Chair must consider.
+
+## Multi-model: why Gemini
+
+Investment uses `gemini-2.5-pro` (with the demo's default `MODEL` for non-Gemini agents). The reasoning here:
+
+- Long context for chart data and financial filings
+- Strong at structured argumentation
+- Cheaper than GPT-5.4 or Claude Opus per token at the volume a 7-agent committee burns
+
+Mixing models per agent is a one-line change:
+
+```python
+from agno.models.google import Gemini
+
+financial_analyst = Agent(
+    model=Gemini(id="gemini-2.5-pro"),
+    ...
+)
+```
+
+The team coordinates regardless of which model each member uses.
+
+## Shared learning, scoped to the team
+
+```python
+from agno.learn import LearnedKnowledgeConfig, LearningMachine, LearningMode
+
+investment_learnings = create_knowledge("Investment Learnings", "investment_learnings")
+
+_learning = LearningMachine(
+    knowledge=investment_learnings,
+    learned_knowledge=LearnedKnowledgeConfig(
+        mode=LearningMode.AGENTIC,
+        namespace="global",
+    ),
+)
+```
+
+Every agent on the team writes to the same `investment_learnings` knowledge with namespace `"global"`. After a few decisions:
+
+- "Tech stocks with negative free cash flow get downgraded"
+- "Avoid recommending positions during earnings week"
+- "Risk Officer's concerns weighted 1.5x for crypto exposure"
+
+The Chair retrieves these on every new evaluation. The committee gets sharper over time without the user manually building the framework.
+
+## Team modes used
+
+The Investment team configuration ships instructions for **four** modes (coordinate, route, broadcast, tasks). The current default is `coordinate`, but the same agent set can run as a router for ticker-specific routing, a broadcast for parallel analysis, or a task fanout for breaking down a request.
+
+See [Team modes](/teams/overview) for the full discussion of when to use each.
+
+## File output
+
+The Memo Writer uses `FileTools` to produce a markdown memo per evaluation:
+
+```
+teams/investment/memos/
+├── 2026-04-22_TSLA.md
+├── 2026-04-23_NVDA.md
+└── 2026-04-24_META.md
+```
+
+Each memo captures the committee's full reasoning, the dissents, and the final recommendation. Useful for retrospective analysis: which calls were right, which were wrong, what does the committee learn from each.
+
+## See it in action
+
+```
+@Investment evaluate TSLA at the current price
+@Investment what's your view on NVDA going into earnings?
+@Investment compare META and GOOGL for a 12-month hold
+@Investment what are the risk factors for adding crypto exposure?
+```
+
+Each query triggers the full committee. Expect 30-60 seconds for the parallel analyst work, then the Chair synthesizes.
+
+Source: [`teams/investment/`](https://github.com/agno-agi/demo-os/tree/main/teams/investment)
