@@ -1,0 +1,42 @@
+---
+title: Pick a template
+description: "Start with the perfect template for your use case."
+---
+
+Agno gives you three production templates, a kitchen-sink reference and a blank canvas.
+
+Pick the closest to your use case, then dive in.
+
+| If you're... | Start with |
+|--------------|------------|
+| Building an agent that can query Slack, GDrive, internal wikis | [Scout](/tutorials/scout/overview) |
+| Building an agent for data analytics, BI, metrics | [Dash](/tutorials/dash/overview) |
+| Building a code companion to help maintain your codebase | [Coda](/tutorials/coda/overview) |
+| Looking for a kitchen-sink with every Agno feature | [Demo OS](/demo-os/overview) |
+| Starting from a blank canvas (AgentOS + Postgres on Railway) | [Blank Canvas](/tutorials/blank-canvas/overview) |
+
+## What every template comes with
+
+- **Docker Compose** for local dev (`docker compose up -d --build`)
+- **Railway scripts** for one-command deploy (`./scripts/railway_*.sh`)
+- **Slack manifest** so you can install the bot in your Slack workspace
+- **JWT-based auth** for production. Secure by default
+- **Eval suite** scaffolded for the agent's specific behaviors
+
+You're 90% of the way to a deployed product on day one. The work that's left is wiring up your data, your knowledge, and your interfaces.
+
+## Dive in
+
+<CardGroup cols={3}>
+  <Card title="Scout" icon="compass" iconType="duotone" href="/tutorials/scout/overview">
+    Context agent over Slack, Drive, MCP, custom sources.
+  </Card>
+  <Card title="Dash" icon="chart-line" iconType="duotone" href="/tutorials/dash/overview">
+    Self-learning data agent over a SaaS metrics dataset.
+  </Card>
+  <Card title="Coda" icon="code" iconType="duotone" href="/tutorials/coda/overview">
+    Code companion in Slack with daily digest and issue triage.
+  </Card>
+</CardGroup>
+
+Or browse the [Demo OS reference](/demo-os/overview) for the kitchen-sink view.
