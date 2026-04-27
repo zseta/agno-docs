@@ -79,11 +79,18 @@
         "tab": "Home",
         "groups": [
           {
-            "group": "Get Started",
+            "group": "Welcome",
             "pages": [
               "index",
+              "first-agent"
+            ]
+          },
+          {
+            "group": "Tutorials",
+            "pages": [
+              "tutorials/pick-a-template",
               {
-                "group": "Tutorial: Scout",
+                "group": "Scout",
                 "pages": [
                   "tutorials/scout/overview",
                   "tutorials/scout/setup",
@@ -93,7 +100,7 @@
                 ]
               },
               {
-                "group": "Tutorial: Dash",
+                "group": "Dash",
                 "pages": [
                   "tutorials/dash/overview",
                   "tutorials/dash/setup",
@@ -103,13 +110,22 @@
                 ]
               },
               {
-                "group": "Tutorial: Coda",
+                "group": "Coda",
                 "pages": [
                   "tutorials/coda/overview",
                   "tutorials/coda/setup",
                   "tutorials/coda/connect-slack",
                   "tutorials/coda/deploy-to-railway",
                   "tutorials/coda/next-steps"
+                ]
+              },
+              {
+                "group": "Blank Canvas",
+                "pages": [
+                  "tutorials/blank-canvas/overview",
+                  "tutorials/blank-canvas/setup",
+                  "tutorials/blank-canvas/deploy-to-railway",
+                  "tutorials/blank-canvas/next-steps"
                 ]
               }
             ]
@@ -174,8 +190,7 @@
           {
             "group": "Get Started",
             "pages": [
-              "introduction",
-              "first-agent"
+              "sdk/introduction"
             ]
           },
           {
@@ -7825,6 +7840,14 @@
     {
       "source": "/home",
       "destination": "/"
+    },
+    {
+      "source": "/introduction",
+      "destination": "/"
+    },
+    {
+      "source": "/sdk",
+      "destination": "/sdk/introduction"
     },
     {
       "source": "/get-started",
