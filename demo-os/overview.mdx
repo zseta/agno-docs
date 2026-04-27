@@ -1,9 +1,9 @@
 ---
-title: Demo OS Overview
+title: Overview
 description: "A reference AgentOS with 14 agents, 4 teams, and 5 workflows in one FastAPI service."
 ---
 
-The [Demo OS](https://github.com/agno-agi/demo-os) is a single AgentOS application that exercises every feature in the production section. Use it as a working reference when building your own.
+The [Demo OS](https://github.com/agno-agi/demo-os) is a single AgentOS application that exercises every feature in the [Runtime](/runtime/overview) section. Use it as a working reference when building your own.
 
 ```bash
 git clone https://github.com/agno-agi/demo-os && cd demo-os
@@ -42,9 +42,7 @@ Each row points at the demo agent that exercises that capability.
 
 ## Why a reference implementation matters
 
-Reading docs explains what's possible. Reading working code shows how it fits together. Demo OS is the second.
-
-When the docs say "you can wire pre-hooks for PII detection," the [Helpdesk agent](https://github.com/agno-agi/demo-os/blob/main/agents/helpdesk/agent.py) shows the four-line config that does it. When the docs say "agents can update their own session state," the [Taskboard agent](https://github.com/agno-agi/demo-os/blob/main/agents/taskboard/agent.py) is a 30-line working example. Every page in this section links straight to the source.
+The docs explain what's possible; Demo OS shows it running. When the docs say "you can wire pre-hooks for PII detection," the [Helpdesk agent](https://github.com/agno-agi/demo-os/blob/main/agents/helpdesk/agent.py) shows the four-line config that does it. When the docs say "agents can update their own session state," the [Taskboard agent](https://github.com/agno-agi/demo-os/blob/main/agents/taskboard/agent.py) is a 30-line working example. Every page in this section links straight to the source.
 
 ## Run it locally
 
@@ -73,4 +71,6 @@ The script provisions Postgres, configures env vars, and ships the app. Same pat
   📷 **Add screenshot:** Demo OS connected to AgentOS UI showing the agent picker with all 14 agents listed.
 </Note>
 
-Next: [RAG →](/demo-os/rag)
+## Next
+
+[RAG →](/demo-os/rag)

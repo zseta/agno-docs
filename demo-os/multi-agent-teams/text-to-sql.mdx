@@ -21,7 +21,7 @@ dash = Team(
 )
 ```
 
-Two members, one leader, one shared learning store.
+Two members and one leader, sharing a single learning store.
 
 ## The split
 
@@ -31,7 +31,7 @@ Two members, one leader, one shared learning store.
 | **Engineer** | `public` (read), `dash` (read+write, blocked from `public` writes via SQLAlchemy event listener) | `SQLTools` (full), `introspect_schema`, `update_knowledge`, `ReasoningTools` |
 | **Leader** | None directly | Routes the request, optional `SlackTools` for posting back |
 
-The boundary is enforced at the database engine, not in the prompt. The Analyst's connection physically cannot write. The Engineer's writes physically cannot touch `public`. These hold even if the model goes off-script.
+The boundary is enforced at the database engine, not in the prompt. The Analyst's connection physically cannot write, and the Engineer's writes physically cannot touch `public`. These hold even if the model goes off-script.
 
 ## How a question flows
 
@@ -103,4 +103,6 @@ For a from-scratch tutorial that builds a Dash-style agent on your own data, see
 
 Source: [`agents/dash/`](https://github.com/agno-agi/demo-os/tree/main/agents/dash)
 
-Next: [Investment Team →](/demo-os/multi-agent-teams/investment)
+## Next
+
+[Investment Team →](/demo-os/multi-agent-teams/investment)

@@ -39,7 +39,7 @@ Three flags do the work:
 | Knowledge | Global (filterable) | Mutable, you load/upsert | Yes, in `agno_knowledge` |
 | Dependencies | One run | Read-only | No, ephemeral |
 
-Session state fills the "things the user is working on right now" slot. Memory fills "things about the user". Dependencies fill "config for this exact request".
+Session state holds what the user is working on right now. Memory holds what's true about the user across sessions. Dependencies carry config for the current request.
 
 ## CRUD via tools
 
@@ -79,7 +79,7 @@ def update_task_status(session_state: dict, task_id: int, status: str) -> str:
 | Cross-session preferences | Memory or user profile |
 | Per-request config (tenant, flags) | Dependencies |
 
-If state should survive the user closing the chat and coming back next week, that's not session state. That's memory or a database table the agent reads from.
+If state should survive the user closing the chat and coming back next week, it belongs in memory or a database table the agent reads from, not in session state.
 
 ## See it in action
 
@@ -95,4 +95,6 @@ Each turn updates `session_state`. The next turn sees the updated state in conte
 
 Source: [`agents/taskboard/agent.py`](https://github.com/agno-agi/demo-os/blob/main/agents/taskboard/agent.py)
 
-Next: [Human-in-the-Loop →](/demo-os/human-in-the-loop)
+## Next
+
+[Human-in-the-Loop →](/demo-os/human-in-the-loop)

@@ -1,9 +1,9 @@
 ---
-title: Human-in-the-Loop
+title: Human Approval
 description: "Confirmation, user input, external execution, and approval flows in three demo agents."
 ---
 
-Three demo agents exercise the HITL surface end-to-end. Different patterns, same primitives.
+Three demo agents exercise the HITL surface end-to-end, each showing a different combination of patterns over the same primitives.
 
 | Agent | What it shows |
 |-------|---------------|
@@ -41,7 +41,7 @@ Where each pattern shows up:
 | `run_diagnostic` | `external_execution=True` | Diagnostic runs in another system. The agent gets the result back. |
 | `UserFeedbackTools()` | Structured question to user mid-run | "Which service do you want to restart?" |
 
-Pre-hooks catch bad input before the model sees it (PII, injection, moderation). Post-hooks catch bad output and write the audit log. The agent never sees raw PII; the audit log captures every run.
+Pre-hooks catch bad input before the model sees it (PII, injection, moderation), and post-hooks catch bad output and write the audit log. The agent never sees raw PII, and every run lands in the audit log.
 
 ## Approvals: compliance gates
 
@@ -106,7 +106,7 @@ agent = Agent(
 )
 ```
 
-PII gets masked in place. Injection attempts get blocked outright. Both are common to use together.
+PII gets masked in place, injection attempts get blocked outright, and the two are commonly used together.
 
 ## Post-hooks for output safety
 
@@ -147,4 +147,6 @@ For audit logs that shouldn't gate the response, use `@hook(run_in_background=Tr
 
 Sources: [`agents/helpdesk/`](https://github.com/agno-agi/demo-os/tree/main/agents/helpdesk), [`agents/approvals/`](https://github.com/agno-agi/demo-os/tree/main/agents/approvals), [`agents/feedback/`](https://github.com/agno-agi/demo-os/tree/main/agents/feedback)
 
-Next: [Multi-Agent Teams →](/demo-os/multi-agent-teams/text-to-sql)
+## Next
+
+[Multi-Agent Teams →](/demo-os/multi-agent-teams/text-to-sql)

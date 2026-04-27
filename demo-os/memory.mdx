@@ -3,7 +3,7 @@ title: Memory
 description: "Entity memory, user profile, and session context in the Contacts agent."
 ---
 
-The [Contacts agent](https://github.com/agno-agi/demo-os/blob/main/agents/contacts/agent.py) is a relationship intelligence agent. A mini CRM that remembers people, the facts you tell it about them, who knows whom, and what's happening between them.
+The [Contacts agent](https://github.com/agno-agi/demo-os/blob/main/agents/contacts/agent.py) is a mini CRM that remembers people, the facts you tell it about them, who knows whom, and what's happening between them.
 
 Three memory stores, each scoped to a different shape of state:
 
@@ -94,15 +94,15 @@ Useful for long, exploratory sessions where the user pivots and the agent needs 
 
 ## Vanilla agentic memory vs LearningMachine
 
-For most agents, `enable_agentic_memory=True` is enough. Single bucket of facts. Agent writes via tools.
+For most agents, `enable_agentic_memory=True` is enough: a single bucket of facts that the agent writes to via tools.
 
 `LearningMachine` is right when the shape of memory matters:
 
-- A relationship graph (Contacts) needs entities + edges, not flat strings.
-- A long-running personal agent (Pal) needs separate "what I know about you" vs "what I know about your domain".
-- A self-improving SQL agent (Dash) needs separate "validated queries" vs "error patterns I've fixed".
+- A relationship graph (Contacts) needs entities and edges, not flat strings.
+- A long-running personal agent (Pal) needs to separate "what I know about you" from "what I know about your domain".
+- A self-improving SQL agent (Dash) needs to separate "validated queries" from "error patterns I've fixed".
 
-When in doubt, start with `enable_agentic_memory=True`. Move to `LearningMachine` once flat memory feels too lossy.
+When in doubt, start with `enable_agentic_memory=True` and move to `LearningMachine` once flat memory feels too lossy.
 
 ## See it in action
 
@@ -118,4 +118,6 @@ Each turn updates the entity graph. The agent uses the graph on every retrieval.
 
 Source: [`agents/contacts/agent.py`](https://github.com/agno-agi/demo-os/blob/main/agents/contacts/agent.py), [Learning Machine docs](/learning/overview)
 
-Next: [Learning →](/demo-os/learning)
+## Next
+
+[Learning →](/demo-os/learning)

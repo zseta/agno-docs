@@ -77,7 +77,7 @@ Per-request dependencies override the agent-level ones for that single run. Usef
 | Knowledge | Content the agent should be able to retrieve and cite |
 | `session_state` | Mutable state for one session only (see [Taskboard](/demo-os/session-state)) |
 
-The lines blur, but the rule of thumb: dependencies are read-only and ephemeral. Memory and knowledge are persistent. Session state is mutable but session-scoped.
+The lines blur, but the rule of thumb is that dependencies are read-only and ephemeral, memory and knowledge are persistent, and session state is mutable but session-scoped.
 
 ## See it in action
 
@@ -90,4 +90,6 @@ The lines blur, but the rule of thumb: dependencies are read-only and ephemeral.
 
 Source: [`agents/injector/agent.py`](https://github.com/agno-agi/demo-os/blob/main/agents/injector/agent.py)
 
-Next: [Session State →](/demo-os/session-state)
+## Next
+
+[Session State →](/demo-os/session-state)

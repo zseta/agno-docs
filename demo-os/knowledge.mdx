@@ -3,7 +3,7 @@ title: Knowledge
 description: "Hybrid search with embeddings, chunking, and metadata in Pal and Dash."
 ---
 
-`Knowledge` is the retrieval primitive. Vector index, optional keyword index, optional reranker. Pal and Dash both use it heavily.
+`Knowledge` is the retrieval primitive: a vector index with an optional keyword index and optional reranker. Pal and Dash both use it heavily.
 
 ```python
 from agno.knowledge import Knowledge
@@ -129,7 +129,7 @@ dash_knowledge = Knowledge(
 )
 ```
 
-The vector DB returns top-50, the reranker scores them, the top-10 reach the model. This is the standard production pattern: cast wide, rerank tight.
+The vector DB returns the top-50, the reranker scores them, and the top-10 reach the model. This two-stage retrieval (cast wide, rerank tight) is the standard production setup.
 
 ## See it in action
 
@@ -142,4 +142,6 @@ The vector DB returns top-50, the reranker scores them, the top-10 reach the mod
 
 Source: [`agents/pal/`](https://github.com/agno-agi/demo-os/tree/main/agents/pal), [`agents/dash/`](https://github.com/agno-agi/demo-os/tree/main/agents/dash), [Knowledge docs](/knowledge/overview)
 
-Next: [Memory →](/demo-os/memory)
+## Next
+
+[Memory →](/demo-os/memory)

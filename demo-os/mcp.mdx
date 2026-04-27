@@ -3,7 +3,7 @@ title: MCP
 description: "Querying live Agno docs through a Model Context Protocol server."
 ---
 
-The [MCP agent](https://github.com/agno-agi/demo-os/blob/main/agents/mcp/agent.py) is twenty lines of code that does one thing: answer questions about Agno using the official docs MCP server. No local knowledge base, no embeddings to maintain, no ingest pipeline. The docs site exposes an MCP endpoint, the agent connects to it, the answers stay current.
+The [MCP agent](https://github.com/agno-agi/demo-os/blob/main/agents/mcp/agent.py) is twenty lines of code that answers questions about Agno using the official docs MCP server. The docs site exposes an MCP endpoint, the agent connects to it, and the answers stay current without a local knowledge base, embeddings, or an ingest pipeline.
 
 ```python
 from agno.agent import Agent
@@ -48,7 +48,7 @@ Tool discovery happens at connect time. The agent's instructions get a list of a
 | You're integrating with internal systems | Write a tool, simpler |
 | You need fine-grained control over arguments / response shape | Write a tool |
 
-For most third-party services, MCP wins. For first-party data (your database, your APIs), a `@tool` function is more direct.
+For most third-party services, MCP wins. A `@tool` function is more direct for first-party data like your database or internal APIs.
 
 ## See it in action
 
@@ -66,4 +66,6 @@ The MCP agent uses MCP as a tool. [Scout's `MCPContextProvider`](/tutorials/scou
 
 Source: [`agents/mcp/agent.py`](https://github.com/agno-agi/demo-os/blob/main/agents/mcp/agent.py)
 
-Next: [Context Providers →](/demo-os/context-providers)
+## Next
+
+[Context Providers →](/demo-os/context-providers)
