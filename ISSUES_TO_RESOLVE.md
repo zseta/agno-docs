@@ -19,16 +19,11 @@ Punch list to clear before merging to `main`. Update as work lands.
 - [x] Drop `_legacy/production/*` and `TBD/2_6_remove/` orphans (46 files) — `7a6cc9b4`
 - [x] Refresh `connect-agent-os-ui` snippet — `07123216`
 - [x] Add `agentos-api-scroll` demo video — `43baf92a`
+- [x] Fix CI broken links — `609bacfa`
 
-## 3. Open
+## 3. Verify before merge
 
-- [ ] `first-agent.mdx` references missing `/videos/agentos-connect-workbench.mp4` and `/videos/agentos-chat-workbench.mp4` — add files or remove embeds.
-
-## 4. Pre-existing dead links (out of scope, not blocking)
-
-Sit in `deploy/*`, not introduced by this branch.
-
-| File | Dead target |
-|------|-------------|
-| `deploy/interfaces/{slack,discord,whatsapp,telegram}/overview.mdx` | `/production/templates/overview` (×7) |
-| `deploy/introduction.mdx` | `/production/applications/{text-to-sql,research-agent,knowledge-agent}` and `/production/applications` |
+- [ ] Confirm `first-agent.mdx` video substitutions are the intended clips:
+  - `/videos/agent-os-connect-os.mp4` (was `agentos-connect-workbench.mp4`)
+  - `/videos/agentos-agent-chat.mp4` (was `agentos-chat-workbench.mp4`)
+- [ ] `videos/agentos-api-scroll.mp4` is 73 MB. GitHub flagged it as above the 50 MB recommended limit. Consider Git LFS or compression before merge.
