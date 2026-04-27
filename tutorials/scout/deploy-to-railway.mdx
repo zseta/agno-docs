@@ -3,7 +3,7 @@ title: Deploy to Railway
 description: "Ship Scout to Railway with one script."
 ---
 
-Scout ships with three Railway scripts. One provisions the project, one syncs env vars, one redeploys. Any Docker-capable host works, but Railway is the fast path.
+Scout ships with three Railway scripts. One provisions the project, one syncs env vars, one redeploys. Any cloud provider works, but Railway is the fastest path to get something running.
 
 ## Prerequisites
 
@@ -19,7 +19,7 @@ Use `.env.production` to keep production credentials separate from local dev. Co
 cp .env .env.production
 ```
 
-Don't set `DB_*` in `.env.production`. The deploy script points Scout at the Railway Postgres service automatically. Setting `DB_HOST` here would break the deploy when env vars sync in Step 2.
+Don't set `DB_*` in `.env.production`. The deploy script points Scout at the Railway Postgres service automatically. Setting `DB_HOST` here would break the deploy when env vars sync.
 
 Then run:
 

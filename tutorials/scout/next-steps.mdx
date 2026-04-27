@@ -22,10 +22,6 @@ Why a service account? Borrowing your credentials would collapse the audit trail
 
 Full setup, including the manual path for orgs that block service-account keys: [GDRIVE_CONNECT.md](https://github.com/agno-agi/scout/blob/main/docs/GDRIVE_CONNECT.md).
 
-<Note>
-  🎥 **Add video:** Running `./scripts/google_setup.sh`, sharing a folder with the SA email, and asking Scout *"search Drive for files with 'roadmap' in the name."*
-</Note>
-
 ## Connect any MCP server
 
 Anything with an [MCP server](https://modelcontextprotocol.io) plugs in: Linear, GitHub, Notion, Postgres, Stripe. Add an `MCPContextProvider` entry to [`scout/contexts.py`](https://github.com/agno-agi/scout/blob/main/scout/contexts.py):

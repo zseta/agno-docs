@@ -3,7 +3,7 @@ title: Setup
 description: "Run Scout locally using Docker."
 ---
 
-This page gets Scout running on your machine with a local Postgres and three always-on contexts: the web, the filesystem (the Scout repo itself), and a local database for remembering people, projects, and notes (the CRM).
+This page gets Scout running on your machine with three context providers: the web, the filesystem (the Scout repo itself), and a CRM (people, projects, notes) backed by Postgres.
 
 ## Prerequisites
 
@@ -27,7 +27,7 @@ This page gets Scout running on your machine with a local Postgres and three alw
         docker compose up -d --build
         ```
 
-        First run pulls the base image and builds the Scout container. Takes a minute or two. Subsequent starts are instant.
+        First run pulls the base image and builds the Scout container. Takes a minute or two. Subsequent starts come up in seconds.
       </Step>
 
       <Step title="Verify it's running">
@@ -36,14 +36,6 @@ This page gets Scout running on your machine with a local Postgres and three alw
         ```
 
         Expect `{"status":"ok"}`. Connection refused means the container is still starting. Check `docker compose logs -f scout-api` and wait for the Agno banner.
-      </Step>
-
-      <Step title="Chat with Scout">
-        <Snippet file="connect-agent-os-ui.mdx" />
-
-        Try the pre-configured prompt: *"Which contexts are you connected to?"*
-
-        Scout calls `list_contexts` and reports back web, filesystem, and CRM.
       </Step>
     </Steps>
   </Tab>
@@ -67,14 +59,20 @@ This page gets Scout running on your machine with a local Postgres and three alw
 
     If any step fails, stop and show me the error. Don't try to fix it on your own.
     ````
-
-    Once it finishes, follow the last step from the Manual tab to connect the AgentOS UI.
   </Tab>
 </Tabs>
 
+## Connect to AgentOS UI
+
+<Snippet file="connect-agent-os-ui.mdx" />
+
+Try the pre-configured prompt: *"Which contexts are you connected to?"*
+
+Scout reports back web, filesystem, and CRM.
+
 ## What you have now
 
-Scout is running with three always-on context providers. Each surfaces as a `query_<id>` tool (plus `update_<id>` where writes are allowed):
+Scout is running with three context providers. Each surfaces as a `query_<id>` tool (plus `update_<id>` where writes are allowed):
 
 | Provider | Tool(s) | Backed by |
 |----------|---------|-----------|
@@ -86,11 +84,11 @@ Scout is running with three always-on context providers. Each surfaces as a `que
 
 Ask Scout to put each provider to work:
 
-> *"Look up the latest benchmark numbers for Claude Sonnet 4.6."* hits the web.
+> *"Look up the latest pricing for Anthropic's models."* hits the web.
 
 > *"Search the repo for where context providers get registered."* navigates the filesystem.
 
-> *"Save Sarah Chen as a contact, she's the head of platform at Acme."* writes to the CRM. (Yes, Scout can mutate state. `update_<id>` tools are real writes.)
+> *"Save Sarah Chen as a contact, she's the head of platform at Acme."* writes to the CRM.
 
 ## Next
 
