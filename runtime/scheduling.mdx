@@ -3,7 +3,7 @@ title: Scheduling
 description: "Run agents on a cron and chain them into multi-step workflows."
 ---
 
-A useful agent doesn't only respond. It shows up. Morning briefings. Daily triage. Weekly digests. Hourly health checks. AgentOS gives you a cron-style scheduler in-process so you don't run a separate worker fleet for any of it.
+A useful agent doesn't only respond. It shows up on its own: morning briefings, daily triage, weekly digests, hourly health checks. AgentOS gives you a cron-style scheduler in-process so you don't run a separate worker fleet for any of it.
 
 ```python
 from agno.os import AgentOS
@@ -16,7 +16,7 @@ agent_os = AgentOS(
 )
 ```
 
-That's it. The scheduler polls `agno_schedules` every `scheduler_poll_interval` seconds, fires due jobs, retries failures, persists state. No external worker, no Celery, no separate cron container.
+That's it. The scheduler polls `agno_schedules` every `scheduler_poll_interval` seconds, fires due jobs, retries failures, and persists state. No external worker fleet, no Celery, no separate cron container.
 
 ## Schedules created by an agent
 
@@ -130,4 +130,6 @@ The user gets the response immediately. The hook runs as a FastAPI background ta
 
 When you scale to multiple replicas, you don't want every replica firing the same scheduled job. Use leader election (one replica owns scheduling) or pin the scheduler to a single replica via deployment config. See [Scheduler](/agent-os/scheduler/overview) for the HA pattern.
 
-Next: [Deploy →](/runtime/deploy)
+## Next
+
+[Deploy →](/runtime/deploy)

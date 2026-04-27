@@ -3,7 +3,7 @@ title: Storage
 description: "Pick a database for sessions, memory, knowledge, and traces."
 ---
 
-Everything an agent persists lives in one `db` object. Sessions, memory, knowledge, traces, schedules, approvals. The `db` interface is identical across backends, so you choose by operational fit, not by feature parity.
+Everything an agent persists lives in one `db` object: sessions, memory, knowledge, traces, schedules, and approvals. The `db` interface is identical across backends, so you choose by operational fit, not by feature parity.
 
 ```python
 from agno.db.postgres import PostgresDb
@@ -96,7 +96,7 @@ agent = Agent(
 
 Other vector store options: LanceDB, Qdrant, Weaviate, Pinecone, Chroma, MongoDB Atlas, Cosmos, Cassandra, ClickHouse, SurrealDB, Milvus. The full list lives under [Vector Stores](/knowledge/vector-stores/index).
 
-For most production AgentOS deployments, **PgVector + PostgresDb on the same Postgres** is the right default. One database, hybrid search, transactional reads, no extra service to operate.
+For most production AgentOS deployments, **PgVector + PostgresDb on the same Postgres** is the right default. You get one database, hybrid search, and transactional reads without an extra service to operate.
 
 ## File and blob storage
 
@@ -125,6 +125,8 @@ agent = Agent(
 )
 ```
 
-This is how [Dash](/demo-os/multi-agent-teams/text-to-sql) keeps the AgentOS database separate from the SaaS metrics database it queries. AgentOS state goes in one place, application data in another, neither leaks into the other.
+This is how [Dash](/demo-os/multi-agent-teams/text-to-sql) keeps the AgentOS database separate from the SaaS metrics database it queries. AgentOS state goes in one place and application data in another, with no leakage between the two.
 
-Next: [Context →](/runtime/context)
+## Next
+
+[Context →](/runtime/context)

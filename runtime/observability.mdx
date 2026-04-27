@@ -3,7 +3,7 @@ title: Observability
 description: "OpenTelemetry tracing, run history, and audit logs out of the box."
 ---
 
-When an agent answers wrong, you need to know why. Which tool did it call? What did it pass? What did the model see? AgentOS captures all of it through OpenTelemetry-compatible tracing, persisted in your `db`.
+When an agent answers wrong, you need to know why: which tool it called, what it passed in, and what the model actually saw. AgentOS captures all of it through OpenTelemetry-compatible tracing, persisted in your `db`.
 
 ```python
 from agno.os import AgentOS
@@ -136,4 +136,6 @@ agent = Agent(..., post_hooks=[audit_log])
 | User-level activity | `agno_sessions` group by `user_id`, `created_at::date` |
 | HITL queue depth | `agno_approvals` where `status='pending'` |
 
-Next: [Security & Auth →](/runtime/security-and-auth)
+## Next
+
+[Security & Auth →](/runtime/security-and-auth)

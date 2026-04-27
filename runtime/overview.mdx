@@ -1,114 +1,44 @@
 ---
 title: What is a Runtime?
-description: "AgentOS is the runtime for agents. Define the agent. Hand it to the runtime. Ship."
+description: "A runtime turns your agent into production software."
 ---
 
-A **runtime** is the execution environment for your code. Node.js is a runtime for JavaScript. The JVM is a runtime for Java. AgentOS is a runtime for agents.
+To build agentic products, you need to run your agents as horizontally scalable, durable services that are reachable over an API. That's what a runtime does.
 
-Without a runtime, an agent is a function. You can call it, get a response, and that's it. Useful for a notebook. Not useful for a product.
+AgentOS turns the `Agent(...)` into a FastAPI app with persistent sessions, JWT-based authentication, observability, and interfaces for Slack, Telegram, and more.
 
-A runtime turns the function into a service. It handles the boring infrastructure that every agent needs: HTTP serving, persistence, scheduling, auth, observability, interfaces. You write the agent. The runtime runs it.
+## What the runtime gives you
 
-```python
-from agno.agent import Agent
-from agno.db.postgres import PostgresDb
-from agno.os import AgentOS
+The runtime covers the ground between your agent code and a shipped service:
 
-agent = Agent(name="My Agent", model="openai:gpt-5.4")
+| Concern | How AgentOS handles it |
+|---------|--------|
+| **HTTP API** | Auto-generated endpoints for every registered agent, team, and workflow |
+| **State** | Sessions and memory persisted to your `db` |
+| **Streaming** | SSE on every run endpoint; tokens and tool calls stream as they happen |
+| **Auth** | JWT validation with RBAC scopes built-in |
+| **Scheduling** | In-process cron that polls the database and fires due jobs |
+| **Observability** | OpenTelemetry tracing into the same `db`, queryable with SQL |
+| **Interfaces** | Slack, Telegram, WhatsApp, Discord, A2A, AG-UI |
+| **Human in the loop** | Pause runs for user confirmation, admin approval, or external execution |
 
-agent_os = AgentOS(
-    agents=[agent],
-    db=PostgresDb(db_url="postgresql://..."),
-    tracing=True,
-    scheduler=True,
-)
+The same `Agent(...)` runs in a script, a test, or an AgentOS service. AgentOS itself is stateless: state lives in `db`, so you can scale horizontally to handle load.
 
-app = agent_os.get_app()
-```
+## What's in this section
 
-Six imports, ten lines. You now have a FastAPI service with 50+ endpoints, persisting sessions and traces to your Postgres, ready to schedule recurring runs. Wrap with `agent_os.serve(app="my_app:app")` and deploy.
+| Page | Covers |
+|------|--------|
+| [Serve as an API](/runtime/serve-as-api) | The HTTP endpoints AgentOS generates and how to add your own |
+| [Storage](/runtime/storage) | Database backends and what gets stored |
+| [Context](/runtime/context) | Knowledge, dependencies, and live context providers |
+| [Human Approval](/runtime/human-approval) | Pausing runs for confirmation, approval, or external systems |
+| [Observability](/runtime/observability) | Tracing, run history, audit logs |
+| [Security & Auth](/runtime/security-and-auth) | JWT, RBAC scopes, request isolation |
+| [Interfaces](/runtime/interfaces) | Slack, Telegram, WhatsApp, A2A, AG-UI |
+| [Scheduling](/runtime/scheduling) | Cron jobs and multi-step workflows |
+| [Deploy](/runtime/deploy) | Docker, Railway, AWS, GCP, scaling |
+| [Build a Product](/runtime/build-a-product) | From a working AgentOS to a shipped product |
 
-## Why have a runtime at all
+## Next
 
-The alternative is to write everything yourself.
-
-| Without a runtime | With AgentOS |
-|-------------------|--------------|
-| Write your own FastAPI wrapper around the agent | `agent_os.get_app()` |
-| Pick a session store, write the schema, handle migrations | One `db=PostgresDb(...)` |
-| Build a JWT middleware, validate tokens, plumb scopes | `authorization=True` |
-| Write a cron worker, deduplication, retries | `scheduler=True` |
-| Wire OpenTelemetry, pick exporters, handle backpressure | `tracing=True` |
-| Build a Slack bot to dispatch messages to your agent | `interfaces=[Slack(agent=agent, ...)]` |
-| Write a control plane to monitor sessions, replay runs, debug failures | [os.agno.com](https://os.agno.com) |
-
-That work is undifferentiated. Every team builds the same plumbing. AgentOS gives you the plumbing so you can spend your time on the parts that matter: what the agent does, how it learns, what it has access to.
-
-## Where AgentOS fits
-
-AgentOS sits between your agent code and your users.
-
-```
-Your code (agents, teams, workflows)
-        ↓
-AgentOS (runtime)
-        ↓
-Your users (HTTP, Slack, scheduled jobs, other agents)
-```
-
-The agent code stays portable. The same `Agent(...)` definition runs in a notebook, a script, an AgentOS service. AgentOS doesn't change the agent. It changes the surface around the agent.
-
-This is the same shape as classic web frameworks. Flask doesn't change your handlers. It serves them. AgentOS doesn't change your agents. It serves them, persists their state, schedules them, secures them, traces them.
-
-## What it handles really well
-
-**Statelessness with state.** AgentOS itself is stateless. Every request is independent. State (sessions, memory, knowledge, traces) lives in your database. Scale by adding replicas. No coordination, no sticky sessions.
-
-**Multi-surface from one definition.** One `Agent` instance answers HTTP, Slack DMs, Telegram messages, and AG-UI streams. Sessions carry the same memory across surfaces.
-
-**Production-grade auth.** JWT validation with RBAC scopes is one flag away. Per-user isolation is the default, not something you bolt on.
-
-**Tracing without ceremony.** Turn it on, OpenTelemetry spans land in the same database as your sessions. Query them with SQL. Send them to Langfuse, Arize, Langsmith, or anywhere else with one exporter line.
-
-**Schedules in-process.** No separate worker fleet. The scheduler polls the database, fires due jobs, retries failures. Works with one replica or many.
-
-**Human in the right loops.** Tools can pause runs for confirmation, user input, or external execution. Approval flows are decorators, not custom flow control.
-
-**Migrations that aren't yours.** AgentOS owns its tables. Schema changes are additive, forward-compatible. You don't run migrations for AgentOS state.
-
-## What you get
-
-| Capability | Page |
-|------------|------|
-| Your agent, served as an HTTP API | [Serve as an API](/runtime/serve-as-api) |
-| Postgres, Mongo, SQLite, Redis, vector stores | [Storage](/runtime/storage) |
-| Knowledge, dependencies, context providers | [Context](/runtime/context) |
-| Pause runs for confirmation or approval | [Human Approval](/runtime/human-approval) |
-| OpenTelemetry tracing, run history, audit logs | [Observability](/runtime/observability) |
-| JWT auth, RBAC scopes, request isolation | [Security & Auth](/runtime/security-and-auth) |
-| Slack, Telegram, WhatsApp, A2A, AG-UI | [Interfaces](/runtime/interfaces) |
-| Run agents on a cron, build multi-step workflows | [Scheduling](/runtime/scheduling) |
-| Docker, Railway, AWS, scaling | [Deploy](/runtime/deploy) |
-| Take a runtime to a shipped product | [Build a Product](/runtime/build-a-product) |
-
-## A reference implementation
-
-The [Demo OS](/demo-os/overview) is a single AgentOS application that exercises every capability above. Fourteen agents, four teams, five workflows, all running inside one FastAPI service. Use it as a working reference when building your own.
-
-<Note>
-  📷 **Add image:** Diagram showing the runtime layer between your agent code and your users (HTTP, Slack, scheduled jobs).
-</Note>
-
-## The mental model
-
-AgentOS is split into three layers:
-
-| Layer | Verb | What it does |
-|-------|------|--------------|
-| **SDK** | Build | Define agents, teams, and workflows with memory, knowledge, guardrails, and 100+ tool integrations. |
-| **Runtime** | Run | A stateless, secure FastAPI backend with sessions, scheduling, and interfaces. |
-| **Control Plane** | Manage | Monitor and operate your system from the [AgentOS UI](https://os.agno.com). |
-
-This whole section is the second layer. The SDK lives under [Agents](/agents/overview), [Teams](/teams/overview), [Workflows](/workflows/overview). The control plane is the [AgentOS UI](https://os.agno.com), which connects to any AgentOS deployment.
-
-Next: [Serve as an API →](/runtime/serve-as-api)
+[Serve as an API →](/runtime/serve-as-api)

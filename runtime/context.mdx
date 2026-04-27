@@ -3,7 +3,7 @@ title: Context
 description: "Knowledge, dependencies, and live context providers feed your agent on every run."
 ---
 
-Context is what the model sees when it generates the next response. The user's message is the obvious part. The interesting part is everything else: the documentation it can cite, the runtime config it should respect, the live systems it can pull from.
+Context is what the model sees when it generates the next response. The user's message is the obvious part, but the interesting part is everything else: the documentation it can cite, the runtime config it should respect, and the live systems it can pull from.
 
 AgentOS gives you three primitives for non-message context:
 
@@ -149,10 +149,12 @@ The [Scout tutorial](/tutorials/scout/setup) is built end-to-end on context prov
 
 The lines blur, but the rule of thumb:
 
-- **Knowledge** is durable and pre-loaded. You add content once, the agent searches it forever.
+- **Knowledge** is durable and pre-loaded. You add content once and the agent searches it forever.
 - **Dependencies** are ephemeral and request-scoped. They never persist.
 - **Context providers** are dynamic and authenticated. They fetch on demand against a live source.
 
-Build a Scout-style agent? Lean on context providers. Build a Dash-style SQL agent? Lean on knowledge. Build a multi-tenant SaaS agent? Lean on dependencies. Most production agents use all three.
+A Scout-style agent leans on context providers, a Dash-style SQL agent leans on knowledge, and a multi-tenant SaaS agent leans on dependencies. Most production agents use all three.
 
-Next: [Human Approval →](/runtime/human-approval)
+## Next
+
+[Human Approval →](/runtime/human-approval)

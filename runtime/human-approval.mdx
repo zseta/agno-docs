@@ -3,7 +3,7 @@ title: Human Approval
 description: "Pause runs for user confirmation, admin approval, or external execution."
 ---
 
-Some agent actions shouldn't run unattended. Sending a refund. Restarting a production service. Deleting a customer record. Posting to a public Slack channel. AgentOS lets you mark a tool as needing human approval, and the run pauses until that human responds.
+Some agent actions shouldn't run unattended: sending a refund, restarting a production service, deleting a customer record, posting to a public Slack channel. AgentOS lets you mark a tool as needing human approval, and the run pauses until that human responds.
 
 Approval can come from three places:
 
@@ -150,7 +150,7 @@ agent = Agent(
 )
 ```
 
-The user's input gets sanitized before it reaches the model. PII gets masked. Injection attempts get blocked. The agent never sees the raw input if a guardrail rejects it.
+The user's input gets sanitized before it reaches the model: PII is masked and injection attempts are blocked. The agent never sees the raw input if a guardrail rejects it.
 
 ## Hooks for outputs
 
@@ -193,4 +193,6 @@ agent = Agent(model=..., post_hooks=[audit_log])
 | [Approvals](/demo-os/human-in-the-loop) | The `@approval` decorator with audit trail |
 | [Feedback](/demo-os/human-in-the-loop) | `UserFeedbackTools` and `UserControlFlowTools` for structured questions |
 
-Next: [Observability →](/runtime/observability)
+## Next
+
+[Observability →](/runtime/observability)

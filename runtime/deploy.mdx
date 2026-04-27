@@ -26,7 +26,7 @@ That's the entrypoint. Anything that can run `uvicorn my_app:app` can run AgentO
 | **Public hostname** | Required for Slack/Telegram/WhatsApp interfaces |
 | **Env vars** | At minimum `OPENAI_API_KEY` and `JWT_VERIFICATION_KEY` (in prod) |
 
-That's it. No queue, no worker pool, no background scheduler service, no separate auth server. AgentOS handles all of that in-process.
+That's it. AgentOS handles queues, worker pools, the scheduler, and JWT auth in-process, so there's no separate worker fleet or auth server to operate.
 
 ## Local with Docker Compose
 
@@ -138,6 +138,8 @@ Env var change:
 # Railway auto-redeploys when env values change.
 ```
 
-Database migration: AgentOS creates the tables it needs on first boot. Schema changes are additive (new columns, new tables) and forward-compatible. No migration tool required for stock AgentOS tables. Your own tables you migrate however you like.
+Database migration: AgentOS creates the tables it needs on first boot. Schema changes are additive (new columns, new tables) and forward-compatible, so no migration tool is required for stock AgentOS tables. Your own tables you migrate however you like.
 
-Next: [Build a Product →](/runtime/build-a-product)
+## Next
+
+[Build a Product →](/runtime/build-a-product)

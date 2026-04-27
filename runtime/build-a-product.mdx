@@ -3,11 +3,9 @@ title: Build a Product
 description: "From a working AgentOS to a shipped product."
 ---
 
-You have an agent. You have AgentOS running it. You have a Postgres holding state. What's left to ship a product?
+You have an agent, AgentOS running it, and a Postgres holding state. What's left to ship a product?
 
-The honest answer: less than you think. Most of the gap between "AgentOS works" and "users can pay" is product work, not infrastructure.
-
-This page is the punch list.
+The honest answer is: less than you think. Most of the gap between "AgentOS works" and "users can pay" is product work, not infrastructure. This page is the punch list.
 
 ## Step 1: Pick the right starting point
 
@@ -126,7 +124,7 @@ The [deploy page](/runtime/deploy) has the per-host details. The shape is the sa
 
 ## Step 9: Iterate from real usage
 
-The first version is wrong about things. That's expected. The interesting question is *how fast can you find what's wrong*.
+The first version is wrong about things, and that's expected. The interesting question is *how fast can you find what's wrong*.
 
 | Signal | Where |
 |--------|-------|
@@ -148,7 +146,7 @@ The agents that get better over time are the ones with feedback loops. Three pat
 | **Knowledge updates** | When you find a wrong-answer pattern, add the right answer to knowledge. The next user gets it. |
 | **Eval-gated deploys** | Every deploy runs an eval suite. Regressions block the merge. |
 
-The agents that get *worse* over time are the ones nobody is watching. Don't let that be yours.
+The agents that get *worse* over time are the ones nobody is watching. Don't let yours be one of them.
 
 ## What's left
 
@@ -161,7 +159,7 @@ You shipped. Now:
 | Compliance (SOC 2, HIPAA, etc.) | RBAC + audit logs + data residency choices in your storage backend |
 | Custom UIs | AG-UI for the chat surface; build the rest as a normal web app calling AgentOS |
 
-These are normal product concerns. AgentOS gives you the runtime. The product is yours.
+These are normal product concerns. AgentOS gives you the runtime, and the product is yours to ship.
 
 ## See it work end-to-end
 
