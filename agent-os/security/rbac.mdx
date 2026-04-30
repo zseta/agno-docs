@@ -44,10 +44,51 @@ agent_os = AgentOS(
 app = agent_os.get_app()
 ```
 
-Set the `JWT_VERIFICATION_KEY` environment variable to your public key in your `.env` file or export it directly in your terminal:
-```bash
-export JWT_VERIFICATION_KEY="your-public-key"
-```
+
+
+## Generate a Verification Key
+
+`authorization=True` only tells AgentOS to enforce JWT auth. To verify tokens, AgentOS also needs a public key. Generate one from the control plane and wire it in.
+
+<Note>
+RBAC requires JWT authentication. Without it, os-level scopes assigned in the control plane do not reach AgentOS and every request is treated as unauthenticated.
+</Note>
+
+<Steps>
+  <Step title="Toggle JWT authorization">
+    Enable JWT authorization when connecting a new AgentOS, or later from the OS Settings page.
+
+    {/* TODO: screenshot of the toggle */}
+  </Step>
+
+  <Step title="Copy the public key">
+    A modal appears with the public key for your AgentOS.
+
+    {/* TODO: screenshot of the modal */}
+  </Step>
+
+  <Step title="Set the verification key">
+    Set the `JWT_VERIFICATION_KEY` environment variable to your public key in your `.env` file or export it directly in your terminal:
+    ```bash
+    export JWT_VERIFICATION_KEY="your-public-key"
+    ```
+
+    Or, if you manage keys via a JWKS file, point AgentOS at it instead:
+    ```bash
+    export JWT_JWKS_FILE="/path/to/jwks.json"
+    ```
+  </Step>
+</Steps>
+
+Authorization is now active for your AgentOS.
+
+<video
+  autoPlay
+  muted
+  controls
+  className="w-full aspect-video"
+  src="/videos/auth-on-connect-web.mp4"
+></video>
 
 ## Scope Format
 
@@ -60,19 +101,53 @@ RBAC uses a hierarchical scope format:
 | `resource:*:action` | `agents:*:read` | Wildcard (equivalent to global) |
 | `agent_os:admin` | - | Full access to all endpoints |
 
+
 ## Complete Scope Reference
+
+### Organization Scopes
+
+Organization scopes are enforced at the control plane and do not map to AgentOS endpoints.
+
+| Scope | Description |
+|-------|-------------|
+| `os:read` | View AgentOS instances in the organization |
+| `os:write` | Create and update AgentOS instances |
+| `os:delete` | Delete AgentOS instances |
+| `org:read` | View organization details and members |
+| `org:write` | Update organization settings and manage members |
+| `org:delete` | Delete the organization |
+| `billing:read` | View billing details and invoices |
+| `billing:write` | Update billing settings and payment methods |
 
 ### Admin Scopes
 
 | Scope | Description |
 |-------|-------------|
-| `agent_os:admin` | Full admin access to all endpoints |
+| `agent_os:admin` | Full admin access to all AgentOS endpoints |
 
-### System Scopes
+
+
+### AgentOS config Scopes
 
 | Scope | Description |
 |-------|-------------|
-| `system:read` | View system configuration and available models |
+| `config:read` | View system configuration and available models |
+| `config:write` | Administrative writes such as database migrations |
+
+
+### Registry Scopes
+
+| Scope | Description |
+|-------|-------------|
+| `registry:read` | View the code-defined registry (tools, models, databases) |
+
+### Component Scopes
+
+| Scope | Description |
+|-------|-------------|
+| `components:read` | List and view components and their configs |
+| `components:write` | Create and update components and configs |
+| `components:delete` | Delete components and configs |
 
 ### Agent Scopes
 
@@ -176,8 +251,16 @@ AgentOS automatically maps endpoints to required scopes.
   <Tab title="System">
     | Endpoint | Required Scope |
     |----------|----------------|
-    | `GET /config` | `system:read` |
-    | `GET /models` | `system:read` |
+    | `GET /config` | `config:read` |
+    | `GET /models` | `config:read` |
+    | `POST /databases/all/migrate` | `config:write` |
+    | `POST /databases/*/migrate` | `config:write` |
+  </Tab>
+
+  <Tab title="Registry">
+    | Endpoint | Required Scope |
+    |----------|----------------|
+    | `GET /registry` | `registry:read` |
   </Tab>
 
   <Tab title="Agents">
@@ -251,8 +334,11 @@ AgentOS automatically maps endpoints to required scopes.
     | `GET /knowledge/content` | `knowledge:read` |
     | `GET /knowledge/content/*` | `knowledge:read` |
     | `GET /knowledge/config` | `knowledge:read` |
+    | `GET /knowledge/*/sources` | `knowledge:read` |
+    | `GET /knowledge/*/sources/*/files` | `knowledge:read` |
     | `POST /knowledge/search` | `knowledge:read` |
     | `POST /knowledge/content` | `knowledge:write` |
+    | `POST /knowledge/remote-content` | `knowledge:write` |
     | `PATCH /knowledge/content/*` | `knowledge:write` |
     | `DELETE /knowledge/content` | `knowledge:delete` |
     | `DELETE /knowledge/content/*` | `knowledge:delete` |
@@ -281,6 +367,7 @@ AgentOS automatically maps endpoints to required scopes.
     | `GET /traces` | `traces:read` |
     | `GET /traces/*` | `traces:read` |
     | `GET /trace_session_stats` | `traces:read` |
+    | `POST /traces/search` | `traces:read` |
   </Tab>
 
   <Tab title="Schedules">
@@ -308,7 +395,36 @@ AgentOS automatically maps endpoints to required scopes.
     | `POST /approvals/*/resolve` | `approvals:write` |
     | `DELETE /approvals/*` | `approvals:delete` |
   </Tab>
+
+  <Tab title="Components">
+    | Endpoint | Required Scope |
+    |----------|----------------|
+    | `GET /components` | `components:read` |
+    | `GET /components/*` | `components:read` |
+    | `GET /components/*/configs` | `components:read` |
+    | `GET /components/*/configs/*` | `components:read` |
+    | `GET /components/*/configs/current` | `components:read` |
+    | `POST /components` | `components:write` |
+    | `POST /components/*/configs` | `components:write` |
+    | `POST /components/*/configs/*/set-current` | `components:write` |
+    | `PATCH /components/*` | `components:write` |
+    | `PATCH /components/*/configs/*` | `components:write` |
+    | `DELETE /components/*` | `components:delete` |
+    | `DELETE /components/*/configs/*` | `components:delete` |
+  </Tab>
 </Tabs>
+
+## Access Prerequisites
+
+A few scopes gate access to everything downstream. Without them, finer-grained scopes have no effect because the user cannot reach the resources they apply to.
+
+| Scope | Without it, the user cannot |
+|-------|-----------------------------|
+| `org:read` | Access the organization at all |
+| `os:read` | List AgentOS instances in the organization |
+| `config:read` | Use any AgentOS endpoint (the UI loads `/config` on startup) |
+
+
 
 ## Custom Scope Mappings
 
