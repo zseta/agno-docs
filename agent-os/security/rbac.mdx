@@ -50,10 +50,6 @@ app = agent_os.get_app()
 
 `authorization=True` only tells AgentOS to enforce JWT auth. To verify tokens, AgentOS also needs a public key. Generate one from the control plane and wire it in.
 
-<Note>
-RBAC requires JWT authentication. Without it, os-level scopes assigned in the control plane do not reach AgentOS and every request is treated as unauthenticated.
-</Note>
-
 <Steps>
   <Step title="Toggle JWT authorization">
     Enable JWT authorization when connecting a new AgentOS, or later from the OS Settings page.
@@ -424,8 +420,6 @@ A few scopes gate access to everything downstream. Without them, finer-grained s
 | `os:read` | List AgentOS instances in the organization |
 | `config:read` | Use any AgentOS endpoint (the UI loads `/config` on startup) |
 
-
-
 ## Custom Scope Mappings
 
 Customize or extend the default scope mappings using the JWT middleware:
@@ -454,6 +448,46 @@ app.add_middleware(
 ```
 
 Custom scope mappings are additive to the defaults. To override a default, specify the same route pattern with your custom scopes.
+
+## Custom Roles and Scopes
+
+<Note>
+Custom roles and scopes are available on the Enterprise plan. [Contact sales](mailto:sales@agno.com) to enable.
+</Note>
+
+<Warning>
+Custom roles require JWT authentication. Without it, scope enforcement is skipped entirely by AgentOS and assigned roles have no effect.
+</Warning>
+
+Compose scopes into named roles in the control plane and assign them to users in your organization. Members inherit the scopes of every role assigned to them.
+
+### Create a Custom Role
+
+1. Open the Roles page in the control plane.
+2. Define a role name and select the scopes it grants.
+3. Save the role.
+
+<video
+  autoPlay
+  muted
+  controls
+  className="w-full aspect-video"
+  src="/videos/custom-role-creation.mp4"
+></video>
+
+### Assign a Role to a User
+
+1. Open the Members page in the control plane.
+2. Select a user and pick the role to assign.
+3. Save the assignment.
+
+<video
+  autoPlay
+  muted
+  controls
+  className="w-full aspect-video"
+  src="/videos/role-assignment.mp4"
+></video>
 
 ## JWT Token Structure
 
