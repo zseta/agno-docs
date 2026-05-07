@@ -82,13 +82,26 @@
             "group": "Welcome",
             "pages": [
               "index",
-              "first-agent"
+              "first-agent",
+              "coding-agents"
             ]
           },
           {
             "group": "Tutorials",
             "pages": [
               "tutorials/pick-a-template",
+              {
+                "group": "Agent Platform",
+                "pages": [
+                  "tutorials/agent-platform/overview",
+                  "tutorials/agent-platform/setup",
+                  "tutorials/agent-platform/create-an-agent",
+                  "tutorials/agent-platform/improve-an-agent",
+                  "tutorials/agent-platform/evals",
+                  "tutorials/agent-platform/deploy-to-railway",
+                  "tutorials/agent-platform/next-steps"
+                ]
+              },
               {
                 "group": "Scout",
                 "pages": [
@@ -119,15 +132,6 @@
                   "tutorials/coda/connect-slack",
                   "tutorials/coda/deploy-to-railway",
                   "tutorials/coda/next-steps"
-                ]
-              },
-              {
-                "group": "Starter",
-                "pages": [
-                  "tutorials/starter/overview",
-                  "tutorials/starter/setup",
-                  "tutorials/starter/deploy-to-railway",
-                  "tutorials/starter/next-steps"
                 ]
               }
             ]
@@ -7849,6 +7853,22 @@
     ]
   },
   "redirects": [
+    {
+      "source": "/tutorials/starter/overview",
+      "destination": "/tutorials/agent-platform/overview"
+    },
+    {
+      "source": "/tutorials/starter/setup",
+      "destination": "/tutorials/agent-platform/setup"
+    },
+    {
+      "source": "/tutorials/starter/deploy-to-railway",
+      "destination": "/tutorials/agent-platform/deploy-to-railway"
+    },
+    {
+      "source": "/tutorials/starter/next-steps",
+      "destination": "/tutorials/agent-platform/next-steps"
+    },
     {
       "source": "/home",
       "destination": "/"
