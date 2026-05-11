@@ -136,7 +136,7 @@ The agent sees four tools: `query_slack`, `query_drive`, `query_crm`, `update_cr
 | `WorkspaceContextProvider` | Composite: Drive + Gmail + Calendar | `query_<id>` | `update_<id>` |
 | `MCPContextProvider` | Any MCP server (stdio, SSE, streamable-HTTP) | `query_<id>` | — |
 
-### Web has multiple backends
+#### Web backends
 
 `WebContextProvider` takes a backend, so you can swap providers without touching the agent:
 
@@ -153,7 +153,7 @@ from agno.context.web import WebContextProvider, ExaBackend
 web = WebContextProvider(backend=ExaBackend(), id="web")
 ```
 
-### Read/write separation
+#### Read/write separation
 
 Writable providers (Database, Slack, GitHub) run two sub-agents under the hood with minimum privilege per role:
 
@@ -163,7 +163,9 @@ Writable providers (Database, Slack, GitHub) run two sub-agents under the hood w
 
 These are infrastructure-level guarantees, not prompt instructions. They hold even if the model goes off-script.
 
-### Lifecycle
+### Configuration
+
+#### Lifecycle
 
 Some providers hold async resources: MCP sessions, watched inboxes, cloned repos. They implement `asetup()` and `aclose()`. Bracket their use so the resource is owned by a single task:
 
@@ -180,7 +182,7 @@ In an AgentOS app, register providers with the runtime and they're set up and to
 
 Providers without async resources (`FilesystemContextProvider`, `DatabaseContextProvider` with sync engines, the SDK-based web backends) work without `asetup` / `aclose`.
 
-### Mode: how tools surface
+#### Mode
 
 Every provider has a `mode` parameter that controls how it exposes tools to the calling agent:
 
@@ -203,7 +205,7 @@ web = WebContextProvider(backend=ExaBackend(), id="web", mode=ContextMode.tools)
 
 Why this matters: In `default` mode, `WebContextProvider` wraps its backend in a sub-agent that synthesizes cited answers. In `tools` mode, your agent calls `web_search` and `web_fetch` directly and does its own synthesis. The tradeoff is control vs. complexity.
 
-### RunContext propagation
+#### RunContext propagation
 
 When a provider runs a sub-agent, it extracts auth and framework state from the caller's `RunContext` and forwards it:
 
@@ -225,7 +227,7 @@ The forwarded fields are `user_id`, `session_id`, `metadata`, and `dependencies`
 
 Message history and `session_state` stay with the outer agent. Sub-agents run isolated.
 
-### Read/write flags
+#### Read/write flags
 
 Providers with both read and write support can be restricted to one direction:
 
@@ -239,7 +241,9 @@ gmail = GmailContextProvider(id="gmail", read=False)
 
 At least one of `read` or `write` must be `True`. This is infrastructure-level: even if the model hallucinates a write call, the tool isn't exposed.
 
-### Multi-provider in one agent
+### Composition
+
+#### Multi-provider
 
 Three providers on one agent compose cleanly because each provider has its own namespace:
 
@@ -257,7 +261,7 @@ agent = Agent(
 
 The agent sees `query_cookbooks`, `query_web`, `query_releases` and picks the right one per question. The compositional payoff lands when one provider's output feeds another's query: pull a topic from Slack, run a web search on it, synthesize the briefing in one turn.
 
-### Custom providers
+#### Custom providers
 
 When the built-ins don't fit, subclass `ContextProvider`. The base class handles tool wrapping, name derivation, and error shaping.
 
@@ -306,7 +310,7 @@ agent = Agent(model=..., tools=faq.get_tools())
 The agent now has a `query_faq` tool. Same shape as every built-in provider.
 </Accordion>
 
-### Configurable sub-agent model
+#### Sub-agent model
 
 Every provider runs its own sub-agent on a configurable model. Default to a cheap one for the source-specific work and let the calling agent use a stronger model for synthesis:
 
@@ -320,7 +324,9 @@ agent = Agent(model=OpenAIResponses(id="gpt-5.4"), tools=slack.get_tools())
 
 The sub-agent does the tool work; the calling agent does the reasoning. On most workloads this is cheaper *and* faster than putting every source's tools on one big agent.
 
-### Google providers
+### Provider catalog
+
+#### Google providers
 
 Agno includes four Google-specific providers. All support two auth methods:
 
@@ -410,7 +416,7 @@ Agno includes four Google-specific providers. All support two auth methods:
   </Tab>
 </Tabs>
 
-### WikiContextProvider
+#### WikiContextProvider
 
 Read/write access to a directory of markdown files. Choose a backend based on your versioning needs:
 
