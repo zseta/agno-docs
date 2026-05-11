@@ -14962,26 +14962,6 @@
       "destination": "/examples/agent-os/advanced-demo/teams"
     },
     {
-      "source": "/examples/agents/agno-assist",
-      "destination": "/cookbook/agents/agno-assist"
-    },
-    {
-      "source": "/examples/agents/airbnb_mcp",
-      "destination": "/cookbook/agents/airbnb_mcp"
-    },
-    {
-      "source": "/examples/agents/competitor-analysis-agent",
-      "destination": "/cookbook/agents/competitor-analysis-agent"
-    },
-    {
-      "source": "/examples/agents/deep_knowledge",
-      "destination": "/cookbook/agents/deep_knowledge"
-    },
-    {
-      "source": "/examples/agents/overview",
-      "destination": "/cookbook/agents/overview"
-    },
-    {
       "source": "/examples/agents/quickstart/agent-with-instructions",
       "destination": "/examples/agents/basics/agent-with-instructions"
     },
@@ -14996,70 +14976,6 @@
     {
       "source": "/examples/agents/quickstart/overview",
       "destination": "/examples/agents/basics/overview"
-    },
-    {
-      "source": "/examples/agents/research-agent",
-      "destination": "/cookbook/agents/research-agent"
-    },
-    {
-      "source": "/examples/agents/social_media_agent",
-      "destination": "/cookbook/agents/social_media_agent"
-    },
-    {
-      "source": "/examples/agents/speech-to-text-agent",
-      "destination": "/cookbook/agents/speech-to-text-agent"
-    },
-    {
-      "source": "/examples/agents/startup-analyst-agent",
-      "destination": "/cookbook/agents/startup-analyst-agent"
-    },
-    {
-      "source": "/examples/agents/translation_agent",
-      "destination": "/cookbook/agents/translation_agent"
-    },
-    {
-      "source": "/examples/agents/web-extraction-agent",
-      "destination": "/cookbook/agents/web-extraction-agent"
-    },
-    {
-      "source": "/examples/agents/youtube-agent",
-      "destination": "/cookbook/agents/youtube-agent"
-    },
-    {
-      "source": "/examples/knowledge/chunking",
-      "destination": "/cookbook/knowledge/chunking"
-    },
-    {
-      "source": "/examples/knowledge/embedders",
-      "destination": "/cookbook/knowledge/embedders"
-    },
-    {
-      "source": "/examples/knowledge/overview",
-      "destination": "/cookbook/knowledge/overview"
-    },
-    {
-      "source": "/examples/knowledge/readers",
-      "destination": "/cookbook/knowledge/readers"
-    },
-    {
-      "source": "/examples/knowledge/vector-databases",
-      "destination": "/cookbook/knowledge/vector-databases"
-    },
-    {
-      "source": "/examples/learning/overview",
-      "destination": "/cookbook/learning/overview"
-    },
-    {
-      "source": "/examples/learning/personal-assistant",
-      "destination": "/cookbook/learning/personal-assistant"
-    },
-    {
-      "source": "/examples/learning/support-agent",
-      "destination": "/cookbook/learning/support-agent"
-    },
-    {
-      "source": "/examples/overview",
-      "destination": "/cookbook/overview"
     },
     {
       "source": "/examples/quickstart/agent-search-over-knowledge",
@@ -15118,46 +15034,6 @@
       "destination": "/examples/basics/sequential-workflow"
     },
     {
-      "source": "/examples/storage/overview",
-      "destination": "/cookbook/storage/overview"
-    },
-    {
-      "source": "/examples/streamlit/agentic-rag",
-      "destination": "/cookbook/streamlit/agentic-rag"
-    },
-    {
-      "source": "/examples/streamlit/answer-engine",
-      "destination": "/cookbook/streamlit/answer-engine"
-    },
-    {
-      "source": "/examples/streamlit/overview",
-      "destination": "/cookbook/streamlit/overview"
-    },
-    {
-      "source": "/examples/streamlit/text-to-sql",
-      "destination": "/cookbook/streamlit/text-to-sql"
-    },
-    {
-      "source": "/examples/teams/ai_support_team",
-      "destination": "/cookbook/teams/ai_support_team"
-    },
-    {
-      "source": "/examples/teams/content_team",
-      "destination": "/cookbook/teams/content_team"
-    },
-    {
-      "source": "/examples/teams/hackernews_team",
-      "destination": "/cookbook/teams/hackernews_team"
-    },
-    {
-      "source": "/examples/teams/news_agency_team",
-      "destination": "/cookbook/teams/news_agency_team"
-    },
-    {
-      "source": "/examples/teams/overview",
-      "destination": "/cookbook/teams/overview"
-    },
-    {
       "source": "/examples/teams/quickstart/basic-coordination",
       "destination": "/examples/teams/basics/basic-coordination"
     },
@@ -15212,162 +15088,6 @@
     {
       "source": "/examples/teams/quickstart/team-history",
       "destination": "/examples/teams/basics/team-history"
-    },
-    {
-      "source": "/examples/teams/reasoning_team",
-      "destination": "/cookbook/teams/reasoning_team"
-    },
-    {
-      "source": "/examples/tools/built-in",
-      "destination": "/cookbook/tools/built-in"
-    },
-    {
-      "source": "/examples/tools/custom-tools",
-      "destination": "/cookbook/tools/custom-tools"
-    },
-    {
-      "source": "/examples/tools/mcp",
-      "destination": "/cookbook/tools/mcp"
-    },
-    {
-      "source": "/examples/tools/overview",
-      "destination": "/cookbook/tools/overview"
-    },
-    {
-      "source": "/examples/tools/tool-calls-accesing-agent",
-      "destination": "/cookbook/tools/overview"
-    },
-    {
-      "source": "/examples/tools/tool-hooks",
-      "destination": "/cookbook/tools/tool-hooks"
-    },
-    {
-      "source": "/examples/use-cases/agents/agno-assist",
-      "destination": "/cookbook/agents/agno-assist"
-    },
-    {
-      "source": "/examples/use-cases/agents/airbnb_mcp",
-      "destination": "/cookbook/agents/airbnb_mcp"
-    },
-    {
-      "source": "/examples/use-cases/agents/competitor-analysis-agent",
-      "destination": "/cookbook/agents/competitor-analysis-agent"
-    },
-    {
-      "source": "/examples/use-cases/agents/deep_knowledge",
-      "destination": "/cookbook/agents/deep_knowledge"
-    },
-    {
-      "source": "/examples/use-cases/agents/overview",
-      "destination": "/cookbook/agents/overview"
-    },
-    {
-      "source": "/examples/use-cases/agents/research-agent",
-      "destination": "/cookbook/agents/research-agent"
-    },
-    {
-      "source": "/examples/use-cases/agents/social_media_agent",
-      "destination": "/cookbook/agents/social_media_agent"
-    },
-    {
-      "source": "/examples/use-cases/agents/speech-to-text-agent",
-      "destination": "/cookbook/agents/speech-to-text-agent"
-    },
-    {
-      "source": "/examples/use-cases/agents/startup-analyst-agent",
-      "destination": "/cookbook/agents/startup-analyst-agent"
-    },
-    {
-      "source": "/examples/use-cases/agents/translation_agent",
-      "destination": "/cookbook/agents/translation_agent"
-    },
-    {
-      "source": "/examples/use-cases/agents/web-extraction-agent",
-      "destination": "/cookbook/agents/web-extraction-agent"
-    },
-    {
-      "source": "/examples/use-cases/agents/youtube-agent",
-      "destination": "/cookbook/agents/youtube-agent"
-    },
-    {
-      "source": "/examples/use-cases/overview",
-      "destination": "/cookbook/overview"
-    },
-    {
-      "source": "/examples/use-cases/streamlit/agentic-rag",
-      "destination": "/cookbook/streamlit/agentic-rag"
-    },
-    {
-      "source": "/examples/use-cases/streamlit/answer-engine",
-      "destination": "/cookbook/streamlit/answer-engine"
-    },
-    {
-      "source": "/examples/use-cases/streamlit/text-to-sql",
-      "destination": "/cookbook/streamlit/text-to-sql"
-    },
-    {
-      "source": "/examples/use-cases/teams/ai_support_team",
-      "destination": "/cookbook/teams/ai_support_team"
-    },
-    {
-      "source": "/examples/use-cases/teams/content_team",
-      "destination": "/cookbook/teams/content_team"
-    },
-    {
-      "source": "/examples/use-cases/teams/hackernews_team",
-      "destination": "/cookbook/teams/hackernews_team"
-    },
-    {
-      "source": "/examples/use-cases/teams/news_agency_team",
-      "destination": "/cookbook/teams/news_agency_team"
-    },
-    {
-      "source": "/examples/use-cases/teams/overview",
-      "destination": "/cookbook/teams/overview"
-    },
-    {
-      "source": "/examples/use-cases/teams/reasoning_team",
-      "destination": "/cookbook/teams/reasoning_team"
-    },
-    {
-      "source": "/examples/use-cases/workflows/blog-post-generator",
-      "destination": "/cookbook/workflows/blog-post-generator"
-    },
-    {
-      "source": "/examples/use-cases/workflows/company-description",
-      "destination": "/cookbook/workflows/company-description"
-    },
-    {
-      "source": "/examples/use-cases/workflows/employee-recruiter",
-      "destination": "/cookbook/workflows/employee-recruiter"
-    },
-    {
-      "source": "/examples/use-cases/workflows/notion-knowledge-manager",
-      "destination": "/cookbook/workflows/notion-knowledge-manager"
-    },
-    {
-      "source": "/examples/use-cases/workflows/overview",
-      "destination": "/cookbook/workflows/overview"
-    },
-    {
-      "source": "/examples/workflows/blog-post-generator",
-      "destination": "/cookbook/workflows/blog-post-generator"
-    },
-    {
-      "source": "/examples/workflows/company-description",
-      "destination": "/cookbook/workflows/company-description"
-    },
-    {
-      "source": "/examples/workflows/employee-recruiter",
-      "destination": "/cookbook/workflows/employee-recruiter"
-    },
-    {
-      "source": "/examples/workflows/notion-knowledge-manager",
-      "destination": "/cookbook/workflows/notion-knowledge-manager"
-    },
-    {
-      "source": "/examples/workflows/overview",
-      "destination": "/cookbook/workflows/overview"
     },
     {
       "source": "/features/evals/telemetry",
@@ -15882,10 +15602,6 @@
       "destination": "/agent-os/interfaces/ag-ui/introduction"
     },
     {
-      "source": "/examples/agents/finance-agent",
-      "destination": "/cookbook/agents/overview"
-    },
-    {
       "source": "/examples/getting-started/human-in-the-loop",
       "destination": "/examples/agents/human-in-the-loop/overview"
     },
@@ -15912,10 +15628,6 @@
     {
       "source": "/concepts/:slug*",
       "destination": "/knowledge/concepts/:slug*"
-    },
-    {
-      "source": "/examples/use-cases/:slug*",
-      "destination": "/cookbook/:slug*"
     },
     {
       "source": "/examples/concepts/:slug*",
