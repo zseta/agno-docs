@@ -65,16 +65,6 @@ Hit `POST /agents/tenant-agent/runs` and the factory is invoked with a [`Request
 | Client picks persona, depth, or style | Factory with `input_schema` reading `ctx.input` |
 | Static, shared component | A prototype `Agent` / `Team` / `Workflow` (no factory) |
 
-## How It Works
-
-1. Register a factory in `AgentOS(agents=[...])`, `teams=[...]`, or `workflows=[...]`.
-2. The client calls the same endpoint as a prototype component (`POST /agents/{id}/runs`).
-3. AgentOS builds a [`RequestContext`](/reference/agent-os/factories#requestcontext) carrying the caller's identity, verified claims, and any `factory_input` sent with the request.
-4. AgentOS validates `factory_input` against the factory's `input_schema`, if set.
-5. AgentOS invokes the factory with the validated context and gets a fresh component back.
-6. The component's `id` is forced to match the factory's `id`. Its `db` is filled in from the factory if falsy. `store_events=True` is set. The relevant `initialize_agent()` / `initialize_team()` / `initialize_workflow()` runs. Then the request runs.
-
-The prototype path (a plain `Agent` / `Team` / `Workflow` in the same list) is unchanged. Factories and prototypes coexist in the same `AgentOS`.
 
 <Note>
 `GET /agents/{id}`, `GET /teams/{id}`, and `GET /workflows/{id}` (the component-detail endpoints) return the factory's metadata without invoking it. The [Factories reference](/reference/agent-os/factories) has the full per-endpoint behavior and discovery payload shape.
