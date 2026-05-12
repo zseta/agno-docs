@@ -69,7 +69,7 @@ Hit `POST /agents/tenant-agent/runs` and the factory is invoked with a [`Request
 
 1. Register a factory in `AgentOS(agents=[...])`, `teams=[...]`, or `workflows=[...]`.
 2. The client calls the same endpoint as a prototype component (`POST /agents/{id}/runs`).
-3. AgentOS builds a `RequestContext`. `user_id` and `session_id` come from `request.state` (set by verified middleware) and fall back to the form field; on `POST /runs`, a conflict between the two logs a warning. `claims` and `scopes` come from `request.state` only. `factory_input` is parsed from the form, the query string (workflow GETs), or the WebSocket message body (workflow WebSocket runs), depending on the endpoint.
+3. AgentOS builds a [`RequestContext`](/reference/agent-os/factories#requestcontext) carrying the caller's identity, verified claims, and any `factory_input` sent with the request.
 4. AgentOS validates `factory_input` against the factory's `input_schema`, if set.
 5. AgentOS invokes the factory with the validated context and gets a fresh component back.
 6. The component's `id` is forced to match the factory's `id`. Its `db` is filled in from the factory if falsy. `store_events=True` is set. The relevant `initialize_agent()` / `initialize_team()` / `initialize_workflow()` runs. Then the request runs.
