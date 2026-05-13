@@ -4,9 +4,9 @@ description: "Build and run your first agent in 20 lines of code."
 keywords: [agno, agent, quickstart, tutorial]
 ---
 
-An agent that works in your filesystem, remembers you across sessions, and runs as a production API. To go further and build an [agent platform](/tutorials/agent-platform/overview), start from the template.
+Let's build an agent that can read/write local files, has long and short term memory, and runs as a production API you can build a product on top of.
 
-## 1. Define the Agent
+## 1. Create the Agent
 
 Save the following code as `workbench.py`:
 
@@ -28,12 +28,12 @@ workbench = Agent(
     num_history_runs=3,  # last 3 conversations
 )
 
-# Serve via AgentOS → streaming, auth, session isolation, API endpoints
+# Serve via AgentOS
 agent_os = AgentOS(agents=[workbench], tracing=True, db=SqliteDb(db_file="agno.db"))
 app = agent_os.get_app()
 ```
 
-`Workspace(".")` scopes the agent to the current directory. `read`, `list`, and `search` run freely; `write`, `edit`, `move`, `delete`, and `shell` require human approval.
+`Workspace(".")` scopes the agent to the current directory. `read`, `list`, and `search` run without approval. `write`, `edit`, `delete`, and `shell` require human approval.
 
 ## 2. Run Your AgentOS
 
@@ -118,7 +118,9 @@ Use it to test, monitor, and manage your agents in real time.
 
 **Click on Chat, and ask:**
 
-> List the files here and tell me what kind of project this is.
+```text
+List the files here and tell me what kind of project this is.
+```
 
 The agent reads your workspace and answers grounded in what it actually finds.
 
