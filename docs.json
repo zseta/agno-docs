@@ -81,9 +81,26 @@
           {
             "group": "Welcome",
             "pages": [
-              "index",
+              "index"
+            ]
+          },
+          {
+            "group": "Get Started",
+            "pages": [
               "first-agent",
-              "coding-agents"
+              "coding-agents",
+              {
+                "group": "Build Your Agent Platform",
+                "pages": [
+                  "agent-platform/overview",
+                  "agent-platform/setup",
+                  "agent-platform/create-an-agent",
+                  "agent-platform/improve-an-agent",
+                  "agent-platform/evals",
+                  "agent-platform/deploy-to-railway",
+                  "agent-platform/next-steps"
+                ]
+              }
             ]
           },
           {
