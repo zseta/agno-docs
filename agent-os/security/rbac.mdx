@@ -107,10 +107,10 @@ The `agent_os:admin` scope grants full access to every AgentOS endpoint below.
 | `os:write` | Create and update AgentOS instances |
 | `os:delete` | Delete AgentOS instances |
 | `org:read` | View organization details |
-| `org:write` | Update organization settings |
+| `org:write` | Update organization details |
 | `org:delete` | Delete the organization |
 | `org:members:read` | View organization members |
-| `org:members:write` | Invite, and update organization members |
+| `org:members:write` | Invite and update organization members |
 | `org:roles:read` | View organization roles and their scope assignments |
 | `org:roles:write` | Create and update organization role scopes |
 | `org:roles:delete` | Delete organization roles |
@@ -324,6 +324,23 @@ app.add_middleware(
 ```
 
 Custom scope mappings are additive to the defaults. To override a default, specify the same route pattern with your custom scopes.
+
+## Default Roles
+
+Every organization comes with three default roles.
+
+| Capability                          | Owner | Administrator | Member |
+|-------------------------------------|:-----:|:-------------:|:------:|
+| Run agents, teams, workflows        |   ✓   |       ✓       |   ✓    |
+| Create and update AgentOS resources |   ✓   |       ✓       |   ✓    |
+| Delete AgentOS resources            |   ✓   |       ✓       |        |
+| Create and update AgentOS instances |   ✓   |       ✓       |   ✓    |
+| Delete AgentOS instances            |   ✓   |               |        |
+| Manage members and roles            |   ✓   |       ✓       |        |
+| Update organization settings        |   ✓   |       ✓       |        |
+| View billing                        |   ✓   |       ✓       |   ✓    |
+| Update billing                      |   ✓   |               |        |
+| Delete the organization             |   ✓   |               |        |
 
 ## Custom Roles and Scopes
 
