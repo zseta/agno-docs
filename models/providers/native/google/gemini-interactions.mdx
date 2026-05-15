@@ -49,7 +49,7 @@ from agno.agent import Agent
 from agno.models.google import GeminiInteractions
 
 agent = Agent(
-    model=GeminiInteractions(id="gemini-2.5-flash"),
+    model=GeminiInteractions(id="gemini-3-flash-preview"),
     markdown=True,
 )
 
@@ -98,7 +98,7 @@ from agno.agent import Agent
 from agno.models.google import GeminiInteractions
 
 agent = Agent(
-    model=GeminiInteractions(id="gemini-2.5-flash"),
+    model=GeminiInteractions(id="gemini-3-flash-preview"),
     add_history_to_context=True,
     markdown=True,
 )
@@ -120,7 +120,7 @@ from agno.models.google import GeminiInteractions
 
 agent = Agent(
     model=GeminiInteractions(
-        id="gemini-2.5-flash",
+        id="gemini-3-flash-preview",
         thinking_level="high",
     ),
     markdown=True,
@@ -141,7 +141,7 @@ from agno.models.google import GeminiInteractions
 
 agent = Agent(
     model=GeminiInteractions(
-        id="gemini-2.5-flash",
+        id="gemini-3-flash-preview",
         search=True,
     ),
     markdown=True,
@@ -162,7 +162,7 @@ from agno.models.google import GeminiInteractions
 from agno.tools.websearch import WebSearchTools
 
 agent = Agent(
-    model=GeminiInteractions(id="gemini-2.5-flash"),
+    model=GeminiInteractions(id="gemini-3-flash-preview"),
     tools=[WebSearchTools()],
     markdown=True,
 )
@@ -189,7 +189,7 @@ class MovieReview(BaseModel):
     summary: str = Field(description="Brief review summary")
 
 agent = Agent(
-    model=GeminiInteractions(id="gemini-2.5-flash"),
+    model=GeminiInteractions(id="gemini-3-flash-preview"),
     output_schema=MovieReview,
 )
 
@@ -208,7 +208,7 @@ from agno.models.google import GeminiInteractions
 
 agent = Agent(
     model=GeminiInteractions(
-        id="gemini-2.5-flash",
+        id="gemini-3-flash-preview",
         background=True,
     ),
     markdown=True,
