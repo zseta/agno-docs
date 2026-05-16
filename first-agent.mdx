@@ -104,14 +104,25 @@ agent_os = AgentOS(agents=[workbench], tracing=True)
 app = agent_os.get_app()
 ```
 
-Install the `os` extra and run with FastAPI:
+Install new dependencies and run your Agent as a Service:
 
-```bash
-uv pip install -U 'agno[os]'
-fastapi dev workbench.py
-```
+<Steps>
+  <Step title="Install new dependencies">
+    ```bash
+    uv pip install -U 'agno[os]'
+    ```
+  </Step>
+  <Step title="Run your service using FastAPI">
+    ```bash
+    fastapi dev workbench.py
+    ```
+  </Step>
+  <Step title="Confirm server is running">
+  Your AgentOS is now running at `http://localhost:8000`.
 
-Your AgentOS is now running at `http://localhost:8000`. API docs are at `http://localhost:8000/docs`.
+  Open [http://localhost:8000/docs](http://localhost:8000/docs) to view the API docs.
+  </Step>
+</Steps>
 
 20 lines of code and you have:
 - A stateful agent served as a production API
@@ -121,9 +132,9 @@ Your AgentOS is now running at `http://localhost:8000`. API docs are at `http://
 
 No third-party services required.
 
-### Give your Agent a UI
+## Give your Agent a UI
 
-The code above runs our agent as a service using the AgentOS. AgentOS is a FastAPI-based runtime that serves agents and related operations as REST APIs.
+The code above runs our agent as a service using AgentOS. AgentOS is a FastAPI-based runtime that serves agents and related operations as REST APIs.
 
 AgentOS also comes with a UI, available at: [os.agno.com](https://os.agno.com). It connects directly from your browser to the running API. Use it to test, monitor, and manage your agents in real time.
 
