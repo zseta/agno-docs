@@ -7,7 +7,7 @@ keywords: [slack, deploy, setup, oauth, scopes, events, ngrok, bot]
 ```python slack_bot.py
 from agno.agent import Agent
 from agno.db.sqlite import SqliteDb
-from agno.models.openai import OpenAIChat
+from agno.models.openai import OpenAIResponses
 from agno.os.app import AgentOS
 from agno.os.interfaces.slack import Slack
 
@@ -15,7 +15,7 @@ agent_db = SqliteDb(session_table="agent_sessions", db_file="tmp/persistent_memo
 
 basic_agent = Agent(
     name="Basic Agent",
-    model=OpenAIChat(id="gpt-4o"),
+    model=OpenAIResponses(id="gpt-5.4"),
     db=agent_db,
     add_history_to_context=True,
     num_history_runs=3,

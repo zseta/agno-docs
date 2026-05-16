@@ -4469,7 +4469,13 @@
                       "agent-os/interfaces/slack/reference"
                     ]
                   },
-                  "agent-os/interfaces/telegram/introduction"
+                  {
+                    "group": "Telegram",
+                    "pages": [
+                      "agent-os/interfaces/telegram/introduction",
+                      "agent-os/interfaces/telegram/reference"
+                    ]
+                  }
                 ]
               },
               {

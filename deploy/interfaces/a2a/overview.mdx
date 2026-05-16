@@ -1,8 +1,84 @@
 ---
-title: "A2A"
-description: "Connect your agents to the Agent-to-Agent protocol for inter-agent communication."
+title: A2A
+description: Expose Agno agents via Google's Agent-to-Agent protocol for inter-agent communication.
 ---
 
-<Info>
-A2A interface documentation is coming soon. For now, see [A2A in the SDK](/agent-os/interfaces/a2a/introduction) or [reach out for help](/get-help).
-</Info>
+[A2A](https://a2a-protocol.org/) (Agent-to-Agent Protocol) is Google's open standard for agent interoperability. Expose your Agno agents so other A2A-compatible systems can discover and communicate with them.
+
+```python a2a_agent.py
+from agno.agent import Agent
+from agno.models.openai import OpenAIResponses
+from agno.os import AgentOS
+
+agent = Agent(
+    name="Research Assistant",
+    model=OpenAIResponses(id="gpt-5.4"),
+    instructions="You help with research tasks.",
+)
+
+agent_os = AgentOS(
+    agents=[agent],
+    a2a_interface=True,
+)
+agent_os.serve(port=9001)
+```
+
+<Note>
+Install the dependency: `uv pip install 'agno[a2a]'`
+</Note>
+
+## The Protocol Stack
+
+A2A is one layer of a three-protocol stack:
+
+| Protocol | Purpose |
+| --- | --- |
+| MCP | Agents ↔ Tools & Data |
+| A2A | Agents ↔ Agents |
+| AG-UI | Agents ↔ Users |
+
+## Quick Start
+
+<Steps>
+
+<Step title="Run your agent">
+```bash
+python a2a_agent.py
+```
+
+Your agent exposes A2A endpoints at `http://localhost:9001/a2a/agents/{agent_id}/`.
+</Step>
+
+<Step title="Discover the agent">
+Other A2A clients can fetch your agent's card:
+
+```bash
+curl http://localhost:9001/a2a/agents/research-assistant/.well-known/agent-card.json
+```
+</Step>
+
+<Step title="Send a message">
+```bash
+curl -X POST http://localhost:9001/a2a/agents/research-assistant/v1/message:send \
+  -H "Content-Type: application/json" \
+  -d '{"message": {"role": "user", "parts": [{"text": "Hello!"}]}}'
+```
+</Step>
+
+</Steps>
+
+## Endpoints
+
+Each agent, team, and workflow exposes three A2A endpoints:
+
+| Endpoint | Purpose |
+| --- | --- |
+| `/.well-known/agent-card.json` | Agent discovery card |
+| `/v1/message:stream` | Streaming responses |
+| `/v1/message:send` | Non-streaming responses |
+
+## Developer Resources
+
+- [A2A Interface](/agent-os/interfaces/a2a/introduction)
+- [A2A Client](/agent-os/client/a2a-client)
+- [A2A Protocol Docs](https://a2a-protocol.org/)
