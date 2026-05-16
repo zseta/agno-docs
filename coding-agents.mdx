@@ -3,15 +3,17 @@ title: Use Agno with Coding Agents
 description: "Give your coding agent access to Agno documentation."
 ---
 
-Two ways to get Agno's full documentation accessible to your coding agents.
+Agno is designed to be used with coding agents, and there are two ways to give your coding agents access to the Agno documentation.
 
 ## Option 1: Add the Docs as an MCP Server
 
-Add [https://docs.agno.com/mcp](https://docs.agno.com/mcp) as an MCP server in your coding agent. The agent gets live access to the docs directly.
+Add [https://docs.agno.com/mcp](https://docs.agno.com/mcp) as an MCP server in your coding agent.
 
-Works in any MCP-aware client: Claude Code, Cursor, Codex, Continue, and others.
+This works with any MCP-aware client: Claude Code, Cursor, Codex, Continue, and others.
 
-### Claude Code example
+The agent gets live access to the docs directly.
+
+### Example: Claude Code
 
 Two ways to give claude code access to agno. Add it using the CLI:
 
@@ -19,7 +21,7 @@ Two ways to give claude code access to agno. Add it using the CLI:
 claude mcp add agno-docs https://docs.agno.com/mcp
 ```
 
-Or commit a `.mcp.json` to your repo so anyone cloning it gets the docs wired in automatically:
+Or add a `.mcp.json` to your repo so anyone using it gets the docs wired in automatically:
 
 ```json .mcp.json
 {
@@ -32,11 +34,13 @@ Or commit a `.mcp.json` to your repo so anyone cloning it gets the docs wired in
 }
 ```
 
-Then in any session, the agent can search, read pages, and pull code samples on demand.
+Then your coding agent can search, read pages, and pull code samples on demand.
 
 ## Option 2: Index the docs
 
-Add `https://docs.agno.com/llms-full.txt` as an indexed source. Your coding agent reads it like any other doc reference.
+Add `https://docs.agno.com/llms-full.txt` as an indexed source to your documentation.
+
+Your coding agent reads it like any other doc reference.
 
 | Tool         | Where to add it                                                    |
 | ------------ | ------------------------------------------------------------------ |
