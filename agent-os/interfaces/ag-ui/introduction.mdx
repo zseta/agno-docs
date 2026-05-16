@@ -107,10 +107,10 @@ Main entry point for AG-UI exposure.
 
 ### Initialization Parameters
 
-| Parameter | Type                  | Default     | Description                                    |
-| --------- | --------------------- | ----------- | ---------------------------------------------- |
-| `agent`   | `Optional[Agent]`     | `None`      | Agno `Agent` instance.                         |
-| `team`    | `Optional[Team]`      | `None`      | Agno `Team` instance.                          |
+| Parameter | Type                                  | Default     | Description                                    |
+| --------- | ------------------------------------- | ----------- | ---------------------------------------------- |
+| `agent`   | `Optional[Union[Agent, RemoteAgent]]` | `None`      | Agno `Agent` or `RemoteAgent` instance.        |
+| `team`    | `Optional[Union[Team, RemoteTeam]]`   | `None`      | Agno `Team` or `RemoteTeam` instance.          |
 | `prefix`  | `str`                 | `""`        | Route prefix (e.g., `/chat`, `/web-research`). |
 | `tags`    | `Optional[List[str]]` | `["AGUI"]`  | OpenAPI tags for the router.                   |
 
