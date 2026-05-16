@@ -1,7 +1,152 @@
 ---
-title: "Overview"
+title: AG-UI
+description: Expose Agno agents via the AG-UI protocol for frontend integration.
 ---
 
-<Info>
-  This page is coming soon. If you have any questions or need help, see [getting help](/get-help).
-</Info>
+[AG-UI](https://docs.ag-ui.com/) (Agent-User Interaction Protocol) is an open, event-based protocol for connecting AI agents to frontend applications. Unlike messaging platforms that require app setup and webhooks, AG-UI is code-first. Run your agent and connect any compatible frontend.
+
+<CodeGroup>
+```python agent.py
+from agno.agent import Agent
+from agno.models.openai import OpenAIResponses
+from agno.os import AgentOS
+from agno.os.interfaces.agui import AGUI
+
+agent = Agent(
+    name="Assistant",
+    model=OpenAIResponses(id="gpt-5.4"),
+    instructions="You are a helpful assistant.",
+    markdown=True,
+)
+
+agent_os = AgentOS(
+    agents=[agent],
+    interfaces=[AGUI(agent=agent)],
+)
+agent_os.serve(port=9001)
+```
+
+```python team.py
+from agno.agent import Agent
+from agno.team import Team
+from agno.models.openai import OpenAIResponses
+from agno.os import AgentOS
+from agno.os.interfaces.agui import AGUI
+
+researcher = Agent(name="Researcher", model=OpenAIResponses(id="gpt-5.4"))
+writer = Agent(name="Writer", model=OpenAIResponses(id="gpt-5.4"))
+
+team = Team(
+    name="Research Team",
+    agents=[researcher, writer],
+    mode="coordinate",
+)
+
+agent_os = AgentOS(
+    teams=[team],
+    interfaces=[AGUI(team=team)],
+)
+agent_os.serve(port=9001)
+```
+</CodeGroup>
+
+<Note>
+Install the dependency: `uv pip install 'agno[agui]'`
+</Note>
+
+## The Protocol Stack
+
+AG-UI is one layer of a three-protocol stack adopted by AWS, Google, Microsoft, and major AI frameworks:
+
+| Protocol | Purpose |
+| --- | --- |
+| MCP | Agents ↔ Tools & Data |
+| A2A | Agents ↔ Agents |
+| AG-UI | Agents ↔ Users |
+
+MCP connects agents to external tools. A2A enables cross-agent coordination. AG-UI delivers real-time, interactive experiences to users.
+
+## Quick Start
+
+<Steps>
+
+<Step title="Run your agent">
+```bash
+python agui_agent.py
+```
+
+Your agent is available at `http://localhost:9001/agui`.
+</Step>
+
+<Step title="Connect a frontend">
+
+<Tabs>
+  <Tab title="Dojo">
+  Clone and run [Dojo](https://github.com/ag-ui-protocol/ag-ui/tree/main/apps/dojo) locally:
+
+  ```bash
+  git clone https://github.com/ag-ui-protocol/ag-ui.git
+  cd ag-ui/typescript-sdk && pnpm install
+  cd ../integrations/agno && pnpm run build
+  ```
+
+  Open `http://localhost:3000` and connect to `http://localhost:9001/agui`.
+
+  <Tip>
+  [dojo.ag-ui.com](https://dojo.ag-ui.com/) is a hosted demo. It cannot connect to localhost.
+  </Tip>
+  </Tab>
+
+  <Tab title="CopilotKit">
+  Point your [CopilotKit](https://docs.copilotkit.ai/) app to `http://localhost:9001/agui`.
+  </Tab>
+
+  <Tab title="Other">
+  Any frontend implementing the AG-UI protocol can connect to your agent's endpoint.
+  </Tab>
+</Tabs>
+
+</Step>
+
+</Steps>
+
+## Features
+
+AG-UI provides bidirectional streaming between your agent and the frontend:
+
+| Feature | Description |
+| --- | --- |
+| Live streaming | Token-by-token responses with cancel/resume |
+| Tool execution | Frontend displays tool calls, arguments, and results |
+| Reasoning traces | Chain-of-thought from reasoning models |
+| Generative UI | Static and declarative UI rendering from agent output |
+| State sync | Bidirectional agent ↔ app state with conflict resolution |
+| Human-in-the-loop | Pause, approve, edit, or retry before actions |
+| Multimodal | Files, images, audio, and transcripts |
+| Custom events | Stream structured data to the frontend |
+
+<Tip>
+Custom events let you stream structured data (customer profiles, search results, charts) in real time. See [Custom Events](/agent-os/interfaces/ag-ui/introduction#custom-events).
+</Tip>
+
+## User Identification
+
+Pass `user_id` via `forwarded_props` from your frontend:
+
+```json
+{
+  "thread_id": "session-123",
+  "forwarded_props": {
+    "user_id": "user@example.com"
+  },
+  "messages": [...]
+}
+```
+
+The agent receives this in `run_context.user_id` for per-user memory and credentials.
+
+## Developer Resources
+
+- [AG-UI Interface](/agent-os/interfaces/ag-ui/introduction)
+- [AG-UI Cookbooks](https://github.com/agno-agi/agno/tree/main/cookbook/05_agent_os/interfaces/agui)
+- [AG-UI Protocol Docs](https://docs.ag-ui.com/)

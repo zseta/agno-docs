@@ -23,12 +23,12 @@ uv pip install ag-ui-protocol
   Expose an Agno agent through the AG-UI interface using `AgentOS` and `AGUI`.
 
 ```python basic.py
-from agno.agent.agent import Agent
+from agno.agent import Agent
 from agno.models.openai import OpenAIResponses
 from agno.os import AgentOS
 from agno.os.interfaces.agui import AGUI
 
-chat_agent = Agent(model=OpenAIResponses(id="gpt-5.2"))
+chat_agent = Agent(model=OpenAIResponses(id="gpt-5.4"))
 
 agent_os = AgentOS(agents=[chat_agent], interfaces=[AGUI(agent=chat_agent)])
 app = agent_os.get_app()
@@ -142,4 +142,4 @@ Use `AgentOS.serve` to run the app with Uvicorn.
 | `port`    | `int`                 | `7777`        | Port to bind.                          |
 | `reload`  | `bool`                | `False`       | Enable auto-reload for development.    |
 
-See [cookbook examples](https://github.com/agno-agi/agno/tree/main/cookbook/06_agent_os/interfaces/agui/) for updated interface patterns.
+See [cookbook examples](https://github.com/agno-agi/agno/tree/main/cookbook/05_agent_os/interfaces/agui/) for updated interface patterns.

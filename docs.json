@@ -4834,12 +4834,6 @@
                 "pages": [
                   "deploy/interfaces/a2a/overview"
                 ]
-              },
-              {
-                "group": "MCP",
-                "pages": [
-                  "deploy/interfaces/mcp/overview"
-                ]
               }
             ]
           },
