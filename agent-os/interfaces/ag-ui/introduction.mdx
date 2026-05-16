@@ -107,10 +107,12 @@ Main entry point for AG-UI exposure.
 
 ### Initialization Parameters
 
-| Parameter | Type              | Default | Description            |
-| --------- | ----------------- | ------- | ---------------------- |
-| `agent`   | `Optional[Agent]` | `None`  | Agno `Agent` instance. |
-| `team`    | `Optional[Team]`  | `None`  | Agno `Team` instance.  |
+| Parameter | Type                  | Default     | Description                                    |
+| --------- | --------------------- | ----------- | ---------------------------------------------- |
+| `agent`   | `Optional[Agent]`     | `None`      | Agno `Agent` instance.                         |
+| `team`    | `Optional[Team]`      | `None`      | Agno `Team` instance.                          |
+| `prefix`  | `str`                 | `""`        | Route prefix (e.g., `/chat`, `/web-research`). |
+| `tags`    | `Optional[List[str]]` | `["AGUI"]`  | OpenAPI tags for the router.                   |
 
 Provide `agent` or `team`.
 
@@ -135,11 +137,15 @@ Use `AgentOS.serve` to run the app with Uvicorn.
 
 ### Parameters
 
-| Parameter | Type                  | Default       | Description                            |
-| --------- | --------------------- | ------------- | -------------------------------------- |
-| `app`     | `Union[str, FastAPI]` | required      | FastAPI app instance or import string. |
-| `host`    | `str`                 | `"localhost"` | Host to bind.                          |
-| `port`    | `int`                 | `7777`        | Port to bind.                          |
-| `reload`  | `bool`                | `False`       | Enable auto-reload for development.    |
+| Parameter         | Type                  | Default       | Description                                          |
+| ----------------- | --------------------- | ------------- | ---------------------------------------------------- |
+| `app`             | `Union[str, FastAPI]` | required      | FastAPI app instance or import string.               |
+| `host`            | `str`                 | `"localhost"` | Host to bind. Override with `AGENT_OS_HOST` env var. |
+| `port`            | `int`                 | `7777`        | Port to bind. Override with `AGENT_OS_PORT` env var. |
+| `reload`          | `bool`                | `False`       | Enable auto-reload for development.                  |
+| `reload_includes` | `Optional[List[str]]` | `None`        | File patterns to watch. Auto-adds `*.yaml`, `*.yml`. |
+| `reload_excludes` | `Optional[List[str]]` | `None`        | File patterns to exclude from reload.                |
+| `workers`         | `Optional[int]`       | `None`        | Number of Uvicorn worker processes.                  |
+| `access_log`      | `bool`                | `False`       | Enable Uvicorn access logging.                       |
 
 See [cookbook examples](https://github.com/agno-agi/agno/tree/main/cookbook/05_agent_os/interfaces/agui/) for updated interface patterns.

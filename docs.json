@@ -4699,8 +4699,7 @@
                         "group": "Advanced",
                         "pages": [
                           "deploy/templates/aws/configure/efs",
-                          "deploy/templates/aws/configure/ssh-access",
-                          "deploy/infra/overview"
+                          "deploy/templates/aws/configure/ssh-access"
                         ]
                       }
                     ]
@@ -4837,12 +4836,6 @@
               }
             ]
           },
-          {
-            "group": "Agno Infra",
-            "pages": [
-              "deploy/infra/overview"
-            ]
-          }
         ]
       },
       {
@@ -14983,11 +14976,15 @@
     },
     {
       "source": "/deploy/agno-infra",
-      "destination": "/deploy/infra/overview"
+      "destination": "/reference/agno-infra/cli/ws/up"
     },
     {
       "source": "/infra/overview",
-      "destination": "/deploy/infra/overview"
+      "destination": "/reference/agno-infra/cli/ws/up"
+    },
+    {
+      "source": "/deploy/infra/overview",
+      "destination": "/reference/agno-infra/cli/ws/up"
     },
     {
       "source": "/deploy/templates/aws/customize/ci-cd",
