@@ -4757,7 +4757,7 @@
                   "deploy/templates/gcode/overview"
                 ]
               },
-              "deploy/templates/extending"
+              "deploy/templates/improve-agents"
             ]
           },
           {
@@ -4835,7 +4835,7 @@
                 ]
               }
             ]
-          },
+          }
         ]
       },
       {
