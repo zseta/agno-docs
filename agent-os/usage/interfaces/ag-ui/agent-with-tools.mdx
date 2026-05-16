@@ -7,13 +7,13 @@ description: "Investment analyst agent with financial tools and web interface"
 
 ```python cookbook/05_agent_os/interfaces/agui/agent_with_tools.py
 from agno.agent.agent import Agent
-from agno.models.openai import OpenAIChat
+from agno.models.openai import OpenAIResponses
 from agno.os import AgentOS
 from agno.os.interfaces.agui import AGUI
 from agno.tools.yfinance import YFinanceTools
 
 agent = Agent(
-    model=OpenAIChat(id="gpt-4o"),
+    model=OpenAIResponses(id="gpt-5.5"),
     tools=[
         YFinanceTools(
             stock_price=True, 
