@@ -1,9 +1,13 @@
 ---
-title: "Structured extraction"
-description: "Turn text, images, audio, video, and PDFs into typed Pydantic objects."
+title: "Data extraction"
+description: "Extract typed Pydantic objects from text, images, audio, video, and PDF."
 ---
 
-Define the schema, pass the input, get a validated object back. The model fills the schema; Pydantic enforces it.
+Define the schema, pass the input, get a validated object back.
+
+<Tip>
+Use cheaper models for structured data extraction at scale.
+</Tip>
 
 ```python
 from typing import Optional
@@ -38,7 +42,7 @@ result = agent.run(
 #         phone='+1-555-0102', company='Acme Corp.', title='VP of Marketing')
 ```
 
-Missing fields come back `null` instead of a hallucinated value because the instruction says so and the schema allows it.
+> The hard part is getting missing fields as `null` instead of a hallucinated value.
 
 ## Nested objects
 
@@ -95,15 +99,15 @@ The only thing that changes per modality is the input argument and the model. Se
 
 | Input | Argument | Cookbook |
 |-------|----------|----------|
-| Text | `agent.run(text)` | [text_extraction](https://github.com/agno-agi/agno/tree/main/cookbook/data_labeling/text_extraction) |
-| Image | `images=[Image(url=...)]` | [image_extraction](https://github.com/agno-agi/agno/tree/main/cookbook/data_labeling/image_extraction) |
-| Audio | `audio=[Audio(content=...)]` | [audio_extraction](https://github.com/agno-agi/agno/tree/main/cookbook/data_labeling/audio_extraction) |
-| Video | `videos=[Video(content=...)]` | [video_extraction](https://github.com/agno-agi/agno/tree/main/cookbook/data_labeling/video_extraction) |
-| PDF | `files=[File(url=...)]` | [document_extraction](https://github.com/agno-agi/agno/tree/main/cookbook/data_labeling/document_extraction) |
+| Text | `agent.run(text)` | [text_extraction](https://github.com/agno-agi/agno/tree/main/cookbook/data_labeling/_03_text_extraction) |
+| Image | `images=[Image(url=...)]` | [image_extraction](https://github.com/agno-agi/agno/tree/main/cookbook/data_labeling/_07_image_extraction) |
+| Audio | `audio=[Audio(content=...)]` | [audio_extraction](https://github.com/agno-agi/agno/tree/main/cookbook/data_labeling/_12_audio_extraction) |
+| Video | `videos=[Video(content=...)]` | [video_extraction](https://github.com/agno-agi/agno/tree/main/cookbook/data_labeling/_14_video_extraction) |
+| PDF | `files=[File(url=...)]` | [document_extraction](https://github.com/agno-agi/agno/tree/main/cookbook/data_labeling/_16_document_extraction) |
 
 ## Extract then embed
 
-`image_extraction_to_vectordb` extends extraction with an embed-and-store step: describe each image into a typed object, flatten it to a searchable string, embed it, and store it in LanceDb for similarity search. See the [cookbook](https://github.com/agno-agi/agno/tree/main/cookbook/data_labeling/image_extraction_to_vectordb).
+`image_extraction_to_vectordb` extends extraction with an embed-and-store step: describe each image into a typed object, flatten it to a searchable string, embed it, and store it in LanceDb for similarity search. See the [cookbook](https://github.com/agno-agi/agno/tree/main/cookbook/data_labeling/_09_image_extraction_to_vectordb).
 
 ## Next steps
 
@@ -115,5 +119,5 @@ The only thing that changes per modality is the input argument and the model. Se
 
 ## Developer Resources
 
-- [Text extraction cookbook](https://github.com/agno-agi/agno/tree/main/cookbook/data_labeling/text_extraction)
+- [Text extraction cookbook](https://github.com/agno-agi/agno/tree/main/cookbook/data_labeling/_03_text_extraction)
 - [Structured output](/input-output/structured-output/agent)

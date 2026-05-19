@@ -8,9 +8,9 @@ Data classification, labeling and evaluation is one of the most powerful use-cas
 
 Agno is natively multi-modal and type-safe, meaning any input (text, audio, image, video, or file) can be turned into structured, reviewed data. Engineering teams use Agno to build a multi-modal input, multi-agent review labeling stack entirely in Python.
 
-Here's how simple text classification is. Just add `output_schema` and the agent returns data in that format. Give your agent tools to search usage and internal data to add more details.
+Here's how simple text classification is. Just add `output_schema` and the agent returns data in that format. Give your agent tools for searching usage and internal data to add more details.
 
-```python cookbook/data_labeling/text_classification/basic.py
+```python cookbook/data_labeling/_01_text_classification/basic.py
 from typing import Literal
 
 from agno.agent import Agent
@@ -36,7 +36,7 @@ result = agent.run("Broken on arrival, total waste of money.").content
 
 The output is a valid `Classification` object. Swap the schema and instructions and the same pattern covers extraction, span labeling, scoring, and preference ranking.
 
-## The primitives
+## Data labeling workflows
 
 Pick the page that matches the shape of label you need.
 
@@ -49,7 +49,7 @@ Pick the page that matches the shape of label you need.
 | Non-text input | Image, audio, video, PDF | Any of the above | [Multimodal inputs](/use-cases/data-labeling/multimodal-inputs) |
 | Reviewed labels | Any input | Adjudicated label + audit trail | [Quality pipeline](/use-cases/data-labeling/quality-pipeline) |
 
-## When to reach for this
+## Guided paths
 
 | You have | You want | Start with |
 |----------|----------|------------|
