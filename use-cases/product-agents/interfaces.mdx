@@ -27,7 +27,6 @@ agent_os = AgentOS(
 | Slack | Team chat, DMs, channel mentions, thread sessions |
 | Telegram | Personal assistants, mobile chat |
 | WhatsApp | Customer support, mobile chat |
-| Discord | Community servers, custom commands |
 | AG-UI | Browser clients consuming SSE streams |
 | A2A | Other agents calling yours over a standard protocol |
 
@@ -53,7 +52,7 @@ agent_os = AgentOS(
     interfaces=[
         Slack(agent=support_agent, token=..., signing_secret=...),
         Telegram(agent=support_agent, token=...),
-        WhatsApp(agent=support_agent, token=..., verify_token=...),
+        Whatsapp(agent=support_agent, token=..., verify_token=...),
         AGUI(agent=support_agent),
     ],
 )
@@ -94,5 +93,6 @@ For a single integration, do not write an interface. Add a route to the FastAPI 
 ## Developer Resources
 
 - [Interfaces in the runtime](/runtime/interfaces)
+- [Interfaces cookbook](https://github.com/agno-agi/agno/tree/main/cookbook/05_agent_os/interfaces)
 - [Slack interface](/agent-os/interfaces/slack/introduction)
 - [AG-UI interface](/agent-os/interfaces/ag-ui/introduction)

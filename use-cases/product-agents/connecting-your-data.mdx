@@ -55,7 +55,7 @@ Attaching a source's twelve raw tools to the agent pollutes context and degrades
 
 ## Read-only providers
 
-Construct a provider with `write=False` and the write tool is not created. The agent cannot mutate the source under any prompt. This is how a style guide or a reference corpus stays immutable while still being queryable.
+Providers that can write take `write=False`, which removes the update tool so the agent cannot mutate the source under any prompt. A read-only source like the web has no write tool to begin with. This is how a style guide or a reference corpus stays immutable while still being queryable.
 
 ## The closed loop
 
@@ -72,5 +72,6 @@ Pair a read source with a writable wiki or CRM and the agent files what it learn
 ## Developer Resources
 
 - [Context engineering](/context/overview)
+- [Context providers cookbook](https://github.com/agno-agi/agno/tree/main/cookbook/12_context)
 - [Context providers in the runtime](/runtime/context)
 - [Scout: connect MCP servers](/tutorials/scout/connect-mcp-servers)
