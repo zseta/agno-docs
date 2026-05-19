@@ -126,7 +126,6 @@
                   "use-cases/product-agents/sessions-and-memory",
                   "use-cases/product-agents/connecting-your-data",
                   "use-cases/product-agents/interfaces",
-                  "use-cases/product-agents/example-scout",
                   {
                     "group": "Scout tutorial",
                     "pages": [
@@ -151,7 +150,6 @@
                   "use-cases/data-agents/safe-data-access",
                   "use-cases/data-agents/materialization",
                   "use-cases/data-agents/serve-and-embed",
-                  "use-cases/data-agents/example-dash",
                   {
                     "group": "Dash tutorial",
                     "pages": [
