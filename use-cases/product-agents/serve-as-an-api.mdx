@@ -1,6 +1,6 @@
 ---
 title: "Serve as an API"
-description: "Turn the agent into an HTTP service with streaming, sessions, and auth, then call it from any surface."
+description: "Turn agents into an HTTP service with streaming, sessions, and auth, then call it from any surface."
 ---
 
 `AgentOS` wraps the agent in a FastAPI app. Every registered agent gets run, session, and memory endpoints. Your product surfaces call those endpoints.
@@ -49,6 +49,27 @@ curl -X POST http://localhost:7777/agents/copilot/runs \
 }
 ```
 
+From a browser widget with streaming and a JWT:
+
+```javascript
+async function askCopilot(message, userId, threadId) {
+  const res = await fetch("https://os.yourproduct.com/agents/copilot/runs", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${jwt}`,
+    },
+    body: JSON.stringify({
+      message,
+      user_id: userId,
+      session_id: threadId,
+      stream: true,
+    }),
+  });
+  return res.body; // SSE stream into the UI
+}
+```
+
 | Want | Pass |
 |------|------|
 | Token stream for a live UI | `stream=true` (Server-Sent Events) |
@@ -88,17 +109,16 @@ Set `authorization=True` and every endpoint except `/health` and `/openapi.json`
 agent_os = AgentOS(agents=[agent], authorization=True)
 ```
 
-AgentOS validates the token before any agent code runs. The `user_id`, `session_id`, and scope claims are read from the token and injected into the run, so a surface never passes identity in the request body. RBAC scopes are enforced per endpoint.
+AgentOS validates the token before any agent code runs and injects `user_id`, `session_id`, and scope claims into the run. RBAC scopes are enforced per endpoint.
 
 ## Next steps
 
 | Task | Guide |
 |------|-------|
-| Drive product widgets off this API | [Agentic product surfaces](/use-cases/product-agents/agentic-product-surfaces) |
 | Add Slack or browser surfaces | [Interfaces](/use-cases/product-agents/interfaces) |
 | Lock down endpoints | [Security and auth](/runtime/security-and-auth) |
 
-## Developer Resources
+## Developer resources
 
 - [Serve as an API](/runtime/serve-as-api)
 - [AgentOS](/agent-os/connect-your-os)

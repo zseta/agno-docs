@@ -4,9 +4,11 @@ sidebarTitle: "Overview"
 description: "Build agents to power every part of your product, from chat to proactive assistance."
 ---
 
-Software is becoming agentic and many parts of your product will become agent-driven in the near future. Most products start with a chat copilot, then add more agent-driven surfaces: smart empty states, inline workflow recommendations, personalized help notes. Agno serves every one of them from one backend that shares sessions, memory, knowledge, and auth.
+Software is becoming agentic and many parts of your product will become agent-driven.
 
-The product feels coherent because there is one system powering it all.
+Most products start with a chat copilot, then add more agent-driven surfaces: smart empty states, inline workflow recommendations, personalized help notes, proactive nudges. Each one is its own agent with its own job.
+
+Agno runs all of them from one backend. Sessions, memory, knowledge, and auth are shared across every surface, so the product feels like one system.
 
 ```python
 from agno.agent import Agent
@@ -22,7 +24,7 @@ agent = Agent(
     db=db,
     add_history_to_context=True,
     num_history_runs=5,
-    update_memory_on_run=True,
+    enable_agentic_memory=True,
 )
 
 agent_os = AgentOS(agents=[agent])
@@ -32,51 +34,37 @@ if __name__ == "__main__":
     agent_os.serve(app="copilot:app", port=7777)
 ```
 
-That is a production agent for your product. Persistent multi-turn history, per-user memory, and an HTTP API with streaming, sessions, and auth. You own the product surface. Agno owns the runtime.
+That is the start of your product copilot. Persistent multi-turn history, per-user memory, and an HTTP API with streaming, sessions, and auth.
 
-## Auth and tenancy are wired in
+## Auth and tenancy are built in
 
-Turn on JWT auth and identity is read from the bearer token, so no surface has to pass `user_id` or `session_id` in the request body.
+Your AgentOS ships with JWT-based authentication. Turn it on and identity is read from a bearer token. `user_id`, `session_id`, and scope claims all come from the token.
 
 ```python
 from agno.os import AgentOS
 
 agent_os = AgentOS(agents=[agent], authorization=True)
-# Every endpoint requires a valid JWT. user_id, session_id, and
-# scope claims are read from the token and applied before any
-# agent code runs.
+# Every endpoint now requires a valid JWT. user_id, session_id,
+# and scopes are read from the token before any agent code runs.
 ```
-
-Sessions, memory, and knowledge scope per user, per organization, and per app. Multi-tenant isolation is the default. You do not write the glue code.
-
-## Why Agno fits this shape
-
-| Reason | What it means for your product |
-|--------|--------------------------------|
-| Sessions are native | A `session_id` ties every turn, its history, and its state together. You do not build the conversation store. |
-| Memory is native | The agent learns user facts and recalls them on any surface. No retrieval glue to write. |
-| The agent is an API | `AgentOS` turns the agent into a FastAPI service. Any surface calls `POST /agents/{id}/runs`. |
-| One agent, many surfaces | The same agent answers a chat panel, an inline action, and a Slack mention. Memory follows the user across all of them. |
-| Multi-tenant by default | Sessions, memory, and knowledge scope per user, per organization, and per app. |
 
 ## The mental model
 
-A product surface does not embed an agent. It calls one.
+The agent runs in your AgentOS as a service. Every product surface is a client that calls it over HTTP.
 
 | Surface | How it reaches the agent |
 |---------|--------------------------|
-| In-app copilot panel | `POST /agents/{id}/runs` with the user's `user_id` and a per-thread `session_id` |
+| In-app copilot panel | `POST /agents/{id}/runs` scoped to `user_id` and a per-thread `session_id` |
 | Inline action ("summarize this", "draft a reply") | The same endpoint, a short-lived `session_id` |
 | Slack / Telegram / WhatsApp | An interface adapter maps the channel onto runs and sessions |
 | Backend event (webhook, cron) | A custom FastAPI route calling `agent.arun(...)` |
 
-Every surface shares the same `(user_id, session_id)` state. A user the agent met in the chat panel on Monday is already known to the inline action on Wednesday.
+Every surface shares the same `(user_id, session_id)` state. A user the agent met in the chat panel is already known to the inline action agent.
 
 ## Guided paths
 
 | You have | You want | Start with |
 |----------|----------|------------|
-| Many AI features to build | One backend behind every surface | [Agentic product surfaces](/use-cases/product-agents/agentic-product-surfaces) |
 | A B2B SaaS product | Per-customer, per-user isolation out of the box | [Serve as an API](/use-cases/product-agents/serve-as-an-api) |
 | Users in Slack or the browser | The same agent where they already work | [Interfaces](/use-cases/product-agents/interfaces) |
 | Internal docs, Drive, databases | An agent grounded in live company data | [Connecting your data](/use-cases/product-agents/connecting-your-data) |
@@ -84,10 +72,7 @@ Every surface shares the same `(user_id, session_id)` state. A user the agent me
 
 ## Explore
 
-<CardGroup cols={3}>
-  <Card title="Agentic product surfaces" icon="grip" href="/use-cases/product-agents/agentic-product-surfaces">
-    One agent backend behind every AI-driven surface in your product.
-  </Card>
+<CardGroup cols={2}>
   <Card title="Serve as an API" icon="server" href="/use-cases/product-agents/serve-as-an-api">
     Turn the agent into an HTTP service with streaming, sessions, and auth.
   </Card>
@@ -105,7 +90,7 @@ Every surface shares the same `(user_id, session_id)` state. A user the agent me
   </Card>
 </CardGroup>
 
-## Developer Resources
+## Developer resources
 
 - [Runtime overview](/runtime/overview)
 - [Sessions](/sessions/overview)

@@ -122,7 +122,6 @@
                 "group": "Product Agents",
                 "pages": [
                   "use-cases/product-agents/overview",
-                  "use-cases/product-agents/agentic-product-surfaces",
                   "use-cases/product-agents/serve-as-an-api",
                   "use-cases/product-agents/sessions-and-memory",
                   "use-cases/product-agents/connecting-your-data",
@@ -215,8 +214,7 @@
               "runtime/security-and-auth",
               "runtime/interfaces",
               "runtime/scheduling",
-              "runtime/deploy",
-              "runtime/build-a-product"
+              "runtime/deploy"
             ]
           }
         ]
@@ -7936,6 +7934,10 @@
     ]
   },
   "redirects": [
+    {
+      "source": "/runtime/build-a-product",
+      "destination": "/runtime/overview"
+    },
     {
       "source": "/tutorials/starter/overview",
       "destination": "/tutorials/agent-platform/overview"
