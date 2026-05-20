@@ -199,8 +199,7 @@
               "runtime/security-and-auth",
               "runtime/interfaces",
               "runtime/scheduling",
-              "runtime/deploy",
-              "runtime/build-a-product"
+              "runtime/deploy"
             ]
           },
           {
