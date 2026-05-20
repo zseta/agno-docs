@@ -23,8 +23,10 @@ Every registered agent, team, and workflow gets run and session endpoints. A sur
 
 ```bash
 curl -X POST http://localhost:8000/workflows/investment-workflow/runs \
-  -H "Content-Type: application/json" \
-  -d '{"message":"Run a full review on NVDA","user_id":"pm@fund.com","session_id":"q4-review"}'
+  -F 'message=Run a full review on NVDA' \
+  -F 'user_id=pm@fund.com' \
+  -F 'session_id=q4-review' \
+  -F 'stream=false'
 ```
 
 ## Where a research system lives

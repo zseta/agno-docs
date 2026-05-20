@@ -31,8 +31,10 @@ Any surface calls the same endpoint:
 
 ```bash
 curl -X POST http://localhost:7777/agents/data-agent/runs \
-  -H "Content-Type: application/json" \
-  -d '{"message":"MRR by plan, last 6 months","user_id":"ab@acme.com","session_id":"q4-review"}'
+  -F 'message=MRR by plan, last 6 months' \
+  -F 'user_id=ab@acme.com' \
+  -F 'session_id=q4-review' \
+  -F 'stream=false'
 ```
 
 ## Surfaces a data agent lives on

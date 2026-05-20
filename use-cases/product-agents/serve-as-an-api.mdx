@@ -34,8 +34,10 @@ Every run endpoint takes the same shape, whether the caller is a browser widget 
 
 ```bash
 curl -X POST http://localhost:7777/agents/copilot/runs \
-  -H "Content-Type: application/json" \
-  -d '{"message":"Summarize this thread","user_id":"sarah@acme.com","session_id":"thread-42"}'
+  -F 'message=Summarize this thread' \
+  -F 'user_id=sarah@acme.com' \
+  -F 'session_id=thread-42' \
+  -F 'stream=false'
 ```
 
 ```json
