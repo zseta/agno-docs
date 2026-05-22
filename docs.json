@@ -118,7 +118,7 @@
                 ]
               },
               {
-                "group": "Product Agents",
+                "group": "Product Copilots & Agents",
                 "pages": [
                   "use-cases/product-agents/overview",
                   "use-cases/product-agents/serve-as-an-api",
