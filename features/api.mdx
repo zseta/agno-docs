@@ -1,6 +1,6 @@
 ---
 title: Agent API
-description: "An HTTP API and MCP server for every agent, team, and workflow in your AgentOS."
+description: "API and MCP server for every agent, team, and workflow in your AgentOS."
 ---
 
 Shipping an agent needs more than a `/run` endpoint. A live agent needs an API that can:
@@ -12,7 +12,7 @@ Shipping an agent needs more than a `/run` endpoint. A live agent needs an API t
 - Gate sensitive tool calls on human approval
 - Resume paused runs once that approval comes back
 
-AgentOS generates all of this from your registered agents, teams, and workflows automatically. Browse the live OpenAPI spec at the `/docs` endpoint of any AgentOS instance.
+AgentOS generates all of this for your agents, teams, and workflows automatically. Browse the live API at `/docs` or fetch the spec from `/openapi.json` on any AgentOS instance.
 
 <video
   autoPlay
@@ -23,10 +23,9 @@ AgentOS generates all of this from your registered agents, teams, and workflows 
   src="/videos/agentos-api-scroll.mp4"
 />
 
-
 ## Interfaces
 
-Agents need to be reachable over more than one interface. You create an agent once and AgentOS exposes it over different interfaces. The same agent answers a REST call, holds a WebSocket session, responds to a Slack event, and shows up as a tool in an MCP client.
+Agents need to be reachable over more than one interface. Define an agent once and AgentOS can expose it over any interface you opt into. REST and SSE are on by default; add an MCP server, WebSocket endpoints, A2A, or a Slack interface as needed. The agent code stays the same; only the interface layer changes.
 
 ## The surface area
 
@@ -46,12 +45,14 @@ Agents need to be reachable over more than one interface. You create an agent on
 
 ## How a request looks
 
-Every run endpoint returns the same shape, whether it's an agent, a team, or a workflow:
+Run endpoints accept `multipart/form-data` so a single call can carry text, files, and media. The response shape is the same whether it's an agent, a team, or a workflow:
 
 ```bash
 curl -X POST http://localhost:8000/agents/my-agent/runs \
-  -H "Content-Type: application/json" \
-  -d '{"message":"Hello","user_id":"alice","session_id":"thread-42"}'
+  -F "message=Hello" \
+  -F "user_id=alice" \
+  -F "session_id=thread-42" \
+  -F "stream=false"
 ```
 
 ```json
@@ -66,13 +67,14 @@ curl -X POST http://localhost:8000/agents/my-agent/runs \
 }
 ```
 
-Pass `stream=true` for Server-Sent Events. Pass `background=true` to run async and poll for completion. The contract doesn't change across surfaces.
+Pass `stream=true` for Server-Sent Events. Pass `background=true` to run async and poll for completion.
 
 ## Adding your own routes
 
-Under the hood, AgentOS is a FastAPI app. Register additional routes for webhooks, custom dashboards, integrations:
+AgentOS is built on FastAPI. Register additional routes for webhooks, custom dashboards, integrations:
 
 ```python
+# `agent` is the same Agent instance you registered with AgentOS above
 app = agent_os.get_app()
 
 @app.post("/webhooks/stripe")
@@ -88,4 +90,6 @@ The agent is a regular Python object. Call `agent.run(...)` or `await agent.arun
 
 ## Auth
 
-When `authorization=True`, every endpoint except `/health` and `/openapi.json` requires a valid JWT in the `Authorization: Bearer ...` header. AgentOS validates the token, extracts claims, and applies RBAC scopes per request before any agent code runs. See [Security & Auth](/features/security-and-auth) for the full model.
+When `authorization=True`, every endpoint except `/health` and `/openapi.json` requires a valid JWT in the `Authorization: Bearer ...` header. AgentOS validates the token, extracts claims, and applies RBAC scopes per request before any agent code runs.
+
+See [Security & Auth](/features/security-and-auth) for the details.
