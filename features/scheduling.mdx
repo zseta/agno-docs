@@ -3,11 +3,9 @@ title: Scheduling
 description: "Built-in cron for triggering recurring tasks."
 ---
 
-AgentOS comes with a built-in cron-style scheduler. Use it to run morning briefings, daily triage, weekly digests, hourly health checks.
+AgentOS comes with a built-in cron-style scheduler. Use it to run morning briefings, daily triage, weekly digests, hourly health checks. Advanced agentic systems like Scout also use it to set reminders and manage their own schedule.
 
-Advanced agentic systems like Scout also use it to set reminders and manage their own schedule.
-
-The schedules live in the AgentOS database (`agno_schedules` table) and use the same FastAPI process used by the agents.
+Registered schedules live in the AgentOS database (`agno_schedules` table) and use the same FastAPI process used by the agents.
 
 ```python
 from agno.os import AgentOS
