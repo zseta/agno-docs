@@ -1,26 +1,29 @@
 ---
 title: Introduction
-description: "Build agents, teams, and workflows in pure Python."
+description: "Build agents, teams, and workflows in pure python."
 ---
 
-Agno is a python SDK for building multi-agent systems.
-
-It comes with three primitives (agents, teams and workflows) and a large set of capabilities you can attach to each (storage, memory, knowledge, learnings, compression).
+Agno is a python SDK for building multi-agent systems. It gives you three primitives (agents, teams and workflows) and a large set of capabilities you attach to them (storage, memory, knowledge, learnings, compression, and more).
 
 <CodeGroup>
 
 ```python Agent
 from agno.agent import Agent
-from agno.tools.yfinance import YFinanceTools
+from agno.db.sqlite import SqliteDb
+from agno.tools.workspace import Workspace
 
-agent = Agent(
-    name="Finance Agent",
-    model="openai:gpt-5.4",
-    tools=[YFinanceTools()],
-    instructions="Fetch market data and produce a one-line take.",
+workbench = Agent(
+    name="Workbench",
+    model="openai:gpt-5.5",
+    db=SqliteDb(db_file="workbench.db"),
+    tools=[Workspace(".")],
+    enable_agentic_memory=True,
+    add_history_to_context=True,
+    num_history_runs=3,
+    markdown=True,
 )
 
-agent.print_response("What's NVDA trading at today?")
+workbench.print_response("Inventory this folder.")
 ```
 
 ```python Team
@@ -91,11 +94,11 @@ workflow.print_response("Analyze NVIDIA for investment.")
 
 ## Three primitives
 
-| Primitive                       | Use it to                                                        |
-| ------------------------------- | ---------------------------------------------------------------- |
-| [Agent](/agents/overview)       | Build autonomous programs with a model, tools, and instructions. |
-| [Team](/teams/overview)         | Coordinate multiple agents to achieve complex tasks.             |
-| [Workflow](/workflows/overview) | Achieve deterministic output using step-based execution.         |
+| Primitive | Use it to |
+|-----------|-----------|
+| [Agent](/agents/overview) | Autonomous programs with a model, tools, and instructions |
+| [Team](/teams/overview) | Coordinate multiple agents on a single task |
+| [Workflow](/workflows/overview) | Deterministic, step-based pipelines over agents and teams |
 
 ## Capabilities
 
@@ -105,29 +108,31 @@ workflow.print_response("Analyze NVIDIA for investment.")
 |------------|--------------|
 | [Models](/models/overview) | 30+ providers behind one API |
 | [Tools](/tools/overview) | 100+ integrations and the ability to write your own |
-| [Skills](/skills/overview) | Composable abilities you can attach to agents and teams |
+| [Skills](/skills/overview) | Composable abilities you attach to agents and teams |
 | [Multimodal](/multimodal/overview) | Image, audio, and video input and output |
 | [Structured I/O](/input-output/overview) | Type-safe input and output with Pydantic schemas |
+| [Reasoning](/reasoning/overview) | Built-in chain-of-thought and reasoning agents |
 
 ### Memory and context
 
 | Capability | What it adds |
 |------------|--------------|
 | [Storage](/database/overview) | Durability and persistence on any database |
-| [Sessions](/sessions/overview) | Multi-turn session management with summaries, history, and metrics |
-| [State](/state/overview) | Session and agentic state agents can read and update mid-run |
+| [Sessions](/sessions/overview) | Multi-turn sessions with summaries, history, and metrics |
+| [State](/state/overview) | State your agents can read and update mid-run |
 | [Memory](/memory/overview) | Per-user and per-session memory |
 | [Knowledge](/knowledge/overview) | Search over documents, URLs, and databases |
-| [Learning](/learning/overview) | Agents that improve over time with learned behavior and decisions |
+| [Learning](/learning/overview) | Agents that improve over time from feedback and outcomes |
 | [Compression](/compression/overview) | Keep long sessions inside the model's context window |
-| [Context Providers](/context-providers/overview) | Inject live data from Calendar, Gmail, Drive, GitHub, Slack, MCP, and more |
+| [Context Providers](/context-providers/overview) | Inject live data from Calendar, Gmail, Drive, GitHub, Slack, MCP |
+| [Dependencies](/dependencies/overview) | Inject runtime values into prompts |
 
 ### Control and safety
 
 | Capability | What it adds |
 |------------|--------------|
 | [Guardrails](/guardrails/overview) | Validate input and output |
-| [Hooks](/hooks/overview) | Lifecycle hooks for input, output, and state |
+| [Hooks](/hooks/overview) | Pre-run and post-run callbacks |
 | [Human-in-the-Loop](/hitl/overview) | Pause runs for approval, input, or external execution |
 
 ### Operations
@@ -135,25 +140,24 @@ workflow.print_response("Analyze NVIDIA for investment.")
 | Capability | What it adds |
 |------------|--------------|
 | [Background execution](/background-execution/overview) | Long-running runs that don't block your API |
-| [Evals](/evals/overview) | Measure accuracy, performance, and reliability; agent-as-judge |
-| [Observability](/observability/overview) | Tracing with Langfuse, Logfire, Arize, and 12+ providers |
-| [Scheduler](/scheduler/overview) | Run agents on a recurring schedule |              |
+| [Evals](/evals/overview) | Measure accuracy, performance, and reliability |
+| [Observability](/observability/overview) | OpenTelemetry tracing into your own database |
+| [Scheduler](/scheduler/overview) | Run agents and workflows on a recurring schedule |
+
+## From SDK to platform
+
+The SDK runs in a Python process - a script, a notebook, a job. When you're ready to go live, wrap your agents in **AgentOS** and you get an HTTP API, persistence, auth, tracing, scheduling, and interfaces.
 
 ## Where to start
 
 <CardGroup cols={3}>
-  <Card title="Agents" icon="robot" iconType="duotone" href="/agents/overview">
-    Single autonomous programs with a model, tools, and instructions.
+  <Card title="Setup" icon="rocket" iconType="duotone" href="/sdk/setup">
+    Install Agno and get your first agent running.
   </Card>
-  <Card title="Teams" icon="users" iconType="duotone" href="/teams/overview">
-    Coordinate multiple agents to achieve complex tasks.
+  <Card title="Run on AgentOS" icon="server" iconType="duotone" href="/features/runtime">
+    Take your agent live as a secure, scalable service.
   </Card>
-  <Card
-    title="Workflows"
-    icon="diagram-project"
-    iconType="duotone"
-    href="/workflows/overview"
-  >
-    Achieve deterministic output using step-based execution.
+  <Card title="Examples" icon="book" iconType="duotone" href="/examples/overview">
+    Worked patterns for the most common use cases.
   </Card>
 </CardGroup>
