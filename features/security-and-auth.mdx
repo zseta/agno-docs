@@ -33,7 +33,7 @@ agent_os = AgentOS(
 )
 ```
 
-When `authorization=True`, every endpoint requires a valid JWT except a small set of public routes: `/`, `/health`, `/info`, `/docs`, `/redoc`, `/openapi.json`, `/docs/oauth2-redirect`
+`authorization=True` drives both layers: it requires a valid JWT on every request (authentication, this section) and enforces the token's scopes per endpoint (authorization, below). A small set of public routes are exempt from the JWT requirement: `/`, `/health`, `/info`, `/docs`, `/redoc`, `/openapi.json`, `/docs/oauth2-redirect`
 
 ### Get a JWT_VERIFICATION_KEY
 
