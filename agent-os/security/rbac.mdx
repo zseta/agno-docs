@@ -72,7 +72,7 @@ app = agent_os.get_app()
 Authorization is now active for your AgentOS.
 
 <Note>
-The control plane only issues **RS256** keys, which is also the default. See [authorization troubleshooting](/faq/rbac-auth-failed#other-authorization-failures) for common setup issues.
+The control plane only issues **RS256** keys, which is also the default. See [authorization troubleshooting](/faq/rbac-auth-failed) for common setup issues.
 </Note>
 
 <video
@@ -82,6 +82,39 @@ The control plane only issues **RS256** keys, which is also the default. See [au
   className="w-full aspect-video"
   src="/videos/auth-on-connect-web.mp4"
 ></video>
+
+## Configuration Options
+
+Configure JWT verification using `AuthorizationConfig`:
+```python
+from agno.os import AgentOS
+from agno.os.config import AuthorizationConfig
+
+agent_os = AgentOS(
+    id="my-agent-os",
+    agents=[agent],
+    authorization=True,
+    authorization_config=AuthorizationConfig(
+        verification_keys=["your-jwt-verification-key"],
+        algorithm="RS256",
+    ),
+)
+```
+
+You can also use a JWKS file:
+```python
+authorization_config=AuthorizationConfig(
+    jwks_file="/path/to/jwks.json",
+    algorithm="RS256",
+)
+```
+
+Or set environment variables:
+```bash
+export JWT_VERIFICATION_KEY="your-public-key"
+# or
+export JWT_JWKS_FILE="/path/to/jwks.json"
+```
 
 ## Scope Format
 
@@ -377,6 +410,41 @@ app.add_middleware(
 
 Custom scope mappings are additive to the defaults. To override a default, specify the same route pattern with your custom scopes.
 
+## Per-User Data Isolation
+
+RBAC controls which operations a caller can perform. Per-user data isolation controls which rows a caller can see and write. Opt in with `user_isolation=True`:
+
+```python
+from agno.os import AgentOS
+from agno.os.config import AuthorizationConfig
+
+agent_os = AgentOS(
+    id="my-agent-os",
+    agents=[agent],
+    authorization=True,
+    authorization_config=AuthorizationConfig(
+        verification_keys=["your-jwt-verification-key"],
+        algorithm="RS256",
+        user_isolation=True,
+    ),
+)
+```
+
+When enabled, AgentOS uses the JWT `sub` claim as the `user_id` for every non-admin caller:
+
+| Operation | Behavior with `user_isolation=True` |
+|-----------|-------------------------------------|
+| Reads (sessions, memory, traces) | Scoped to the caller's `user_id`. Other users' rows are not returned. |
+| Writes (sessions, memories, traces) | `user_id` is coerced to the caller's `sub`. A caller cannot persist rows attributed to another user. |
+| Cancel / resume / continue routes | Require `session_id` and verify the caller owns the run. |
+| WebSocket reconnect | Requires `session_id` (and `workflow_id`) for non-admins. |
+
+A caller holding `admin_scope` (default `agent_os:admin`) bypasses isolation and sees all data. Set a custom override with `admin_scope="ops:admin"`.
+
+<Note>
+Isolation is off by default. JWT/RBAC still apply when `user_isolation=False`, but routes operate on the unscoped database and add no per-user ownership gates on top of RBAC. Per-user isolation requires a database that records `user_id` (PostgreSQL recommended for production).
+</Note>
+
 ## JWT Token Structure
 
 Your JWT tokens should include:
@@ -419,79 +487,11 @@ Your JWT tokens should include:
 }
 ```
 
-## Configuration Options
-
-Configure JWT verification using `AuthorizationConfig`:
-```python
-from agno.os import AgentOS
-from agno.os.config import AuthorizationConfig
-
-agent_os = AgentOS(
-    id="my-agent-os",
-    agents=[agent],
-    authorization=True,
-    authorization_config=AuthorizationConfig(
-        verification_keys=["your-jwt-verification-key"],
-        algorithm="RS256",
-    ),
-)
-```
-
-You can also use a JWKS file:
-```python
-authorization_config=AuthorizationConfig(
-    jwks_file="/path/to/jwks.json",
-    algorithm="RS256",
-)
-```
-
-Or set environment variables:
-```bash
-export JWT_VERIFICATION_KEY="your-public-key"
-# or
-export JWT_JWKS_FILE="/path/to/jwks.json"
-```
-
-## Per-User Data Isolation
-
-RBAC controls which operations a caller can perform. Per-user data isolation controls which rows a caller can see and write. Opt in with `user_isolation=True`:
-
-```python
-from agno.os import AgentOS
-from agno.os.config import AuthorizationConfig
-
-agent_os = AgentOS(
-    id="my-agent-os",
-    agents=[agent],
-    authorization=True,
-    authorization_config=AuthorizationConfig(
-        verification_keys=["your-jwt-verification-key"],
-        algorithm="RS256",
-        user_isolation=True,
-    ),
-)
-```
-
-When enabled, AgentOS uses the JWT `sub` claim as the `user_id` for every non-admin caller:
-
-| Operation | Behavior with `user_isolation=True` |
-|-----------|-------------------------------------|
-| Reads (sessions, memory, traces) | Scoped to the caller's `user_id`. Other users' rows are not returned. |
-| Writes (sessions, memories, traces) | `user_id` is coerced to the caller's `sub`. A caller cannot persist rows attributed to another user. |
-| Cancel / resume / continue routes | Require `session_id` and verify the caller owns the run. |
-| WebSocket reconnect | Requires `session_id` (and `workflow_id`) for non-admins. |
-
-A caller holding `admin_scope` (default `agent_os:admin`) bypasses isolation and sees all data. Set a custom override with `admin_scope="ops:admin"`.
-
-<Note>
-Isolation is off by default. JWT/RBAC still apply when `user_isolation=False`, but routes operate on the unscoped database and add no per-user ownership gates on top of RBAC. Per-user isolation requires a database that records `user_id` (PostgreSQL recommended for production).
-</Note>
-
 ## Excluded Routes
 
 These routes are excluded from RBAC checks by default:
 
-`/`, `/health`, `/docs`, `/redoc`, `/openapi.json`, `/docs/oauth2-redirect`
+`/`, `/health`, `/info`, `/docs`, `/redoc`, `/openapi.json`, `/docs/oauth2-redirect`
 
 ## Error Responses
 
