@@ -112,7 +112,7 @@ This is on by default for every run endpoint. There's nothing to configure.
 
 ## User isolation
 
-Per-user data isolation is **opt-in**. JWT and RBAC stay in force without it, but routes operate on the unscoped DB. A caller with `agents:my-agent:run` could read another user's sessions if they know the IDs. For multi-tenant deployments, turn it on:
+Per-user data isolation is **opt-in**. RBAC stays in force without it, but routes operate on the unscoped DB. A caller with `agents:my-agent:run` could read another user's sessions if they know the IDs. For multi-tenant deployments, turn it on:
 
 ```python
 from agno.os.config import AuthorizationConfig
@@ -123,7 +123,7 @@ agent_os = AgentOS(
     authorization=True,
     authorization_config=AuthorizationConfig(
         verification_keys=[public_key],
-        user_isolation=True,
+        user_isolation=True,   # requires authorization=True; the user_id comes from the JWT sub
     ),
 )
 ```
