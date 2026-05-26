@@ -4,38 +4,27 @@ sidebarTitle: "Introduction"
 description: "The runtime for your agent platform."
 ---
 
-**AgentOS is a FastAPI app that runs your agent platform.** It's a live service that:
-
-1. Runs agents on demand, via API requests or interfaces like Slack,  Telegram, and others.
-2. Maintains long-running sessions that last from minutes to days to weeks.
-3. Is durable across restarts, replicas, and infrastructure failures.
-4. Is secure against unauthenticated access.
-5. Logs every run and action taken.
+**AgentOS is the FastAPI runtime for your agent platform.** It serves agents, teams, and workflows over HTTP and SSE, with tracing, scheduling, RBAC, and audit trails built-in. Sessions, memory, knowledge, and traces are stored in your database.
 
 Build your agents using the [Agno SDK](/sdk/introduction), run them using the AgentOS runtime.
 
-Here's a minimal example of the AgentOS serving an Agent with memory, state and MCP:
+Here's the smallest possible AgentOS:
 
-```python agno_assist.py lines
+```python agno_assist.py
 from agno.agent import Agent
 from agno.db.sqlite import SqliteDb
 from agno.models.anthropic import Claude
 from agno.os import AgentOS
-from agno.tools.mcp import MCPTools
 
-agno_assist = Agent(
+agent = Agent(
     name="Agno Assist",
     model=Claude(id="claude-sonnet-4-5"),
     db=SqliteDb(db_file="agno.db"),
-    tools=[MCPTools(url="https://docs.agno.com/mcp")],
-    add_datetime_to_context=True,
-    add_history_to_context=True,
-    num_history_runs=3,
-    markdown=True,
 )
 
-agent_os = AgentOS(agents=[agno_assist])
+agent_os = AgentOS(agents=[agent])
 app = agent_os.get_app()
+
 ```
 
 ## Key Features
@@ -69,27 +58,13 @@ The runtime exposes the APIs that power both the control plane and your AI produ
   alt="AgentOS Architecture"
 />
 
-The AgentOS runs as a container in your cloud. The UI connects directly from the browser. No proxies. No data relays. Your data stays completely private.
-
-<Frame>
-  <video
-    autoPlay
-    muted
-    loop
-    playsInline
-    controls
-    style={{ borderRadius: "0.5rem", width: "100%", height: "auto" }}
-  >
-    <source src="/videos/agentos-agent-chat.mp4" type="video/mp4" />
-  </video>
-</Frame>
-
 ## Private by Design
 
-Most AI tooling stores your data on their servers. You pay retention costs, deal with egress fees, and depend on their security. AgentOS runs entirely in your infrastructure:
+Most AI tooling stores your data on their servers. You pay retention costs, deal with egress fees, and depend on their security. AgentOS runs entirely in your infrastructure: the runtime runs as a container in your cloud, and the [control plane](/agent-os/control-plane) connects directly from your browser. No proxies. No data relays.
+
 - **Your database**: Sessions, memory, knowledge, traces. All stored where you control it.
 - **Zero transmission**: No conversations, logs, or metrics sent to Agno.
-- **From browser to runtime**: The control plane connects from your browser to the runtime. Agno stores no data except for your runtime endpoint. All data resides in your database.
+- **No relay**: Agno stores no data except for your runtime endpoint. All data resides in your database.
 
 See [AgentOS Security](/agent-os/security/overview) for more details.
 
