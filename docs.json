@@ -4652,8 +4652,8 @@
                     "group": "Slack",
                     "pages": [
                       "agent-os/interfaces/slack/overview",
-                      "agent-os/interfaces/slack/setup",
                       "agent-os/interfaces/slack/hitl",
+                      "agent-os/interfaces/slack/setup",
                       "agent-os/interfaces/slack/reference"
                     ]
                   },
