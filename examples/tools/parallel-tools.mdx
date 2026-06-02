@@ -1,48 +1,116 @@
 ---
 title: "Parallel"
-description: "Use Parallel tools with Agno agents."
+description: "Web search, deep research, and continuous monitoring with Parallel."
 ---
 
-Enable Agno agents with web search and extraction infrastructure from Parallel that prioritizes token efficiency and multi-hop reasoning.
+ParallelTools provide four APIs: Search (quick lookups), Extract (pull URL content), Task (deep research), and Monitor (track changes over time).
+
+## Search API
+
+Fast web search for recent information.
 
 ```python
-
 from agno.agent import Agent
 from agno.models.openai import OpenAIResponses
 from agno.tools.parallel import ParallelTools
 
-# ---------------------------------------------------------------------------
-# Create Agent
-# ---------------------------------------------------------------------------
-
 agent = Agent(
-    model=OpenAIResponses(id="gpt-5.1"),
-    tools=[ParallelTools()],
-    instructions="No need to tell me its based on your research.",
+    model=OpenAIResponses(id="gpt-5.4"),
+    tools=[ParallelTools(
+        max_results=10,
+        include_domains=["techcrunch.com", "wired.com"],
+    )],
     markdown=True,
 )
 
-# ---------------------------------------------------------------------------
-# Run Agent
-# ---------------------------------------------------------------------------
-if __name__ == "__main__":
-    agent.print_response(
-        "Tell me about Agno's AgentOS?",
-        stream=True,
-        stream_events=True,
-    )
+agent.print_response("What are the latest developments in AI agents?", stream=True)
 ```
 
-## Run the Example
-```bash
-# Clone and setup repo
-git clone https://github.com/agno-agi/agno.git
-cd agno/cookbook/91_tools
+## Task API
 
-# Create and activate virtual environment
+Deep research with structured output and citations.
+
+```python
+from agno.agent import Agent
+from agno.models.openai import OpenAIResponses
+from agno.tools.parallel import ParallelTools
+
+enrichment_tools = ParallelTools(
+    enable_search=False,
+    enable_extract=False,
+    enable_task=True,
+    default_processor="base",
+    default_output_schema={
+        "type": "json",
+        "json_schema": {
+            "type": "object",
+            "properties": {
+                "company_name": {"type": "string"},
+                "headquarters": {"type": "string"},
+                "total_funding": {"type": "string"},
+                "key_investors": {"type": "array", "items": {"type": "string"}},
+            },
+            "required": ["company_name"],
+        },
+    },
+)
+
+agent = Agent(
+    model=OpenAIResponses(id="gpt-5.4"),
+    tools=[enrichment_tools],
+    markdown=True,
+    instructions="Use create_task() to research, then get_task_result() to retrieve.",
+)
+
+agent.print_response("Research Anthropic and return structured company data", stream=True)
+```
+
+## Monitor API
+
+Track topics over time and detect changes.
+
+```python
+from agno.agent import Agent
+from agno.models.openai import OpenAIResponses
+from agno.tools.parallel import ParallelTools
+
+monitor_tools = ParallelTools(
+    enable_search=False,
+    enable_extract=False,
+    enable_monitor=True,
+    default_monitor_frequency="1d",
+)
+
+agent = Agent(
+    model=OpenAIResponses(id="gpt-5.4"),
+    tools=[monitor_tools],
+    markdown=True,
+)
+
+# Create monitors
+agent.print_response("Create a monitor to track OpenAI product launches", stream=True)
+
+# Later: check for events
+agent.print_response("List my monitors and fetch recent events", stream=True)
+```
+
+## Run the Examples
+
+```bash
+git clone https://github.com/agno-agi/agno.git
+cd agno
+
 ./scripts/demo_setup.sh
 source .venvs/demo/bin/activate
 
-python parallel_tools.py
+# Search API
+python cookbook/91_tools/parallel/news_search.py
+
+# Task API
+python cookbook/91_tools/parallel/company_enrichment.py
+
+# Monitor API
+python cookbook/91_tools/parallel/competitor_tracker.py
 ```
-For details, see [Parallel cookbook](https://github.com/agno-agi/agno/blob/main/cookbook/91_tools/parallel_tools.py).
+
+For details, see the [Parallel cookbook](https://github.com/agno-agi/agno/tree/main/cookbook/91_tools/parallel).
