@@ -9,15 +9,13 @@ The Telegram interface exposes an Agno Agent, Team, or Workflow on Telegram via 
 
 ## Setup
 
-Requires a bot token from [@BotFather](https://t.me/BotFather) and a webhook URL.
+Follow the [Telegram setup guide](/agent-os/interfaces/telegram/setup) to set up your bot.
 
-**Environment variables:**
-```bash
-export TELEGRAM_TOKEN="..."
-export TELEGRAM_WEBHOOK_SECRET_TOKEN="..."  # production only
-```
+Required configuration:
 
-See the [full setup guide](/agent-os/interfaces/telegram/setup) for step-by-step instructions.
+- `TELEGRAM_TOKEN` (bot token from @BotFather)
+- `TELEGRAM_WEBHOOK_SECRET_TOKEN` -- required in production, skipped when `APP_ENV=development`
+- An ngrok tunnel (for local development) and webhook pointing to `/telegram/webhook`
 
 ## Example Usage
 

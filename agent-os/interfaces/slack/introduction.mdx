@@ -9,15 +9,18 @@ The Slack interface lets you deploy agents, teams, or workflows as interactive S
 
 ## Setup
 
-Requires a Slack App with OAuth scopes and event subscriptions.
+Follow the [Slack setup guide](/agent-os/interfaces/slack/setup) to create a Slack App and configure OAuth scopes, event subscriptions, and App Home.
 
-**Environment variables:**
-```bash
-export SLACK_TOKEN="xoxb-..."
-export SLACK_SIGNING_SECRET="..."
-```
+<Note>
+Install the Slack dependencies: `uv pip install 'agno[slack]'`
+</Note>
 
-See the [full setup guide](/agent-os/interfaces/slack/setup) for step-by-step instructions.
+Required configuration:
+
+- `SLACK_TOKEN` (Bot User OAuth Token)
+- `SLACK_SIGNING_SECRET` (App Signing Secret)
+- Webhook URL set to `{prefix}/events` (use [ngrok](https://ngrok.com) for local development)
+- **Agents & AI Apps** enabled under App Home in your Slack App settings (required for streaming UI)
 
 ## Example Usage
 

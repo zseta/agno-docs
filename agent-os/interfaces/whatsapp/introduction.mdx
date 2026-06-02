@@ -9,17 +9,14 @@ The WhatsApp interface lets you deploy agents, teams, or workflows as WhatsApp b
 
 ## Setup
 
-Requires a Meta Developer account, WhatsApp Business API access, and webhook configuration.
+Follow the [WhatsApp setup guide](/agent-os/interfaces/whatsapp/setup) to create a Meta App, configure the WhatsApp Business API, and set up webhooks.
 
-**Environment variables:**
-```bash
-export WHATSAPP_ACCESS_TOKEN="..."
-export WHATSAPP_PHONE_NUMBER_ID="..."
-export WHATSAPP_VERIFY_TOKEN="..."
-export WHATSAPP_APP_SECRET="..."  # production
-```
+Required configuration:
 
-See the [full setup guide](/agent-os/interfaces/whatsapp/setup) for step-by-step instructions.
+- `WHATSAPP_ACCESS_TOKEN` (from [Meta App Dashboard](https://developers.facebook.com/apps/) > WhatsApp > API Setup)
+- `WHATSAPP_PHONE_NUMBER_ID` (from WhatsApp > API Setup)
+- `WHATSAPP_VERIFY_TOKEN` (any string you choose for webhook verification)
+- Webhook URL set to `{prefix}/webhook` (use [ngrok](https://ngrok.com) for local development)
 
 ## Example Usage
 
