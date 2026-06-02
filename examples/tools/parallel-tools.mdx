@@ -6,9 +6,9 @@ keywords: [parallel, web search, task api, monitor api, deep research, web monit
 
 Enable Agno agents with web search and extraction infrastructure from Parallel that prioritizes token efficiency and multi-hop reasoning.
 
-## Search API
+## Search
 
-Fast web search for recent information.
+Natural-language web search that returns LLM-optimized excerpts. Use when the model needs current facts, specific entities, or web data to ground a response.
 
 ```python
 from agno.agent import Agent
@@ -27,9 +27,9 @@ agent = Agent(
 agent.print_response("What are the latest developments in AI agents?", stream=True)
 ```
 
-## Task API
+## Task
 
-Deep research with structured output and citations.
+Deep research that takes a plain-language input and returns comprehensive, cited results. Use for multi-hop research that needs minutes (not seconds) and synthesis across many sources.
 
 ```python
 from agno.agent import Agent
@@ -66,9 +66,9 @@ agent = Agent(
 agent.print_response("Research Anthropic and return structured company data", stream=True)
 ```
 
-## Monitor API
+## Monitor
 
-Track topics over time and detect changes.
+Continuously track the web for changes relevant to a natural-language query, on a schedule you control. Use for news tracking, regulatory watchlists, or competitor monitoring.
 
 ```python
 from agno.agent import Agent
@@ -117,13 +117,13 @@ agent.print_response("List my monitors and fetch recent events", stream=True)
   </Step>
   <Step title="Run an example">
     ```bash
-    # Search API
+    # Search
     python cookbook/91_tools/parallel/news_search.py
 
-    # Task API
+    # Task (deep research)
     python cookbook/91_tools/parallel/company_enrichment.py
 
-    # Monitor API
+    # Monitor (continuous tracking)
     python cookbook/91_tools/parallel/competitor_tracker.py
     ```
   </Step>
