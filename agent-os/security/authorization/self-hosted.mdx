@@ -52,9 +52,13 @@ For key rotation, use a JWKS file instead of a single verification key. AgentOS 
 
 AgentOS works with any standards-compliant identity provider, including WorkOS, Auth0, Okta, Clerk, Supabase, Firebase, AWS Cognito, and Keycloak. There are no provider-specific integrations to install. The setup is the same for all of them:
 
-1. Download the provider's JWKS file or get its public key.
-2. Configure it as a verification key.
+1. Get the provider's JWKS file. Most managed IDPs expose this at a JWKS endpoint.
+2. Configure it on the JWT middleware as `jwks_file` with the matching `algorithm` (RS256 for most IDPs).
 3. Point the JWT middleware at the claim that carries permissions (`scopes_claim`), or use [custom scope mappings](/agent-os/security/authorization/customization) to define endpoint requirements in the provider's naming.
+
+<Note>
+JWKS replaces `verification_keys`; they're alternative key sources, not stacked. If the provider gives you a raw public key (PEM) instead of a JWKS endpoint, use `verification_keys=[pem]` and skip `jwks_file`.
+</Note>
 
 ### Example: WorkOS
 
@@ -88,6 +92,10 @@ app.add_middleware(
 
 WorkOS access tokens carry `permissions`, `role`, `org_id`, and `sid` claims by default. If your WorkOS permission names already match AgentOS scopes (e.g., `agents:read`), the middleware passes them through directly. If they don't, use [custom scope mappings](/agent-os/security/authorization/customization) to redefine endpoint requirements in WorkOS's naming.
 
+<Note>
+**Why this example uses `JWTMiddleware` instead of `AuthorizationConfig`.** `AuthorizationConfig` covers verification keys, algorithm, audience, and isolation, but not claim names or token sources. Use it when the provider's JWT uses the standard `scopes` and `sub` claims. For providers that use a different claim name (WorkOS `permissions`, Auth0 `scope`, Okta `scp`), or when you need cookie tokens or custom scope mappings, use `JWTMiddleware` directly.
+</Note>
+
 ## Accepting Multiple Issuers
 
 `verification_keys` is a list. AgentOS tries each key in order until one verifies the token. Pass a second key to accept tokens from both the AgentOS control plane and your own backend at the same time.
@@ -103,6 +111,10 @@ authorization_config=AuthorizationConfig(
 ```
 
 This keeps the AgentOS UI working through the control plane while your backend mints its own tokens for service-to-service or production traffic. All keys in the list must use the algorithm set in `algorithm`.
+
+<Note>
+For a mix of JWKS-based and raw-key issuers (e.g., a third-party IDP plus the AgentOS control plane), set both `jwks_file` and `verification_keys`. AgentOS tries JWKS keys first (matched by `kid`), then static verification keys as a fallback.
+</Note>
 
 <Note>
 Order matters for performance, not correctness. AgentOS tries each key in order and stops at the first match. Put the most common issuer first to skip an extra decode attempt per request.
