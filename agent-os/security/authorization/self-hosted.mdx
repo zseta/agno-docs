@@ -96,6 +96,8 @@ WorkOS access tokens carry `permissions`, `role`, `org_id`, and `sid` claims by 
 **Why this example uses `JWTMiddleware` instead of `AuthorizationConfig`.** `AuthorizationConfig` covers verification keys, algorithm, audience, and isolation, but not claim names or token sources. Use it when the provider's JWT uses the standard `scopes` and `sub` claims. For providers that use a different claim name (WorkOS `permissions`, Auth0 `scope`, Okta `scp`), or when you need cookie tokens or custom scope mappings, use `JWTMiddleware` directly.
 </Note>
 
+See [WorkOS BYOT](/agent-os/usage/rbac/workos-byot) for a runnable example.
+
 ## Accepting Multiple Issuers
 
 `verification_keys` is a list. AgentOS tries each key in order until one verifies the token. Pass a second key to accept tokens from both the AgentOS control plane and your own backend at the same time.
