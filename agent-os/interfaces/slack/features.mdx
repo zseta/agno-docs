@@ -1,15 +1,33 @@
 ---
 title: Features
 sidebarTitle: Features
-description: Sessions, files, teams, workflows, and advanced configuration for the Slack interface.
-keywords: [slack, sessions, threads, files, teams, workflows, user identity]
+description: Memory, files, streaming, search, and cross-platform identity for your Slack agent.
+keywords: [slack, sessions, threads, files, search, user identity, streaming]
 ---
 
-## Sessions and threads
+A basic agent receives a message, thinks, and replies. A production agent handles the messy reality of workplace chat: conversations that span days, files dropped mid-thread, long-running tasks that need visibility, and sensitive actions that need approval.
 
-Each Slack thread maps to a session. The session ID follows the pattern `{agent_name}:{thread_ts}`, so different agents on the same server stay isolated even if they share a database.
+Here's what makes it production-ready:
+
+| Capability | What it does | Quick setup |
+|------------|--------------|-------------|
+| [Memory](#memory) | Conversations persist across messages | `db=SqliteDb(...)` |
+| [Files](#files) | Read attachments, send files back | `SlackTools(enable_upload_file=True)` |
+| [Streaming](#streaming) | Show progress on long tasks | On by default |
+| [Search](#search) | Find messages and context across workspace | `SlackTools(enable_search_workspace=True)` |
+| [Identity](#identity) | Recognize users across platforms | `resolve_user_identity=True` |
+| [Response control](#response-control) | Control when bot responds | `reply_to_mentions_only=True` |
+| [Approvals](/agent-os/interfaces/slack/hitl) | Pause for human approval | `@tool(requires_confirmation=True)` |
+| [Context provider](/agent-os/context-providers) | Query and update Slack from any agent | `SlackContextProvider()` |
+
+---
+
+## Memory
+
+Slack conversations span hours or days. With a database configured, the agent remembers previous messages in the thread and can reference earlier context without the user restating it.
 
 ```python
+from agno.agent import Agent
 from agno.db.sqlite import SqliteDb
 
 agent = Agent(
@@ -21,24 +39,11 @@ agent = Agent(
 )
 ```
 
-With a database configured, conversation history persists across server restarts. Without one, threads reset when the server restarts.
-
-## Responding to messages
-
-By default, the bot responds to @mentions in channels and all direct messages. This keeps the bot out of conversations where it was not explicitly invoked.
-
-| `reply_to_mentions_only` | Behavior |
-|--------------------------|----------|
-| `True` (default) | Responds to @mentions in channels, all DMs |
-| `False` | Responds to every message in joined channels |
-
-<Warning>
-Setting `reply_to_mentions_only=False` means the bot responds to every channel message. Use this only for dedicated bot channels, not general discussion channels.
-</Warning>
+Each Slack thread maps to one session. DMs work the same way. Conversations persist across server restarts.
 
 ## Files
 
-Users can attach files to messages, and agents can upload files back. Enable file tools on your agent:
+The agent can read files that users attach and generate files in response. The interface extracts attachments from incoming messages and makes them available to the agent. Generated files upload back to the thread.
 
 ```python
 from agno.tools.slack import SlackTools
@@ -48,107 +53,109 @@ agent = Agent(
 )
 ```
 
-The interface extracts attached files from incoming messages and makes them available to the agent.
+## Streaming
 
-## Teams and workflows
+Responses stream live, so users see text appear as the agent generates it, with task cards showing progress on long-running work.
 
-The interface accepts teams and workflows the same way it accepts agents:
-
-<Tabs>
-  <Tab title="Team">
 ```python
-from agno.team import Team
-
-support_team = Team(
-    name="Support",
-    mode="coordinate",
-    members=[tech_agent, docs_agent],
-    model=...,
-)
-
-Slack(team=support_team)
+Slack(agent=agent, streaming=True)  # on by default
 ```
 
-When a user messages the bot, the team coordinator routes to the right specialist. Each thread is still one session, but the session belongs to the team rather than a single agent.
-  </Tab>
-  <Tab title="Workflow">
+<Note>
+Streaming requires [Agents & AI Apps](https://docs.slack.dev/ai) mode. Enable it under **App Home** in your [Slack App settings](https://api.slack.com/apps). Without it, users see a spinner until the full response is ready.
+</Note>
+
+## Search
+
+The agent can search across your Slack workspace: messages, channels, and threads.
+
 ```python
-from agno.workflow import Step, Workflow
+from agno.tools.slack import SlackTools
 
-research_flow = Workflow(
-    name="Research",
-    steps=[
-        Step(agent=researcher, name="Research"),
-        Step(agent=writer, name="Write"),
-    ],
+agent = Agent(
+    tools=[SlackTools(enable_search_workspace=True)],
 )
-
-Slack(workflow=research_flow)
 ```
 
-Each message triggers the workflow. The interface shows step progress in task cards as the workflow moves through its stages.
-  </Tab>
-</Tabs>
+The `search_workspace` tool uses Slack's semantic search to find relevant messages and context. Useful for catching up on discussions, finding prior decisions, or summarizing activity.
 
-## User identity
+<Note>
+Search requires additional [OAuth scopes](https://docs.slack.dev/reference/scopes) (`search:read.public`, `search:read.files`). Add them under **OAuth & Permissions** in your [Slack App settings](https://api.slack.com/apps). See the [Reference](/agent-os/interfaces/slack/reference#oauth-scopes) for the full list.
+</Note>
 
-Enable `resolve_user_identity=True` to resolve Slack user IDs like `U0123ABC` to email addresses:
+## Identity
+
+The same user messages from Slack today, WhatsApp tomorrow. With identity resolution, the agent recognizes them as the same person.
 
 ```python
 Slack(agent=agent, resolve_user_identity=True)
 ```
 
-The agent receives `{"user_name": "Jane Doe", "user_id": "jane@company.com"}` in metadata. This lets agents share memory across interfaces. Jane gets the same context whether she messages via Slack, WhatsApp, or Telegram.
+The agent receives `user_id` as the user's email instead of their Slack ID. Memory and context carry across platforms.
 
-## Multiple bots on one server
+## Response control
 
-Run several bots with different route prefixes:
+By default, the bot only responds when @mentioned in channels. In DMs, it responds to every message.
 
-```python
-AgentOS(
-    agents=[support_bot, research_bot],
-    interfaces=[
-        Slack(agent=support_bot, prefix="/support", token=SUPPORT_TOKEN, signing_secret=SUPPORT_SECRET),
-        Slack(agent=research_bot, prefix="/research", token=RESEARCH_TOKEN, signing_secret=RESEARCH_SECRET),
-    ],
-)
-```
+| Setting | Behavior |
+|---------|----------|
+| `reply_to_mentions_only=True` (default) | Responds to @mentions in channels, all DMs |
+| `reply_to_mentions_only=False` | Responds to every message in joined channels |
 
-Each Slack App can only have one Request URL, so you need a separate Slack App per bot.
+<Warning>
+Setting `reply_to_mentions_only=False` means the bot responds to every channel message. Use this only for dedicated bot channels.
+</Warning>
 
 ## Troubleshooting
 
 <AccordionGroup>
-  <Accordion title="No response from the bot">
-    **Cause:** Server not running or event subscription misconfigured.
+  <Accordion title="Bot doesn't respond">
+**Check:** Server running? ngrok active? Request URL matches `{your-url}/slack/events`?
 
-    **Fix:** Verify that ngrok is running, the Request URL in your Slack App settings matches `{your-tunnel-url}/slack/events`, and you've subscribed to `app_mention` and `message.im` events.
+**Fix:** Verify you've subscribed to `app_mention` and `message.im` events in your Slack App.
   </Accordion>
 
   <Accordion title="403 errors on events">
-    **Cause:** Wrong signing secret.
+**Cause:** Wrong signing secret, or request timestamp too old.
 
-    **Fix:** Verify `SLACK_SIGNING_SECRET` matches the value under **Basic Information > App Credentials** in your Slack App settings. The signing secret is different from the bot token.
+**Fix:** `SLACK_SIGNING_SECRET` must match **Basic Information > App Credentials** in your Slack App settings. If using ngrok, restart it to clear stale connections. Slack rejects requests older than 5 minutes.
   </Accordion>
 
-  <Accordion title="Bot ignores channel messages">
-    **Cause:** `reply_to_mentions_only=True` (the default).
+  <Accordion title="No streaming or task cards">
+**Cause:** "Agents & AI Apps" not enabled.
 
-    **Fix:** @mention the bot with `@YourAppName`, or set `reply_to_mentions_only=False` if you want the bot to respond to all messages in channels it has joined.
+**Fix:** In Slack App settings → **App Home** → enable **Agents & AI Apps**.
   </Accordion>
 
-  <Accordion title="No streaming UI or task cards">
-    **Cause:** Agents & AI Apps not enabled.
+  <Accordion title="Bot responds to unrelated messages">
+**Cause:** `reply_to_mentions_only=False` makes the bot respond to every message in channels it can see, including @mentions of other users.
 
-    **Fix:** In your Slack App settings, go to **App Home** and enable **Agents & AI Apps**. This is required for streaming text and task cards.
+**Fix:** Set `reply_to_mentions_only=True` (the default). Only set it to `False` for dedicated bot channels.
   </Accordion>
 
-  <Accordion title="SSL certificate errors on macOS">
-    **Cause:** System Python missing root certificates.
+  <Accordion title="search_workspace returns error">
+**Cause:** The `search_workspace` tool requires an `action_token` that only exists when running through the Slack interface. It doesn't work in standalone scripts or terminal testing.
 
-    **Fix:** Set the `SSL_CERT_FILE` environment variable:
-    ```bash
-    export SSL_CERT_FILE=$(python3 -c "import certifi; print(certifi.where())")
-    ```
+**Fix:** Test search through the actual Slack bot, not in a standalone script. For terminal testing, use `search_messages` instead (requires a user token with `search:read` scope).
+  </Accordion>
+
+  <Accordion title="SSL certificate errors (macOS)">
+**Cause:** System Python missing root certificates.
+
+**Fix:**
+```bash
+export SSL_CERT_FILE=$(python3 -c "import certifi; print(certifi.where())")
+```
   </Accordion>
 </AccordionGroup>
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Human-in-the-Loop" icon="shield-check" href="/agent-os/interfaces/slack/hitl">
+    Pause for approval before sensitive actions
+  </Card>
+  <Card title="Reference" icon="book" href="/agent-os/interfaces/slack/reference">
+    All parameters and endpoints
+  </Card>
+</CardGroup>

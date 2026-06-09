@@ -1,140 +1,186 @@
 ---
 title: Setup
 sidebarTitle: Setup
-description: Create a Slack App using a manifest and connect it to your agent.
+description: Create a Slack App and connect it to your agent.
 keywords: [slack, setup, manifest, oauth, events, configuration]
 ---
 
+Connecting an agent to Slack requires solving three problems:
+
+1. **Delivery.** Slack pushes events (messages, mentions, button clicks) to a public HTTPS endpoint. During development, ngrok tunnels traffic to your local machine.
+
+2. **Identity.** Slack needs a registered app with a name, icon, and declared permissions. This is your agent's presence in Slack, visible to users under **Apps** in the sidebar.
+
+3. **Authentication.** Two credentials link your code to the Slack app: a bot token for API calls, and a signing secret to verify incoming webhooks.
+
+Once configured, everything flows through one endpoint:
+
+```
+Slack  →  https://YOUR-URL/slack/events  →  AgentOS  →  Agent
+```
+
+This guide solves the three problems in order across five steps. Most developers finish in under 10 minutes.
+
 <Note>
-Install the Slack dependencies: `uv pip install 'agno[slack]'`
+Install dependencies first: `uv pip install 'agno[slack]'`
 </Note>
 
-## Get your URL
+## 1. Expose a public URL
 
-Slack needs a public HTTPS URL to deliver events. For local development, use ngrok:
+The first problem to solve is delivery: Slack sends events via webhook, so your server must be reachable from the internet.
+
+For local development, [ngrok](https://ngrok.com) creates a tunnel:
 
 ```bash
 ngrok http 7777
 ```
 
-Copy the `https://` forwarding URL. For production, use your deployed URL.
+<Check>
+You now have a public HTTPS endpoint. Copy the forwarding URL, since the app you create next will point at it.
+</Check>
 
-## Create a Slack App
+<Warning>
+**ngrok generates a new URL on each restart.** For production, use a stable domain instead (see the [deployment guide](/deploy/templates)).
+</Warning>
+
+## 2. Create the Slack App
+
+With delivery solved, the next step is giving your agent its identity in Slack: a registered app with the right permissions and event subscriptions.
 
 <Tabs>
-<Tab title="Quick start">
+<Tab title="Manifest">
 
-1. Download the [manifest.json](https://github.com/agno-agi/agno/blob/main/libs/agno/agno/os/interfaces/slack/manifest.json)
-2. Replace `https://your-url` with your ngrok URL
-3. Go to [api.slack.com/apps](https://api.slack.com/apps) → **Create New App** → **From an app manifest**
-4. Paste the manifest and click **Create**
-5. Go to **Install App** → **Install to Workspace**
-6. Copy the **Bot User OAuth Token** (`xoxb-...`)
+A manifest pre-configures scopes, events, and settings in one step. It includes everything needed for DMs, @mentions, and [Human-in-the-Loop](/hitl/overview) interactions.
+
+1. Download [manifest.json](https://github.com/agno-agi/agno/blob/main/libs/agno/agno/os/interfaces/slack/manifest.json) and replace `https://YOUR-URL` with your ngrok URL
+2. Go to [api.slack.com/apps](https://api.slack.com/apps) → **Create New App** → **From a manifest**
+3. Select your workspace, choose **JSON**, and paste the manifest contents
+4. Click **Next**, review the summary, then click **Create**
+
+<Check>
+Your app now has every scope and event it needs.
+</Check>
 
 </Tab>
-<Tab title="Step by step">
+<Tab title="Manual">
 
-### Create the app
+This path configures each setting individually. Use it when you need custom scopes or want to understand what the manifest abstracts. Each area below maps to a page in the Slack app dashboard.
+
+<AccordionGroup>
+<Accordion title="Create the app">
 
 1. Go to [api.slack.com/apps](https://api.slack.com/apps)
-2. Click **Create New App**
-3. Select **From an app manifest**
-4. Select your workspace
-5. Choose **JSON** and paste the manifest below
+2. Click **Create New App** → **From scratch**
+3. Name it (e.g., "My Agent"), select your workspace, then click **Create App**
 
-Replace `https://your-url` with your ngrok or production URL:
+</Accordion>
+<Accordion title="Configure App Home">
 
-```json
-{
-    "display_information": {
-        "name": "My Agent",
-        "description": "An AI agent that lives in Slack.",
-        "background_color": "#000000"
-    },
-    "features": {
-        "app_home": {
-            "home_tab_enabled": false,
-            "messages_tab_enabled": true,
-            "messages_tab_read_only_enabled": false
-        },
-        "bot_user": {
-            "display_name": "My Agent",
-            "always_online": true
-        },
-        "assistant_view": {
-            "assistant_description": "Ask me anything.",
-            "suggested_prompts": []
-        }
-    },
-    "oauth_config": {
-        "scopes": {
-            "bot": [
-                "app_mentions:read",
-                "assistant:write",
-                "channels:history",
-                "channels:read",
-                "chat:write",
-                "files:read",
-                "files:write",
-                "groups:history",
-                "groups:read",
-                "im:history",
-                "users:read",
-                "users:read.email"
-            ]
-        }
-    },
-    "settings": {
-        "event_subscriptions": {
-            "request_url": "https://your-url/slack/events",
-            "bot_events": [
-                "app_mention",
-                "assistant_thread_started",
-                "message.im"
-            ]
-        },
-        "org_deploy_enabled": false,
-        "socket_mode_enabled": false,
-        "token_rotation_enabled": false
-    }
-}
-```
+App Home is your agent's surface in Slack. Users find it under **Apps** and start conversations there.
 
-6. Click **Create**
+1. Click **App Home** in the sidebar
+2. Under **Show Tabs**, enable **Messages Tab**
+3. Check **Allow users to send Slash commands and messages from the messages tab**
 
-The manifest configures scopes, events, and app home settings in one shot.
+</Accordion>
+<Accordion title="Add OAuth scopes">
 
-6. Click **Create**
+Scopes are the permissions your app requests, and each one grants a single capability like reading messages, sending replies, or accessing files.
 
-### Install to workspace
+Go to **OAuth & Permissions** → **Scopes** → **Bot Token Scopes** and add:
 
-1. Go to **Install App** in the sidebar
-2. Click **Install to Workspace**
-3. Click **Allow** to authorize
-4. Copy the **Bot User OAuth Token** (`xoxb-...`)
+| Scope | Purpose | Required? |
+|-------|---------|-----------|
+| `app_mentions:read` | See @mentions | Yes |
+| `chat:write` | Send messages | Yes |
+| `im:history` | Read DM history | Yes |
+| `assistant:write` | Slack's assistant UI with streaming | Yes |
+| `channels:read` | See public channel membership | Yes |
+| `channels:history` | Read public channel history | Recommended |
+| `groups:read` | See private channel membership | Optional |
+| `groups:history` | Read private channel history | Optional |
+| `files:read` | Access shared files | Optional |
+| `files:write` | Upload files | Optional |
+| `users:read` | Look up user profiles | Optional |
+| `users:read.email` | Look up user emails | Optional |
+
+<Tip>
+Start with the required scopes and add optional ones later, keeping in mind that each change needs a reinstall. The [scopes reference](/agent-os/interfaces/slack/reference#oauth-scopes) maps every scope to the features and tools that need it.
+</Tip>
+
+</Accordion>
+<Accordion title="Subscribe to events">
+
+Events tell Slack when to call your webhook. Go to **Event Subscriptions**:
+
+1. Toggle **Enable Events** to **On**
+2. Enter **Request URL**: `https://YOUR-NGROK-URL/slack/events`
+3. Slack sends a verification challenge to that URL
+
+<Warning>
+**The verification challenge needs a live endpoint.** If it fails, complete the [Connect your agent](#4-connect-your-agent) step first, then return and retry.
+</Warning>
+
+Under **Subscribe to bot events**, add:
+
+| Event | Fires when |
+|-------|------------|
+| `app_mention` | Someone @mentions the agent |
+| `message.im` | Someone DMs the agent |
+| `assistant_thread_started` | Someone opens a thread with the agent |
+
+To also receive channel messages, add `message.channels` and `message.groups` (see [Respond to all channel messages](#respond-to-all-channel-messages)).
+
+</Accordion>
+<Accordion title="Enable interactivity">
+
+[Human-in-the-Loop](/hitl/overview) features (confirmation buttons, input forms) require interactivity. This routes button clicks and form submissions to your agent.
+
+1. Click **Interactivity & Shortcuts** in the sidebar
+2. Toggle **Interactivity** to **On**
+3. Enter **Request URL**: `https://YOUR-NGROK-URL/slack/interactions`
+
+</Accordion>
+</AccordionGroup>
+
+<Check>
+The manual configuration now matches what the manifest sets up automatically.
+</Check>
 
 </Tab>
 </Tabs>
 
-## Set Environment Variables
+## 3. Install and collect credentials
+
+The last remaining problem is authentication, and installing the app to your workspace generates both credentials you need.
+
+1. Click **Install App** in the sidebar
+2. Click **Install to Workspace**, review permissions, then click **Allow**
+3. Copy the **Bot User OAuth Token** (starts with `xoxb-`)
+4. Go to **Basic Information** → **App Credentials** and copy the **Signing Secret**
+
+Export them so your code can authenticate:
 
 ```bash
-# Bot User OAuth Token (from Install App page)
-export SLACK_TOKEN="xoxb-..."
-
-# Signing Secret (Basic Information → App Credentials)
-export SLACK_SIGNING_SECRET="..."
+export SLACK_TOKEN="xoxb-..."           # Bot User OAuth Token
+export SLACK_SIGNING_SECRET="..."       # From Basic Information → App Credentials
 ```
 
-## Run
+<Check>
+Slack-side setup is complete: the app exists, it points at your URL, and you hold its credentials.
+</Check>
 
-```python basic.py
+## 4. Connect your agent
+
+With all three problems solved, the only thing left is to connect the agent itself:
+
+```python app.py
 from agno.agent import Agent
 from agno.models.openai import OpenAIResponses
 from agno.os.app import AgentOS
 from agno.os.interfaces.slack import Slack
 
-agent = Agent(name="Support Bot", model=OpenAIResponses(id="gpt-5.4"))
+agent = Agent(name="My Agent", model=OpenAIResponses(id="gpt-5.4"))
 
 app = AgentOS(
     agents=[agent],
@@ -143,72 +189,72 @@ app = AgentOS(
 ```
 
 ```bash
-python basic.py
+python app.py
 ```
 
-DM the bot or @mention it in a channel to test.
+AgentOS mounts the Slack interface at `/slack/events`, the same path your webhook points at. Events from Slack now reach your agent.
 
-## Verify
+## 5. Test in Slack
 
-**Direct message**: Find your bot under **Apps** in the Slack sidebar and message it directly.
+Once the agent is running, verify everything works by sending it a message. The quickest check is a direct message: find your agent under **Apps** in Slack and say hello.
 
-**In a channel**: Invite the bot first, then mention it:
+To test in a channel, invite the agent and then mention it:
 
 ```
 /invite @MyAgent
-@MyAgent what can you help me with?
+@MyAgent hello!
 ```
 
-Each thread maintains its own conversation. Follow-up messages in the same thread don't need to mention the bot again.
+Each thread keeps its own conversation, so follow-up messages in the same thread don't need another @mention.
 
-## Customizing the Manifest
+<Check>
+If the agent replies, events are flowing from Slack through AgentOS to your agent. Setup is complete.
+</Check>
 
-### Minimal scopes
+## Customization
 
-The manifest above includes scopes for file handling and user lookup. For a minimal bot that only responds to messages:
+The five steps above cover the standard setup. Two adjustments come up often enough to walk through here.
 
-```json
-"bot": [
-    "app_mentions:read",
-    "assistant:write",
-    "channels:read",
-    "chat:write",
-    "im:history"
-]
-```
+<Warning>
+**Scope and event changes require reinstalling.** Go to **Install App** → **Reinstall to Workspace** after any change.
+</Warning>
 
 ### Respond to all channel messages
 
-Add `message.channels` and `message.groups` to bot_events, and set `reply_to_mentions_only=False` in your code:
+By default, the agent only responds to @mentions and DMs. To respond to every message in channels it's in:
 
-```json
-"bot_events": [
-    "app_mention",
-    "assistant_thread_started",
-    "message.channels",
-    "message.groups",
-    "message.im"
-]
-```
+1. In **Event Subscriptions**, add `message.channels` and `message.groups` events
+2. Go to **Install App** → **Reinstall to Workspace**
+3. Update your code:
 
 ```python
 Slack(agent=agent, reply_to_mentions_only=False)
 ```
 
-### Search tools
+See [Response control](/agent-os/interfaces/slack/features#response-control) for how this changes the agent's behavior.
 
-For `SlackTools.search_workspace()`, add these scopes:
+### Add search tools
 
-```json
-"bot": [
-    "search:read.public",
-    "search:read.files",
-    "search:read.users"
-]
-```
+If your agent uses `SlackTools.search_workspace()`, the app needs three additional scopes:
 
-See the [Reference](/agent-os/interfaces/slack/reference) for all scopes and their purposes.
+- `search:read.public`
+- `search:read.files`
+- `search:read.users`
 
-<Warning>
-ngrok URLs change each time you restart. For production, deploy behind a stable URL. See [deployment templates](/deploy/templates).
-</Warning>
+Add them under **OAuth & Permissions**, then reinstall.
+
+## Next steps
+
+Once your agent is responding in Slack, continue with the deeper interface guides.
+
+<CardGroup cols={3}>
+  <Card title="Features" icon="sparkles" href="/agent-os/interfaces/slack/features">
+    Sessions, files, streaming, and more
+  </Card>
+  <Card title="Human-in-the-Loop" icon="shield-check" href="/agent-os/interfaces/slack/hitl">
+    Pause for approval before taking actions
+  </Card>
+  <Card title="Reference" icon="book" href="/agent-os/interfaces/slack/reference">
+    All parameters, scopes, and events
+  </Card>
+</CardGroup>
