@@ -16,51 +16,22 @@ export SLACK_TOKEN=***
 
 ## Example
 
-Three agent configurations: every tool enabled, a curated subset, and a read-only setup.
+The following agent sends a message to a Slack channel, lists channels, and retrieves message history. The messaging, channel, and file tools are enabled by default, so `SlackTools()` needs no configuration.
 
-```python cookbook/91_tools/slack_tools.py
+```python
 from agno.agent import Agent
 from agno.tools.slack import SlackTools
 
-# Example 1: Enable all Slack tools
-agent_all = Agent(
-    tools=[
-        SlackTools(
-            all=True,  # Enable all Slack tools
-        )
-    ],
-    markdown=True,
-)
+agent = Agent(tools=[SlackTools()])
 
-# Example 2: Enable specific tools only
-agent_specific = Agent(
-    tools=[
-        SlackTools(
-            enable_send_message=True,
-            enable_list_channels=True,
-            enable_get_channel_history=False,
-            enable_upload_file=False,
-            enable_download_file=False,
-        )
-    ],
-    markdown=True,
-)
+# Example 1: Send a message to a Slack channel
+agent.print_response("Send a message 'Hello from Agno!' to the channel #general", markdown=True)
 
-# Example 3: Read-only agent (no send_message)
-agent_readonly = Agent(
-    tools=[
-        SlackTools(
-            enable_send_message=False,
-            enable_list_channels=True,
-            enable_get_channel_history=True,
-            enable_upload_file=False,
-            enable_download_file=True,
-        )
-    ],
-    markdown=True,
-)
+# Example 2: List all channels in the Slack workspace
+agent.print_response("List all channels in our Slack workspace", markdown=True)
 
-agent_all.print_response("Send 'Hello from Agno!' to #general", stream=True)
+# Example 3: Get the message history of a specific channel by channel ID
+agent.print_response("Get the last 10 messages from the channel 1231241", markdown=True)
 ```
 
 ## Toolkit Params
