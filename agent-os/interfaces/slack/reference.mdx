@@ -104,6 +104,9 @@ All five scopes above are required for a functional streaming bot. Missing `app_
 | --- | --- |
 | `channels:read` | `list_channels()`, `get_channel_info()` |
 | `channels:history` | `get_channel_history()`, `get_thread()` in public channels |
+| `chat:write` | `send_message()`, `send_message_thread()` |
+| `files:read` | `download_file()`, `download_file_bytes()` |
+| `files:write` | `upload_file()` |
 | `groups:read` | `list_channels()` for private channels |
 | `groups:history` | `get_channel_history()`, `get_thread()` in private channels |
 | `search:read` | `search_messages()` (requires user token) |
