@@ -108,6 +108,7 @@
               "features/sdk",
               "features/runtime",
               "features/api",
+              "features/interfaces",
               "features/storage",
               "features/observability",
               "features/security-and-auth",
