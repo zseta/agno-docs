@@ -66,15 +66,15 @@ Your app now has every scope and event it needs.
 
 This path configures each setting individually. Use it when you need custom scopes or want to understand what the manifest abstracts. Each area below maps to a page in the Slack app dashboard.
 
-<AccordionGroup>
-<Accordion title="Create the app">
+<Steps>
+<Step title="Create the app">
 
 1. Go to [api.slack.com/apps](https://api.slack.com/apps)
 2. Click **Create New App** → **From scratch**
 3. Name it (e.g., "My Agent"), select your workspace, then click **Create App**
 
-</Accordion>
-<Accordion title="Configure App Home">
+</Step>
+<Step title="Configure App Home">
 
 App Home is your agent's surface in Slack. Users find it under **Apps** and start conversations there.
 
@@ -82,8 +82,18 @@ App Home is your agent's surface in Slack. Users find it under **Apps** and star
 2. Under **Show Tabs**, enable **Messages Tab**
 3. Check **Allow users to send Slash commands and messages from the messages tab**
 
-</Accordion>
-<Accordion title="Add OAuth scopes">
+</Step>
+<Step title="Enable Agents & AI Apps">
+
+Streaming responses and task cards use Slack's assistant UI, which has its own feature toggle.
+
+1. Click **Agents & AI Apps** in the sidebar
+2. Toggle the feature **On**
+
+Without this, users see a spinner until the full response is ready (see [Streaming](/agent-os/interfaces/slack/features#streaming)).
+
+</Step>
+<Step title="Add OAuth scopes">
 
 Scopes are the permissions your app requests, and each one grants a single capability like reading messages, sending replies, or accessing files.
 
@@ -105,11 +115,11 @@ Go to **OAuth & Permissions** → **Scopes** → **Bot Token Scopes** and add:
 | `users:read.email` | Look up user emails | Optional |
 
 <Tip>
-Start with the required scopes and add optional ones later, keeping in mind that each change needs a reinstall. The [scopes reference](/agent-os/interfaces/slack/reference#oauth-scopes) maps every scope to the features and tools that need it.
+Start with the required scopes and add optional ones later, keeping in mind that each change needs a reinstall. Slack's [scopes reference](https://docs.slack.dev/reference/scopes/) documents the full catalog.
 </Tip>
 
-</Accordion>
-<Accordion title="Subscribe to events">
+</Step>
+<Step title="Subscribe to events">
 
 Events tell Slack when to call your webhook. Go to **Event Subscriptions**:
 
@@ -131,8 +141,8 @@ Under **Subscribe to bot events**, add:
 
 To also receive channel messages, add `message.channels` and `message.groups` (see [Respond to all channel messages](#respond-to-all-channel-messages)).
 
-</Accordion>
-<Accordion title="Enable interactivity">
+</Step>
+<Step title="Enable interactivity">
 
 [Human-in-the-Loop](/hitl/overview) features (confirmation buttons, input forms) require interactivity. This routes button clicks and form submissions to your agent.
 
@@ -140,8 +150,8 @@ To also receive channel messages, add `message.channels` and `message.groups` (s
 2. Toggle **Interactivity** to **On**
 3. Enter **Request URL**: `https://YOUR-NGROK-URL/slack/interactions`
 
-</Accordion>
-</AccordionGroup>
+</Step>
+</Steps>
 
 <Check>
 The manual configuration now matches what the manifest sets up automatically.
@@ -182,10 +192,14 @@ from agno.os.interfaces.slack import Slack
 
 agent = Agent(name="My Agent", model=OpenAIResponses(id="gpt-5.4"))
 
-app = AgentOS(
+agent_os = AgentOS(
     agents=[agent],
     interfaces=[Slack(agent=agent)],
-).get_app()
+)
+app = agent_os.get_app()
+
+if __name__ == "__main__":
+    agent_os.serve(app="app:app", reload=True)
 ```
 
 ```bash

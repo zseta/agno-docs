@@ -8133,6 +8133,10 @@
   },
   "redirects": [
     {
+      "source": "/deploy/interfaces",
+      "destination": "/deploy/interfaces/overview"
+    },
+    {
       "source": "/runtime/build-a-product",
       "destination": "/features/runtime"
     },

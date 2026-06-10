@@ -31,10 +31,14 @@ from agno.os.interfaces.slack import Slack
 
 agent = Agent(name="Support Bot", model=OpenAIResponses(id="gpt-5.4"))
 
-app = AgentOS(
+agent_os = AgentOS(
     agents=[agent],
     interfaces=[Slack(agent=agent)],
-).get_app()
+)
+app = agent_os.get_app()
+
+if __name__ == "__main__":
+    agent_os.serve(app="agent:app", reload=True)
 ```
 
 </Tab>
@@ -57,10 +61,14 @@ support_team = Team(
     model=OpenAIResponses(id="gpt-5.4"),
 )
 
-app = AgentOS(
+agent_os = AgentOS(
     teams=[support_team],
     interfaces=[Slack(team=support_team)],
-).get_app()
+)
+app = agent_os.get_app()
+
+if __name__ == "__main__":
+    agent_os.serve(app="team:app", reload=True)
 ```
 
 The team coordinator routes messages to the right specialist. Each thread is one session belonging to the team.
@@ -70,7 +78,7 @@ The team coordinator routes messages to the right specialist. Each thread is one
 
 ```python workflow.py
 from agno.agent import Agent
-from agno.workflow import Workflow
+from agno.workflow import Step, Workflow
 from agno.models.openai import OpenAIResponses
 from agno.os.app import AgentOS
 from agno.os.interfaces.slack import Slack
@@ -80,13 +88,20 @@ writer = Agent(name="Writer", model=OpenAIResponses(id="gpt-5.4"))
 
 research_flow = Workflow(
     name="Research",
-    agents=[researcher, writer],
+    steps=[
+        Step(name="Research", agent=researcher),
+        Step(name="Write", agent=writer),
+    ],
 )
 
-app = AgentOS(
+agent_os = AgentOS(
     workflows=[research_flow],
     interfaces=[Slack(workflow=research_flow)],
-).get_app()
+)
+app = agent_os.get_app()
+
+if __name__ == "__main__":
+    agent_os.serve(app="workflow:app", reload=True)
 ```
 
 Each message triggers the workflow. Task cards show step progress as the workflow moves through stages.

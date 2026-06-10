@@ -46,11 +46,15 @@ agent = Agent(
     db=db,
 )
 
-app = AgentOS(
+agent_os = AgentOS(
     agents=[agent],
     db=db,
     interfaces=[Slack(agent=agent)],
-).get_app()
+)
+app = agent_os.get_app()
+
+if __name__ == "__main__":
+    agent_os.serve(app="agent:app", reload=True)
 ```
 
 </Tab>
@@ -83,11 +87,15 @@ support_team = Team(
     db=db,
 )
 
-app = AgentOS(
+agent_os = AgentOS(
     teams=[support_team],
     db=db,
     interfaces=[Slack(team=support_team)],
-).get_app()
+)
+app = agent_os.get_app()
+
+if __name__ == "__main__":
+    agent_os.serve(app="team:app", reload=True)
 ```
 
 When a member agent calls a tool that requires confirmation, the team pauses.
@@ -97,7 +105,7 @@ When a member agent calls a tool that requires confirmation, the team pauses.
 
 ```python workflow.py
 from agno.agent import Agent
-from agno.workflow import Workflow
+from agno.workflow import Step, Workflow
 from agno.db.sqlite import SqliteDb
 from agno.models.openai import OpenAIResponses
 from agno.os import AgentOS
@@ -116,15 +124,22 @@ writer = Agent(name="Writer", model=OpenAIResponses(id="gpt-5.4"), tools=[send_e
 
 research_flow = Workflow(
     name="Research",
-    agents=[researcher, writer],
+    steps=[
+        Step(name="Research", agent=researcher),
+        Step(name="Write", agent=writer),
+    ],
     db=db,
 )
 
-app = AgentOS(
+agent_os = AgentOS(
     workflows=[research_flow],
     db=db,
     interfaces=[Slack(workflow=research_flow)],
-).get_app()
+)
+app = agent_os.get_app()
+
+if __name__ == "__main__":
+    agent_os.serve(app="workflow:app", reload=True)
 ```
 
 Workflow step pauses surface in Slack the same way.
@@ -143,6 +158,7 @@ HITL requires a [database](/features/storage) to persist paused runs.
 | [Confirmation](/hitl/user-confirmation) | Approve/Reject buttons | `@tool(requires_confirmation=True)` |
 | [User input](/hitl/user-input) | Text fields or dropdowns | `@tool(requires_user_input=True)` |
 | [External execution](/hitl/external-execution) | Confirm button, result fed back | `@tool(external_execution=True)` |
+| [User feedback](/hitl/dynamic-user-input) | Dynamic forms: checkboxes, dropdowns, text questions | `UserFeedbackTools()` |
 
 See the [HITL overview](/hitl/overview) for details on each pause type.
 

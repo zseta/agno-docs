@@ -1536,7 +1536,7 @@ paths:
 
         **Setup:** Configure this URL in your [Slack App](https://api.slack.com/apps) under **Event Subscriptions > Request URL**.
 
-        See the [setup guide](/agent-os/interfaces/slack/setup) for creating a Slack App or use the [manifest](/agent-os/interfaces/slack/setup#quick-start) for quick setup.
+        See the [setup guide](/agent-os/interfaces/slack/setup) for creating a Slack App or use the [manifest](/agent-os/interfaces/slack/setup#2-create-the-slack-app) for quick setup.
       operationId: slack_events_simple_team
       parameters:
         - name: X-Slack-Request-Timestamp
@@ -1588,6 +1588,18 @@ paths:
 
         See the [setup guide](/agent-os/interfaces/slack/setup) for step-by-step instructions or the [HITL guide](/agent-os/interfaces/slack/hitl) for approval workflows.
       operationId: slack_interactions
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required:
+                - payload
+              properties:
+                payload:
+                  type: string
+                  description: URL-encoded JSON interaction payload (Slack sends interactive component data as a single form field)
       parameters:
         - name: X-Slack-Request-Timestamp
           in: header
