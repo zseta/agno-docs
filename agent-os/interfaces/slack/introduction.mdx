@@ -109,13 +109,30 @@ Each message triggers the workflow. Task cards show step progress as the workflo
 </Tab>
 </Tabs>
 
-Set `SLACK_TOKEN` and `SLACK_SIGNING_SECRET` environment variables, then run with `python <file>.py`.
+<Steps>
+  <Step title="Create Slack App">
+    Follow the [setup guide](/agent-os/interfaces/slack/setup) to create your app and get credentials.
+  </Step>
+  <Step title="Set credentials">
+    ```bash
+    export SLACK_TOKEN="xoxb-..."
+    export SLACK_SIGNING_SECRET="..."
+    ```
+  </Step>
+  <Step title="Run">
+    ```bash
+    python agent.py
+    ```
+  </Step>
+</Steps>
 
-AgentOS mounts the Slack interface as a FastAPI router at `/slack/events`. Point your Slack App's Request URL there. New to Slack Apps? The [setup guide](/agent-os/interfaces/slack/setup) walks through creating the app and configuring events.
+<Info>
+See [more examples](/agent-os/usage/interfaces/slack/basic) including [streaming](/agent-os/usage/interfaces/slack/streaming), [teams](/agent-os/usage/interfaces/slack/support-team), [workflows](/agent-os/usage/interfaces/slack/workflow), and [multiple bots](/agent-os/usage/interfaces/slack/multi-bot).
+</Info>
 
 ## Multiple bots
 
-AgentOS can mount multiple Slack interfaces on different prefixes, each connected to its own Slack App:
+Run multiple agents on the same server, each with its own Slack App. Useful when you need separate bots for different functions (support vs. sales) or different workspaces.
 
 <Tabs>
 <Tab title="Agent">
@@ -189,11 +206,11 @@ agent_os = AgentOS(
 </Tab>
 </Tabs>
 
-Each bot gets its own Slack App and Request URL (`/ace/events`, `/dash/events`, etc.).
+<Tip>
+Each interface mounts on its own prefix. Set each Slack App's Request URL accordingly (`/ace/events`, `/dash/events`, etc.).
+</Tip>
 
 ## Next steps
-
-Start with the setup guide if you don't have a Slack App yet, then explore what the interface can do.
 
 <CardGroup cols={2}>
   <Card title="Setup Guide" icon="rocket" href="/agent-os/interfaces/slack/setup">

@@ -5,20 +5,19 @@ description: Create a Slack App and connect it to your Agno agent.
 keywords: [slack, setup, manifest, oauth, events, configuration]
 ---
 
-Connecting an agent to Slack requires solving three problems:
+To connect an agent to Slack, you need three pieces in place:
 
-1. **Delivery.** Slack pushes events (messages, mentions, button clicks) to a public HTTPS endpoint. During development, ngrok tunnels traffic to your local machine.
+1. **A public endpoint** for Slack to send events to. In development, use ngrok to forward Slack traffic to your local AgentOS server.
 
-2. **Identity.** Slack needs a registered app with a name, icon, and declared permissions. This is your agent's presence in Slack, visible to users under **Apps** in the sidebar.
+2. **A Slack app** that represents your agent in the workspace. This is what users see under **Apps** in Slack, with its own name, icon, and permissions.
 
-3. **Authentication.** Two credentials link your code to the Slack app: a bot token for API calls, and a signing secret to verify incoming webhooks.
+3. **Credentials** so your agent can talk to Slack and verify incoming requests. You'll use a bot token for Slack API calls and a signing secret for webhook verification.
 
-Once configured, everything flows through one endpoint:
+After setup, Slack events follow this path:
 
 ```
 Slack  →  https://YOUR-URL/slack/events  →  AgentOS  →  Agent
 ```
-
 
 The guide below walks through the setup step by step.
 
@@ -26,11 +25,9 @@ The guide below walks through the setup step by step.
 Install dependencies first: `uv pip install 'agno[slack]'`
 </Note>
 
-## 1. Expose a public URL
+## 1. Expose your local server
 
-The first problem to solve is delivery: Slack sends events via webhook, so your server must be reachable from the internet.
-
-For local development, [ngrok](https://ngrok.com) creates a tunnel:
+Slack needs a public HTTPS URL for event callbacks. For local development, start an ngrok tunnel to your AgentOS server:
 
 ```bash
 ngrok http 7777
@@ -41,17 +38,17 @@ You now have a public HTTPS endpoint. Copy the forwarding URL, since the app you
 </Check>
 
 <Warning>
-**ngrok generates a new URL on each restart.** For production, use a stable domain instead (see the [deployment guide](/deploy/templates)).
+**ngrok generates a new URL on each restart.** For production, use a stable domain instead (see the [deployment guide](/deploy/introduction)).
 </Warning>
 
-## 2. Create the Slack App
+## 2. Create the Slack app
 
-With delivery solved, the next step is giving your agent its identity in Slack: a registered app with the right permissions and event subscriptions.
+Create a Slack app for your agent and configure the permissions and events it needs.
 
 <Tabs>
 <Tab title="Manifest">
 
-A manifest pre-configures scopes, events, and settings in one step. It includes everything needed for DMs, @mentions, and [Human-in-the-Loop](/hitl/overview) interactions.
+The manifest is the quickest setup path. It pre-configures the scopes, events, and settings needed for DMs, @mentions, and [Human-in-the-Loop](/hitl/overview) interactions.
 
 1. Download [manifest.json](https://github.com/agno-agi/agno/blob/main/libs/agno/agno/os/interfaces/slack/manifest.json) and replace `https://YOUR-URL` with your ngrok URL
 2. Go to [api.slack.com/apps](https://api.slack.com/apps) → **Create New App** → **From a manifest**
@@ -59,7 +56,7 @@ A manifest pre-configures scopes, events, and settings in one step. It includes 
 4. Click **Next**, review the summary, then click **Create**
 
 <Check>
-Your app now has every scope and event it needs.
+Your Slack app now has the required scopes and event subscriptions.
 </Check>
 
 </Tab>

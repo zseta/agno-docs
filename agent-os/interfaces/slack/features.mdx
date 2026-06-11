@@ -39,7 +39,11 @@ agent = Agent(
 )
 ```
 
-Each Slack thread maps to one session. DMs work the same way. Conversations persist across server restarts.
+Each Slack thread maps to one session. DMs work the same way. All responses are sent as thread replies, keeping channel conversations organized. Conversations persist across server restarts.
+
+<Note>
+Session format: `{entity_id}:{thread_ts}`. For example, an agent named "Support Bot" produces session IDs like `Support Bot:1719000000.000100`.
+</Note>
 
 ## Files
 
