@@ -1,0 +1,103 @@
+---
+title: Agent with Silent Tools
+description: Suppress frontend tool-execution messages over the AG-UI protocol.
+---
+
+## Code
+
+```python cookbook/05_agent_os/interfaces/agui/agent_with_silent_tools.py
+from agno.agent.agent import Agent
+from agno.models.openai import OpenAIResponses
+from agno.os import AgentOS
+from agno.os.interfaces.agui import AGUI
+from agno.tools import tool
+from agno.tools.duckduckgo import DuckDuckGoTools
+
+
+@tool(external_execution=True, external_execution_silent=True)
+def generate_haiku(topic: str) -> str:
+    """Generate a haiku about a given topic and display it in the frontend.
+
+    Args:
+        topic: The topic for the haiku (e.g., "nature", "technology", "love")
+
+    Returns:
+        Confirmation that the haiku was generated and displayed
+    """
+    return f"Haiku about '{topic}' generated and displayed in frontend"
+
+
+agent = Agent(
+    model=OpenAIResponses(id="gpt-5.4"),
+    tools=[
+        DuckDuckGoTools(),
+        generate_haiku,
+    ],
+    description="You are a helpful AI assistant with backend and frontend tools. You can search the web and create haikus that render in the frontend.",
+    instructions="""
+    You are a versatile AI assistant with the following capabilities:
+
+    **Tools (executed on server):**
+    - Web search using DuckDuckGo for finding current information
+
+    **Frontend Tools (executed on client):**
+    - generate_haiku: Creates a haiku about a given topic
+
+    Always be helpful, creative, and use the most appropriate tool for each request!
+    """,
+    add_datetime_to_context=True,
+    add_history_to_context=True,
+    add_location_to_context=True,
+    timezone_identifier="Etc/UTC",
+    markdown=True,
+    debug_mode=True,
+)
+
+agent_os = AgentOS(
+    agents=[agent],
+    interfaces=[AGUI(agent=agent)],
+)
+app = agent_os.get_app()
+
+if __name__ == "__main__":
+    agent_os.serve(app="agent_with_silent_tools:app", port=9001, reload=True)
+```
+
+## Usage
+
+<Steps>
+  <Snippet file="create-venv-step.mdx" />
+
+  <Step title="Set Environment Variables">
+    ```bash
+    export OPENAI_API_KEY=your_openai_api_key
+    ```
+  </Step>
+
+  <Step title="Install Dependencies">
+    ```bash
+    uv pip install 'agno[agui]' ddgs
+    ```
+  </Step>
+
+  <Step title="Run Example">
+    ```bash
+    python cookbook/05_agent_os/interfaces/agui/agent_with_silent_tools.py
+    ```
+  </Step>
+</Steps>
+
+## Key Features
+
+- **Silent Frontend Tools**: `external_execution_silent=True` hides the "I have tools to execute" message
+- **Backend Tools**: `DuckDuckGoTools` runs on the server
+- **Frontend Tools**: `generate_haiku` runs in the browser via `external_execution=True`
+- **Cleaner UX**: Frontend tool calls happen without verbose status chatter
+
+## Setup Frontend
+
+1. Clone the AG-UI repository: `git clone https://github.com/ag-ui-protocol/ag-ui.git`
+2. Install the TypeScript SDK: `cd ag-ui/typescript-sdk && pnpm install`
+3. Build the Agno integration: `cd integrations/agno && pnpm run build`
+4. Start Dojo: `cd ../../apps/dojo && pnpm run dev`
+5. Open `http://localhost:3000` and select the Agno integration

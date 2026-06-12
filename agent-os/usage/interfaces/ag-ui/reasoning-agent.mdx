@@ -1,0 +1,74 @@
+---
+title: Reasoning Agent
+description: Stream an Agno reasoning agent's thinking to the frontend over AG-UI.
+---
+
+## Code
+
+```python cookbook/05_agent_os/interfaces/agui/reasoning_agent.py
+from agno.agent.agent import Agent
+from agno.models.openai import OpenAIResponses
+from agno.os import AgentOS
+from agno.os.interfaces.agui import AGUI
+from agno.tools.websearch import WebSearchTools
+
+chat_agent = Agent(
+    name="Assistant",
+    model=OpenAIResponses(id="o4-mini"),
+    instructions="You are a helpful AI assistant.",
+    add_datetime_to_context=True,
+    add_history_to_context=True,
+    add_location_to_context=True,
+    timezone_identifier="Etc/UTC",
+    markdown=True,
+    tools=[WebSearchTools()],
+)
+
+agent_os = AgentOS(
+    agents=[chat_agent],
+    interfaces=[AGUI(agent=chat_agent)],
+)
+app = agent_os.get_app()
+
+if __name__ == "__main__":
+    agent_os.serve(app="reasoning_agent:app", reload=True, port=9001)
+```
+
+## Usage
+
+<Steps>
+  <Snippet file="create-venv-step.mdx" />
+
+  <Step title="Set Environment Variables">
+    ```bash
+    export OPENAI_API_KEY=your_openai_api_key
+    ```
+  </Step>
+
+  <Step title="Install Dependencies">
+    ```bash
+    uv pip install 'agno[agui]' ddgs
+    ```
+  </Step>
+
+  <Step title="Run Example">
+    ```bash
+    python cookbook/05_agent_os/interfaces/agui/reasoning_agent.py
+    ```
+  </Step>
+</Steps>
+
+## Key Features
+
+- **Native Reasoning**: `o4-mini` streams its reasoning as AG-UI `REASONING_*` events
+- **Visible Thinking**: The frontend renders the agent's reasoning steps in real time
+- **Web Search**: `WebSearchTools` pulls in current information
+- **Context Aware**: Date, time, and location are added to the agent's context
+
+## Setup Frontend
+
+1. Clone the AG-UI repository: `git clone https://github.com/ag-ui-protocol/ag-ui.git`
+2. Install the TypeScript SDK: `cd ag-ui/typescript-sdk && pnpm install`
+3. Build the Agno integration: `cd integrations/agno && pnpm run build`
+4. Start Dojo: `cd ../../apps/dojo && pnpm run dev`
+5. Open `http://localhost:3000` and select the Agno integration
