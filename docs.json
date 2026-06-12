@@ -1067,7 +1067,8 @@
                     ]
                   },
                   "learning/learning-modes",
-                  "learning/custom-schemas"
+                  "learning/custom-schemas",
+                  "learning/managing-learnings"
                 ]
               },
               {
