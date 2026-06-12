@@ -8,9 +8,9 @@ description: Serve a multi-agent Agno team over the AG-UI protocol.
 ```python cookbook/05_agent_os/interfaces/agui/research_team.py
 from agno.agent.agent import Agent
 from agno.models.openai import OpenAIResponses
-from agno.os.app import AgentOS
-from agno.os.interfaces.agui.agui import AGUI
-from agno.team.team import Team
+from agno.os import AgentOS
+from agno.os.interfaces.agui import AGUI
+from agno.team import Team
 from agno.tools.websearch import WebSearchTools
 
 researcher = Agent(
