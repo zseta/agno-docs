@@ -1,6 +1,6 @@
 ---
-title: "Basic"
-description: "Create a basic AI agent with ChatGPT-like web interface"
+title: Basic AG-UI Agent
+description: Connect an Agno agent to a web frontend over the AG-UI protocol.
 ---
 
 ## Code
@@ -13,7 +13,7 @@ from agno.os.interfaces.agui import AGUI
 
 chat_agent = Agent(
     name="Assistant",
-    model=OpenAIResponses(id="gpt-5.5"),
+    model=OpenAIResponses(id="gpt-5.4"),
     instructions="You are a helpful AI assistant.",
     add_datetime_to_context=True,
     markdown=True,
@@ -26,7 +26,7 @@ agent_os = AgentOS(
 app = agent_os.get_app()
 
 if __name__ == "__main__":
-    agent_os.serve(app="basic:app", reload=True)
+    agent_os.serve(app="basic:app", reload=True, port=9001)
 ```
 
 ## Usage
@@ -40,9 +40,9 @@ if __name__ == "__main__":
     ```
   </Step>
 
-  <Step title="Install dependencies">
+  <Step title="Install Dependencies">
     ```bash
-    uv pip install -U agno ag-ui-protocol
+    uv pip install 'agno[agui]'
     ```
   </Step>
 
@@ -55,17 +55,16 @@ if __name__ == "__main__":
 
 ## Key Features
 
-- **Web Interface**: ChatGPT-like conversation experience
-- **Real-time Chat**: Instant message exchange
-- **Markdown Support**: Rich text formatting in responses  
-- **DateTime Context**: Time-aware responses
-- **Open Protocol**: Compatible with AG-UI frontends
+- **Web Interface**: Browser-based chat through an AG-UI frontend like Dojo or CopilotKit
+- **Real-Time Streaming**: Responses stream token-by-token
+- **Markdown Support**: Rich text formatting in responses
+- **DateTime Context**: Time-aware responses via `add_datetime_to_context`
+- **Open Protocol**: Works with any AG-UI-compatible frontend
 
 ## Setup Frontend
 
-1. Clone AG-UI repository: `git clone https://github.com/ag-ui-protocol/ag-ui.git`
-2. Install dependencies: `cd ag-ui/typescript-sdk && pnpm install`
-3. Build integration: `cd integrations/agno && pnpm run build`
+1. Clone the AG-UI repository: `git clone https://github.com/ag-ui-protocol/ag-ui.git`
+2. Install the TypeScript SDK: `cd ag-ui/typescript-sdk && pnpm install`
+3. Build the Agno integration: `cd integrations/agno && pnpm run build`
 4. Start Dojo: `cd ../../apps/dojo && pnpm run dev`
-5. Access at http://localhost:3000
-
+5. Open `http://localhost:3000` and select the Agno integration

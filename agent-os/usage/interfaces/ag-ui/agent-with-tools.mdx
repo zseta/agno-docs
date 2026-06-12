@@ -1,28 +1,50 @@
 ---
-title: "Agent with Tools"
-description: "Investment analyst agent with financial tools and web interface"
+title: Agent with Tools
+description: Combine backend and frontend tools over the AG-UI protocol.
 ---
 
 ## Code
 
 ```python cookbook/05_agent_os/interfaces/agui/agent_with_tools.py
+from typing import List
+
 from agno.agent.agent import Agent
 from agno.models.openai import OpenAIResponses
 from agno.os import AgentOS
 from agno.os.interfaces.agui import AGUI
-from agno.tools.yfinance import YFinanceTools
+from agno.tools import tool
+from agno.tools.websearch import WebSearchTools
+
+
+@tool(external_execution=True)
+def generate_haiku(
+    english: List[str], japanese: List[str], image_names: List[str]
+) -> str:
+    """Generate a haiku in Japanese and English and display it in the frontend."""
+    return "Haiku generated and displayed in frontend"
+
 
 agent = Agent(
-    model=OpenAIResponses(id="gpt-5.5"),
+    model=OpenAIResponses(id="gpt-5.4"),
     tools=[
-        YFinanceTools(
-            stock_price=True, 
-            analyst_recommendations=True, 
-            stock_fundamentals=True
-        )
+        WebSearchTools(),
+        generate_haiku,
     ],
-    description="You are an investment analyst that researches stock prices, analyst recommendations, and stock fundamentals.",
-    instructions="Format your response using markdown and use tables to display data where possible.",
+    description="You are a helpful AI assistant with backend and frontend tools. You can search the web and create haikus that render in the frontend.",
+    instructions="""
+    You are a versatile AI assistant with the following capabilities:
+
+    **Tools (executed on server):**
+    - Web search using DuckDuckGo for finding current information
+
+    Always be helpful, creative, and use the most appropriate tool for each request!
+    """,
+    add_datetime_to_context=True,
+    add_history_to_context=True,
+    add_location_to_context=True,
+    timezone_identifier="Etc/UTC",
+    markdown=True,
+    debug_mode=True,
 )
 
 agent_os = AgentOS(
@@ -32,7 +54,7 @@ agent_os = AgentOS(
 app = agent_os.get_app()
 
 if __name__ == "__main__":
-    agent_os.serve(app="agent_with_tools:app", reload=True)
+    agent_os.serve(app="agent_with_tools:app", port=9001, reload=True)
 ```
 
 ## Usage
@@ -46,9 +68,9 @@ if __name__ == "__main__":
     ```
   </Step>
 
-  <Step title="Install dependencies">
+  <Step title="Install Dependencies">
     ```bash
-    uv pip install -U agno yfinance
+    uv pip install 'agno[agui]' ddgs
     ```
   </Step>
 
@@ -61,9 +83,15 @@ if __name__ == "__main__":
 
 ## Key Features
 
-- **Financial Data Tools**: Real-time stock prices, analyst recommendations, fundamentals
-- **Investment Analysis**: Comprehensive company analysis and recommendations  
-- **Data Visualization**: Tables and formatted financial information
-- **Web Interface**: Professional browser-based interaction
-- **GPT-4o Powered**: Advanced reasoning for financial insights
+- **Backend Tools**: `WebSearchTools` runs on the server
+- **Frontend Tools**: `generate_haiku` runs in the browser via `external_execution=True`
+- **Mixed Execution**: One agent orchestrates both server-side and client-side tools
+- **Real-Time Streaming**: Tool calls and results stream to the frontend
 
+## Setup Frontend
+
+1. Clone the AG-UI repository: `git clone https://github.com/ag-ui-protocol/ag-ui.git`
+2. Install the TypeScript SDK: `cd ag-ui/typescript-sdk && pnpm install`
+3. Build the Agno integration: `cd integrations/agno && pnpm run build`
+4. Start Dojo: `cd ../../apps/dojo && pnpm run dev`
+5. Open `http://localhost:3000` and select the Agno integration
