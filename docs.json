@@ -8000,6 +8000,18 @@
                 ]
               },
               {
+                "group": "Learnings",
+                "pages": [
+                  "reference-api/schema/learnings/list-learnings",
+                  "reference-api/schema/learnings/create-learning",
+                  "reference-api/schema/learnings/list-learning-users",
+                  "reference-api/schema/learnings/delete-learning-user",
+                  "reference-api/schema/learnings/get-learning",
+                  "reference-api/schema/learnings/update-learning",
+                  "reference-api/schema/learnings/delete-learning"
+                ]
+              },
+              {
                 "group": "Evals",
                 "pages": [
                   "reference-api/schema/evals/list-evaluation-runs",

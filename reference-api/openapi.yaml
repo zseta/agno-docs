@@ -8435,8 +8435,930 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/InternalServerErrorResponse'
+  /learnings:
+    get:
+      tags:
+        - Learnings
+      summary: List Learnings
+      description: |-
+        List learning records with pagination and optional filters. For a scoped (non-admin) caller with user isolation enabled, results are bound to that user and also include records with no owner (`user_id IS NULL`) — this covers global, agent, team, session, and entity-scoped learnings; passing a `user_id` that differs from the caller is rejected with 403. Admins and unscoped callers see all records (optionally filtered by `user_id`).
+      operationId: list_learnings
+      security:
+        - HTTPBearer: []
+      parameters:
+        - name: learning_type
+          in: query
+          required: false
+          schema:
+            anyOf:
+              - type: string
+              - type: 'null'
+            description: Filter by learning type
+            title: Learning Type
+          description: Filter by learning type
+        - name: user_id
+          in: query
+          required: false
+          schema:
+            anyOf:
+              - type: string
+              - type: 'null'
+            description: Filter by user ID
+            title: User Id
+          description: Filter by user ID
+        - name: agent_id
+          in: query
+          required: false
+          schema:
+            anyOf:
+              - type: string
+              - type: 'null'
+            description: Filter by agent ID
+            title: Agent Id
+          description: Filter by agent ID
+        - name: team_id
+          in: query
+          required: false
+          schema:
+            anyOf:
+              - type: string
+              - type: 'null'
+            description: Filter by team ID
+            title: Team Id
+          description: Filter by team ID
+        - name: session_id
+          in: query
+          required: false
+          schema:
+            anyOf:
+              - type: string
+              - type: 'null'
+            description: Filter by session ID
+            title: Session Id
+          description: Filter by session ID
+        - name: namespace
+          in: query
+          required: false
+          schema:
+            anyOf:
+              - type: string
+              - type: 'null'
+            description: Filter by namespace
+            title: Namespace
+          description: Filter by namespace
+        - name: entity_id
+          in: query
+          required: false
+          schema:
+            anyOf:
+              - type: string
+              - type: 'null'
+            description: Filter by entity ID
+            title: Entity Id
+          description: Filter by entity ID
+        - name: entity_type
+          in: query
+          required: false
+          schema:
+            anyOf:
+              - type: string
+              - type: 'null'
+            description: Filter by entity type
+            title: Entity Type
+          description: Filter by entity type
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            maximum: 1000
+            minimum: 1
+            description: Page size
+            default: 100
+            title: Limit
+          description: Page size
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            description: 1-indexed page number
+            default: 1
+            title: Page
+          description: 1-indexed page number
+        - name: sort_by
+          in: query
+          required: false
+          schema:
+            anyOf:
+              - type: string
+              - type: 'null'
+            description: Field to sort by, e.g. `created_at` or `updated_at` (the default). An unrecognised field is ignored.
+            title: Sort By
+          description: Field to sort by, e.g. `created_at` or `updated_at` (the default). An unrecognised field is ignored.
+        - name: sort_order
+          in: query
+          required: false
+          schema:
+            anyOf:
+              - $ref: '#/components/schemas/SortOrder'
+              - type: 'null'
+            description: Sort order (asc or desc)
+            default: desc
+            title: Sort Order
+          description: Sort order (asc or desc)
+        - name: db_id
+          in: query
+          required: false
+          schema:
+            anyOf:
+              - type: string
+              - type: 'null'
+            description: Database ID to query
+            title: Db Id
+          description: Database ID to query
+        - name: table
+          in: query
+          required: false
+          schema:
+            anyOf:
+              - type: string
+              - type: 'null'
+            description: The database table to use (requires db_id)
+            title: Table
+          description: The database table to use (requires db_id)
+      responses:
+        '200':
+          description: Learnings retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedResponse_LearningResponse_'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthenticatedResponse'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerErrorResponse'
+    post:
+      tags:
+        - Learnings
+      summary: Create Learning
+      description: |-
+        Create a new learning record. For the identity-keyed learning types (`user_profile`, `user_memory`, `session_context`, `entity_memory`) the record id is derived deterministically from the identity fields so it reconciles with what the agent reads/writes — provide those fields (else 422), and if a record already exists the request is rejected with 409 (use PATCH to update it). Other types get a generated id. For a scoped (non-admin) caller, the body's `user_id` must be omitted/null or match the caller (mismatch → 403); admins and unscoped callers may set any `user_id`.
+      operationId: create_learning
+      security:
+        - HTTPBearer: []
+      parameters:
+        - name: db_id
+          in: query
+          required: false
+          schema:
+            anyOf:
+              - type: string
+              - type: 'null'
+            description: Database ID to use
+            title: Db Id
+          description: Database ID to use
+        - name: table
+          in: query
+          required: false
+          schema:
+            anyOf:
+              - type: string
+              - type: 'null'
+            description: The database table to use (requires db_id)
+            title: Table
+          description: The database table to use (requires db_id)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LearningCreate'
+      responses:
+        '201':
+          description: Learning created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LearningResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthenticatedResponse'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenResponse'
+        '409':
+          description: A learning already exists for this identity. Use PATCH to update it.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerErrorResponse'
+  /learnings/users:
+    get:
+      tags:
+        - Learnings
+      summary: List Learning Users
+      description: |-
+        List the users that own learning records, with a last-updated timestamp. Intended as the entry point for a per-user view: list users here, then drill into a single user's learnings via `GET /learnings?user_id=...`. Records with no owner (`user_id IS NULL`) are excluded. Pass `learning_type` to restrict the grouping to a single store (e.g. `user_profile` or `user_memory`). For a scoped (non-admin) caller results are bound to that user; an explicit `user_id` that differs is rejected with 403. Admins and unscoped callers list all users. Sortable by `user_id` or `last_learning_updated_at` (the default).
+      operationId: list_learning_users
+      security:
+        - HTTPBearer: []
+      parameters:
+        - name: learning_type
+          in: query
+          required: false
+          schema:
+            anyOf:
+              - type: string
+              - type: 'null'
+            description: Restrict the grouping to a single learning type
+            title: Learning Type
+          description: Restrict the grouping to a single learning type
+        - name: user_id
+          in: query
+          required: false
+          schema:
+            anyOf:
+              - type: string
+              - type: 'null'
+            description: Restrict the result to a single user
+            title: User Id
+          description: Restrict the result to a single user
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            maximum: 1000
+            minimum: 1
+            description: Page size
+            default: 20
+            title: Limit
+          description: Page size
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            description: 1-indexed page number
+            default: 1
+            title: Page
+          description: 1-indexed page number
+        - name: sort_by
+          in: query
+          required: false
+          schema:
+            anyOf:
+              - type: string
+              - type: 'null'
+            description: 'Field to sort by: user_id or last_learning_updated_at (the default)'
+            title: Sort By
+          description: 'Field to sort by: user_id or last_learning_updated_at (the default)'
+        - name: sort_order
+          in: query
+          required: false
+          schema:
+            anyOf:
+              - $ref: '#/components/schemas/SortOrder'
+              - type: 'null'
+            description: Sort order (asc or desc)
+            default: desc
+            title: Sort Order
+          description: Sort order (asc or desc)
+        - name: db_id
+          in: query
+          required: false
+          schema:
+            anyOf:
+              - type: string
+              - type: 'null'
+            description: Database ID to query
+            title: Db Id
+          description: Database ID to query
+        - name: table
+          in: query
+          required: false
+          schema:
+            anyOf:
+              - type: string
+              - type: 'null'
+            description: The database table to use (requires db_id)
+            title: Table
+          description: The database table to use (requires db_id)
+      responses:
+        '200':
+          description: Learning users retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedResponse_LearningUserStats_'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthenticatedResponse'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerErrorResponse'
+  '/learnings/users/{user_id}':
+    delete:
+      tags:
+        - Learnings
+      summary: Delete Learning User
+      description: |-
+        Delete the learning records owned by a user. By default removes every learning type backed by the agno_learnings table (user_profile, user_memory, and any user-scoped entity records); pass `learning_type` to restrict deletion to a single store. Records with no owner (`user_id IS NULL`) are not affected. For a scoped (non-admin) caller, only their own learnings may be deleted; a different `user_id` is rejected with 403. Admins and unscoped callers may delete any user's learnings. Returns 204 even if the user had no matching records.
+      operationId: delete_learning_user
+      security:
+        - HTTPBearer: []
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: string
+            description: The user whose learnings should be deleted
+            title: User Id
+          description: The user whose learnings should be deleted
+        - name: learning_type
+          in: query
+          required: false
+          schema:
+            anyOf:
+              - type: string
+              - type: 'null'
+            description: Restrict deletion to a single learning type; omit to delete all of the user's learnings
+            title: Learning Type
+          description: Restrict deletion to a single learning type; omit to delete all of the user's learnings
+        - name: db_id
+          in: query
+          required: false
+          schema:
+            anyOf:
+              - type: string
+              - type: 'null'
+            description: Database ID to use
+            title: Db Id
+          description: Database ID to use
+        - name: table
+          in: query
+          required: false
+          schema:
+            anyOf:
+              - type: string
+              - type: 'null'
+            description: The database table to use (requires db_id)
+            title: Table
+          description: The database table to use (requires db_id)
+      responses:
+        '204':
+          description: User learnings deleted successfully
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthenticatedResponse'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerErrorResponse'
+  '/learnings/{learning_id}':
+    get:
+      tags:
+        - Learnings
+      summary: Get Learning
+      description: Retrieve a single learning record by its ID.
+      operationId: get_learning
+      security:
+        - HTTPBearer: []
+      parameters:
+        - name: learning_id
+          in: path
+          required: true
+          schema:
+            type: string
+            description: The learning ID
+            title: Learning Id
+          description: The learning ID
+        - name: db_id
+          in: query
+          required: false
+          schema:
+            anyOf:
+              - type: string
+              - type: 'null'
+            description: Database ID to query
+            title: Db Id
+          description: Database ID to query
+        - name: table
+          in: query
+          required: false
+          schema:
+            anyOf:
+              - type: string
+              - type: 'null'
+            description: The database table to use (requires db_id)
+            title: Table
+          description: The database table to use (requires db_id)
+      responses:
+        '200':
+          description: Learning retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LearningResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthenticatedResponse'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerErrorResponse'
+    patch:
+      tags:
+        - Learnings
+      summary: Update Learning
+      description: |-
+        Update a learning record. Only `content` and `metadata` may be modified; identity fields (user_id, agent_id, team_id, etc.) are immutable. Provided fields fully replace the existing values. Records with no owner (`user_id IS NULL` — shared agent/team/session/entity learnings) are readable by any caller but may only be modified by an admin.
+      operationId: update_learning
+      security:
+        - HTTPBearer: []
+      parameters:
+        - name: learning_id
+          in: path
+          required: true
+          schema:
+            type: string
+            description: The learning ID
+            title: Learning Id
+          description: The learning ID
+        - name: db_id
+          in: query
+          required: false
+          schema:
+            anyOf:
+              - type: string
+              - type: 'null'
+            description: Database ID to use
+            title: Db Id
+          description: Database ID to use
+        - name: table
+          in: query
+          required: false
+          schema:
+            anyOf:
+              - type: string
+              - type: 'null'
+            description: The database table to use (requires db_id)
+            title: Table
+          description: The database table to use (requires db_id)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LearningUpdate'
+      responses:
+        '200':
+          description: Learning updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LearningResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthenticatedResponse'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenResponse'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerErrorResponse'
+    delete:
+      tags:
+        - Learnings
+      summary: Delete Learning
+      description: |-
+        Permanently delete a learning record by its ID. Records with no owner (`user_id IS NULL` — shared agent/team/session/entity learnings) may only be deleted by an admin.
+      operationId: delete_learning
+      security:
+        - HTTPBearer: []
+      parameters:
+        - name: learning_id
+          in: path
+          required: true
+          schema:
+            type: string
+            description: The learning ID
+            title: Learning Id
+          description: The learning ID
+        - name: db_id
+          in: query
+          required: false
+          schema:
+            anyOf:
+              - type: string
+              - type: 'null'
+            description: Database ID to use
+            title: Db Id
+          description: Database ID to use
+        - name: table
+          in: query
+          required: false
+          schema:
+            anyOf:
+              - type: string
+              - type: 'null'
+            description: The database table to use (requires db_id)
+            title: Table
+          description: The database table to use (requires db_id)
+      responses:
+        '204':
+          description: Learning deleted successfully
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthenticatedResponse'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenResponse'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerErrorResponse'
 components:
   schemas:
+    LearningResponse:
+      properties:
+        learning_id:
+          type: string
+          title: Learning Id
+          description: Unique identifier for the learning record
+        learning_type:
+          type: string
+          title: Learning Type
+          description: Type of learning (e.g. 'user_profile', 'entity_memory')
+        namespace:
+          anyOf:
+            - type: string
+            - type: 'null'
+          title: Namespace
+          description: Namespace for scoping ('user', 'global', or custom)
+        user_id:
+          anyOf:
+            - type: string
+            - type: 'null'
+          title: User Id
+          description: Associated user ID
+        agent_id:
+          anyOf:
+            - type: string
+            - type: 'null'
+          title: Agent Id
+          description: Associated agent ID
+        team_id:
+          anyOf:
+            - type: string
+            - type: 'null'
+          title: Team Id
+          description: Associated team ID
+        session_id:
+          anyOf:
+            - type: string
+            - type: 'null'
+          title: Session Id
+          description: Associated session ID
+        entity_id:
+          anyOf:
+            - type: string
+            - type: 'null'
+          title: Entity Id
+          description: Associated entity ID (for entity-specific learnings)
+        entity_type:
+          anyOf:
+            - type: string
+            - type: 'null'
+          title: Entity Type
+          description: Entity type (e.g. 'person', 'company')
+        content:
+          anyOf:
+            - type: object
+            - type: 'null'
+          title: Content
+          description: The learning content payload
+        metadata:
+          anyOf:
+            - type: object
+            - type: 'null'
+          title: Metadata
+          description: Optional metadata
+        created_at:
+          anyOf:
+            - type: integer
+            - type: 'null'
+          title: Created At
+          description: Creation timestamp (Unix epoch seconds)
+        updated_at:
+          anyOf:
+            - type: integer
+            - type: 'null'
+          title: Updated At
+          description: Last update timestamp (Unix epoch seconds)
+      type: object
+      required:
+        - learning_id
+        - learning_type
+      title: LearningResponse
+      description: A single learning record as returned by the API.
+    LearningCreate:
+      properties:
+        learning_type:
+          type: string
+          title: Learning Type
+          description: Type of learning (e.g. 'user_profile', 'entity_memory')
+        content:
+          type: object
+          title: Content
+          description: The learning content payload
+        namespace:
+          anyOf:
+            - type: string
+            - type: 'null'
+          title: Namespace
+          description: Namespace for scoping ('user', 'global', or custom)
+        user_id:
+          anyOf:
+            - type: string
+            - type: 'null'
+          title: User Id
+          description: Associated user ID. When the request is authenticated, must match the JWT subject or be omitted/null (which creates a global / non-user-scoped record).
+        agent_id:
+          anyOf:
+            - type: string
+            - type: 'null'
+          title: Agent Id
+          description: Associated agent ID
+        team_id:
+          anyOf:
+            - type: string
+            - type: 'null'
+          title: Team Id
+          description: Associated team ID
+        session_id:
+          anyOf:
+            - type: string
+            - type: 'null'
+          title: Session Id
+          description: Associated session ID
+        entity_id:
+          anyOf:
+            - type: string
+            - type: 'null'
+          title: Entity Id
+          description: Associated entity ID
+        entity_type:
+          anyOf:
+            - type: string
+            - type: 'null'
+          title: Entity Type
+          description: Entity type
+        metadata:
+          anyOf:
+            - type: object
+            - type: 'null'
+          title: Metadata
+          description: Optional metadata
+      type: object
+      required:
+        - learning_type
+        - content
+      title: LearningCreate
+      description: Request body for creating a learning record.
+    LearningUpdate:
+      properties:
+        content:
+          anyOf:
+            - type: object
+            - type: 'null'
+          title: Content
+          description: Replacement content payload
+        metadata:
+          anyOf:
+            - type: object
+            - type: 'null'
+          title: Metadata
+          description: Replacement metadata
+      type: object
+      title: LearningUpdate
+      description: 'Request body for updating a learning record. Identity fields are immutable.'
+    LearningUserStats:
+      properties:
+        user_id:
+          type: string
+          title: User Id
+          description: The user ID
+        last_learning_updated_at:
+          anyOf:
+            - type: integer
+            - type: 'null'
+          title: Last Learning Updated At
+          description: Most recent learning update for this user (Unix epoch seconds)
+      type: object
+      required:
+        - user_id
+      title: LearningUserStats
+      description: A user that owns learning records, with their most recent activity.
+    PaginatedResponse_LearningResponse_:
+      properties:
+        data:
+          items:
+            $ref: '#/components/schemas/LearningResponse'
+          type: array
+          title: Data
+          description: List of items for the current page
+        meta:
+          $ref: '#/components/schemas/PaginationInfo'
+          description: Pagination metadata
+      type: object
+      required:
+        - data
+        - meta
+      title: 'PaginatedResponse[LearningResponse]'
+    PaginatedResponse_LearningUserStats_:
+      properties:
+        data:
+          items:
+            $ref: '#/components/schemas/LearningUserStats'
+          type: array
+          title: Data
+          description: List of items for the current page
+        meta:
+          $ref: '#/components/schemas/PaginationInfo'
+          description: Pagination metadata
+      type: object
+      required:
+        - data
+        - meta
+      title: 'PaginatedResponse[LearningUserStats]'
+    ForbiddenResponse:
+      properties:
+        detail:
+          type: string
+          title: Detail
+          description: Error detail message
+        error_code:
+          anyOf:
+            - type: string
+            - type: 'null'
+          title: Error Code
+          description: Error code for categorization
+      type: object
+      required:
+        - detail
+      title: ForbiddenResponse
+      example:
+        detail: Cannot list learnings for another user
+        error_code: FORBIDDEN
+    ConflictResponse:
+      properties:
+        detail:
+          type: string
+          title: Detail
+          description: Error detail message
+        error_code:
+          anyOf:
+            - type: string
+            - type: 'null'
+          title: Error Code
+          description: Error code for categorization
+      type: object
+      required:
+        - detail
+      title: ConflictResponse
+      example:
+        detail: A 'user_profile' learning already exists for this identity. Use PATCH to update it.
+        error_code: CONFLICT
     ActivityMessage:
       properties:
         id:
