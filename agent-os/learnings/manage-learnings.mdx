@@ -4,23 +4,14 @@ sidebarTitle: "Manage Learnings"
 description: "Read and manage learning records through the AgentOS /learnings endpoints."
 ---
 
-AgentOS exposes a set of `/learnings` REST endpoints for CRUD over the `agno_learnings` table, the table that backs every learning store (`user_profile`, `user_memory`, `session_context`, `entity_memory`, `decision_log`).
-
-Enable learning on an agent and serve it with AgentOS, and the endpoints are available automatically. Use them to inspect what your agents have learned, seed a user profile before the first conversation, correct a memory, or remove a user's data on request.
+AgentOS exposes `/learnings` REST endpoints for CRUD over the `agno_learnings` table, the table that backs every learning store (`user_profile`, `user_memory`, `session_context`, `entity_memory`, `decision_log`). Enable learning on an agent and serve it with AgentOS, and the endpoints are available automatically.
 
 ## Prerequisites
 
-Before using the learnings endpoints, ensure you have:
-
-- A supported database: PostgreSQL, SQLite, or MongoDB
-- Required dependencies installed: `uv pip install agno`
-- An agent with learning enabled (see the [Learning quickstart](/learning/quickstart))
-- Basic understanding of [Learning stores](/learning/stores/intro)
+- A supported database: PostgreSQL, SQLite, or MongoDB. Other databases return `501`.
+- An agent with learning enabled (see the [Learning quickstart](/learning/quickstart)).
 
 ## Example
-
-This example serves a learning-enabled agent with AgentOS. The `/learnings`
-endpoints come up on the same app.
 
 ```python learnings_with_agentos.py
 from agno.agent import Agent
@@ -54,7 +45,7 @@ if __name__ == "__main__":
     agent_os.serve(app="learnings_with_agentos:app", reload=True)
 ```
 
-Once it is running, browse the interactive OpenAPI docs at `http://localhost:7777/docs`.
+Browse the interactive OpenAPI docs at `http://localhost:7777/docs`.
 
 ## Endpoints
 
@@ -68,6 +59,8 @@ Once it is running, browse the interactive OpenAPI docs at `http://localhost:777
 | `PATCH` | `/learnings/{learning_id}` | Update `content` and/or `metadata` |
 | `DELETE` | `/learnings/{learning_id}` | Delete a record |
 
+Every endpoint accepts `db_id` and `table` query parameters to target a specific database or table. `table` requires `db_id`.
+
 ## Listing and filtering
 
 `GET /learnings` returns a paginated envelope: `data` holds the records and `meta` holds the pagination info (`page`, `limit`, `total_pages`, `total_count`).
@@ -75,8 +68,6 @@ Once it is running, browse the interactive OpenAPI docs at `http://localhost:777
 ```bash
 curl "http://localhost:7777/learnings?user_id=demo-user&limit=10&page=1"
 ```
-
-Narrow the results with any combination of these query parameters:
 
 | Parameter | Description |
 |-----------|-------------|
@@ -88,7 +79,7 @@ Narrow the results with any combination of these query parameters:
 | `sort_by` | `created_at` or `updated_at` (default). Unknown fields are ignored |
 | `sort_order` | `asc` or `desc` (default) |
 
-To build a per-user view, start with `GET /learnings/users` to list the users that own learnings, then drill into one with `GET /learnings?user_id=...`.
+For a per-user view, list users with `GET /learnings/users`, then drill into one with `GET /learnings?user_id=...`.
 
 ## Creating records
 
@@ -113,14 +104,14 @@ The learning stores key records by a deterministic ID derived from their identit
 | `session_context` | `session_context_{session_id}` | `session_id` |
 | `entity_memory` | `entity_{namespace}_{entity_type}_{entity_id}` | `namespace`, `entity_type`, `entity_id` |
 
-- Provide the required identity field(s) for these types, or the request returns `422`.
-- Include the same identity fields inside `content` (for example, `user_id` for `user_profile`) so the agent's store can deserialize the record.
-- If a record already exists for that identity, `POST` returns `409`. Use `PATCH` to update it.
+- Provide the required identity field(s), or the request returns `422`.
+- Include the same identity fields inside `content` so the agent's store can deserialize the record.
+- An existing record for that identity returns `409`. Use `PATCH` to update it.
 - Other types (for example, `decision_log`) get a generated ID, so a user can have many.
 
 ## Updating records
 
-`PATCH` replaces `content` and/or `metadata`. Identity fields (`user_id`, `agent_id`, `team_id`, `session_id`, `entity_id`, `entity_type`, `namespace`, `learning_type`) are immutable.
+`PATCH` replaces `content` and/or `metadata`. Identity fields are immutable.
 
 ```bash
 curl -X PATCH http://localhost:7777/learnings/user_profile_demo-user \
@@ -138,63 +129,21 @@ curl -X DELETE http://localhost:7777/learnings/user_profile_demo-user
 curl -X DELETE http://localhost:7777/learnings/users/demo-user
 ```
 
-Both return `204`. `DELETE /learnings/users/{user_id}` returns `204` even when the user has no matching records, and never touches records with no owner.
+Both return `204`, and never touch records with no owner.
 
 ## Authorization and isolation
 
-Scoping follows the framework's opt-in [user isolation](/agent-os/security/authorization/user-isolation) contract (`AuthorizationConfig(user_isolation=True)`). It applies only to a regular, non-admin caller. Admins, requests with isolation disabled, and requests without a JWT are unscoped and have full access.
-
-For a scoped (non-admin) caller:
+Scoping follows the framework's opt-in [user isolation](/agent-os/security/authorization/user-isolation) contract (`AuthorizationConfig(user_isolation=True)`). Admins, requests with isolation disabled, and requests without a JWT are unscoped and have full access. For a scoped (non-admin) caller:
 
 | Operation | Behavior |
 |-----------|----------|
-| List / list users | Bound to the caller. List also includes records with no owner (`user_id IS NULL`). A different `user_id` query returns `403` |
+| List / list users | Bound to the caller. List also includes records with no owner (`user_id IS NULL`). A different `user_id` returns `403` |
 | Create | Body `user_id` must be omitted/null or match the caller, otherwise `403` |
 | Delete user | Only the caller's own learnings; a different `user_id` returns `403` |
 | Get single record | A cross-user record returns `404` (no existence leak) |
 | Patch / delete single record | Cross-user returns `404`. Shared records (`user_id IS NULL`) are readable but admin-only to mutate, so a regular user gets `403` |
 
 When [RBAC](/agent-os/security/authorization/scopes) is enabled, the routes require the `learnings:read`, `learnings:write`, or `learnings:delete` scopes.
-
-## Targeting a database or table
-
-Every endpoint accepts `db_id` and `table` query parameters to target a specific database or table. `table` requires `db_id`.
-
-```bash
-curl "http://localhost:7777/learnings?db_id=my-db&table=agno_learnings"
-```
-
-## Best Practices
-
-- **Update with PATCH, not POST**: re-creating an identity-keyed record returns `409`. Use `PATCH /learnings/{learning_id}` to change `content` or `metadata`.
-- **Mirror identity fields into `content`**: the agent's store deserializes from `content`, so include fields like `user_id` there as well as at the top level.
-- **List users before drilling in**: `GET /learnings/users` is the entry point for a per-user view; follow it with `GET /learnings?user_id=...`.
-- **Filter by `learning_type`**: target a single store instead of paging the whole table.
-- **Enable user isolation for multi-tenant deployments**: callers then only ever see and modify their own learnings.
-
-## Troubleshooting
-
-<AccordionGroup>
-  <Accordion title="POST returns 409 Conflict">
-    A record already exists for that identity. The identity-keyed types keep one record per identity, so use `PATCH /learnings/{learning_id}` to update it instead of creating a new one.
-  </Accordion>
-
-  <Accordion title="POST returns 422 Validation Error">
-    An identity-keyed type is missing a required identity field. Provide `user_id` (`user_profile`, `user_memory`), `session_id` (`session_context`), or `namespace` + `entity_type` + `entity_id` (`entity_memory`).
-  </Accordion>
-
-  <Accordion title="API-created records don't show up for the agent">
-    The derived ID must match what the agent reads and writes. Confirm you sent the correct identity field for the `learning_type`, and that the same identity fields are present inside `content`.
-  </Accordion>
-
-  <Accordion title="Endpoints return 501 Not Implemented">
-    The configured database doesn't implement the learnings methods. Use PostgreSQL, SQLite, or MongoDB.
-  </Accordion>
-
-  <Accordion title="A regular user gets 403 on PATCH or DELETE">
-    The record has no owner (`user_id` is null). Shared agent, team, session, and entity learnings are readable by anyone but can only be modified by an admin.
-  </Accordion>
-</AccordionGroup>
 
 ## Developer Resources
 
