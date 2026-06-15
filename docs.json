@@ -4618,6 +4618,12 @@
                 ]
               },
               {
+                "group": "Learnings",
+                "pages": [
+                  "agent-os/learnings/manage-learnings"
+                ]
+              },
+              {
                 "group": "Studio",
                 "pages": [
                   "agent-os/studio/introduction",
@@ -7996,6 +8002,18 @@
                   "reference-api/schema/memory/get-memory-topics",
                   "reference-api/schema/memory/get-user-memory-statistics",
                   "reference-api/schema/memory/optimize-user-memories"
+                ]
+              },
+              {
+                "group": "Learnings",
+                "pages": [
+                  "reference-api/schema/learnings/list-learnings",
+                  "reference-api/schema/learnings/create-learning",
+                  "reference-api/schema/learnings/list-learning-users",
+                  "reference-api/schema/learnings/delete-learning-user",
+                  "reference-api/schema/learnings/get-learning",
+                  "reference-api/schema/learnings/update-learning",
+                  "reference-api/schema/learnings/delete-learning"
                 ]
               },
               {
