@@ -1067,8 +1067,7 @@
                     ]
                   },
                   "learning/learning-modes",
-                  "learning/custom-schemas",
-                  "learning/managing-learnings"
+                  "learning/custom-schemas"
                 ]
               },
               {
@@ -4616,6 +4615,12 @@
                 "pages": [
                   "agent-os/knowledge/manage-knowledge",
                   "agent-os/knowledge/filter-knowledge"
+                ]
+              },
+              {
+                "group": "Learnings",
+                "pages": [
+                  "agent-os/learnings/manage-learnings"
                 ]
               },
               {
