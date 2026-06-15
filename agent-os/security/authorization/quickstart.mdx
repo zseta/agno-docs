@@ -64,6 +64,24 @@ The control plane only issues **RS256** keys, which is also the default. See [au
   src="/videos/auth-on-connect-web.mp4"
 ></video>
 
+## Sending Authenticated Requests
+
+Authenticated requests carry a verified caller identity. AgentOS uses this to enforce per-endpoint permissions, scope data to the caller, and audit who did what.
+
+Send the JWT in the `Authorization: Bearer <token>` header:
+
+```bash
+curl -H "Authorization: Bearer $TOKEN" http://localhost:7777/agents
+```
+
+Where the token comes from depends on your issuer:
+- **Control plane**: minted by `os.agno.com` and copied from the OS Settings page.
+- **Self-hosted**: minted by your backend or a third-party IDP. See [Self-Hosted](/agent-os/security/authorization/self-hosted) for setup.
+
+See [JWT Tokens](/agent-os/security/authorization/tokens) for the claim structure each token must include.
+
+Requests without a valid JWT return `401 Unauthorized`. Requests whose JWT lacks the scopes the endpoint requires return `403 Forbidden`.
+
 ## Configurable Options
 
 Configure JWT verification using `AuthorizationConfig`:
@@ -100,14 +118,6 @@ authorization_config=AuthorizationConfig(
 | `JWT_JWKS_FILE` | Path to a static JWKS file. |
 
 Env vars work alongside `AuthorizationConfig`. Pass keys in code, env vars, or both.
-
-## Sending Authenticated Requests
-
-Send the token in the `Authorization` header:
-
-```bash
-curl -H "Authorization: Bearer $TOKEN" http://localhost:7777/agents
-```
 
 ## Excluded Routes
 
