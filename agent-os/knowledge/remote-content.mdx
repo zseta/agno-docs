@@ -18,6 +18,19 @@ knowledge = Knowledge(
         GitHubConfig(id="docs-repo", name="Docs Repo", repo="acme/docs", token="..."),
     ],
 )
+```
+
+See [Cloud Storage Sources](/knowledge/concepts/cloud-storage) for the provider classes (`S3Config`, `GcsConfig`, `SharePointConfig`, `GitHubConfig`, `AzureBlobConfig`) and their parameters.
+
+Once a Knowledge instance has `content_sources` registered, AgentOS exposes them through the Knowledge API.
+
+```bash
+# Upload a file from a registered S3 source
+curl -X POST http://localhost:7777/knowledge/remote-content \
+  -F "config_id=company-s3" \
+  -F "path=reports/q4-2025.pdf" \
+  -F "name=Q4 Report"
+```
 
 ## Discover registered sources
 
