@@ -101,7 +101,7 @@ curl -X POST http://localhost:7777/knowledge/remote-content \
 - A trailing `/` ingests every file under the prefix as a folder. Example: `reports/`.
 - No trailing `/` ingests a single file. Example: `reports/q4-2025.pdf`.
 
-`config_id` and `path` are required. See the [upload-remote-content reference](/reference-api/schema/knowledge/upload-remote-content) for all form fields and query parameters. Valid `reader_id` and `chunker` values come from [`/knowledge/config`](/reference-api/schema/knowledge/get-config) under `readers` and `chunkers`.
+Checkout API reference [upload-remote-content reference](/reference-api/schema/knowledge/upload-remote-content)
 
 ## Per-request overrides with `source_params`
 
