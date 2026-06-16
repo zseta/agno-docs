@@ -4,19 +4,7 @@ description: Upload content from registered cloud sources via the AgentOS Knowle
 keywords: [knowledge, agentos, remote content, s3, gcs, sharepoint, github, azure blob, api]
 ---
 
-Once a Knowledge instance has `content_sources` registered, AgentOS exposes them through the Knowledge API.
-
-```bash
-# Upload a file from a registered S3 source
-curl -X POST http://localhost:7777/knowledge/remote-content \
-  -F "config_id=company-s3" \
-  -F "path=reports/q4-2025.pdf" \
-  -F "name=Q4 Report"
-```
-
 ## Register sources
-
-Register at least one source in `content_sources` on your Knowledge instance. See [Cloud Storage Sources](/knowledge/concepts/cloud-storage) for the provider classes (`S3Config`, `GcsConfig`, `SharePointConfig`, `GitHubConfig`, `AzureBlobConfig`) and their parameters.
 
 ```python
 from agno.knowledge.knowledge import Knowledge
@@ -30,9 +18,6 @@ knowledge = Knowledge(
         GitHubConfig(id="docs-repo", name="Docs Repo", repo="acme/docs", token="..."),
     ],
 )
-```
-
-The `id` values (`company-s3`, `docs-repo`) are what later cURL examples pass as `config_id`.
 
 ## Discover registered sources
 
@@ -101,7 +86,7 @@ curl -X POST http://localhost:7777/knowledge/remote-content \
 - A trailing `/` ingests every file under the prefix as a folder. Example: `reports/`.
 - No trailing `/` ingests a single file. Example: `reports/q4-2025.pdf`.
 
-`config_id` and `path` are required. See the [upload-remote-content reference](/reference-api/schema/knowledge/upload-remote-content) for all form fields and query parameters. Valid `reader_id` and `chunker` values come from [`/knowledge/config`](/reference-api/schema/knowledge/get-config) under `readers` and `chunkers`.
+Checkout API reference [upload-remote-content reference](/reference-api/schema/knowledge/upload-remote-content)
 
 ## Per-request overrides with `source_params`
 
@@ -121,7 +106,7 @@ Without `source_params`, the request uses the values baked into the registered c
 `GET /knowledge/{knowledge_id}/sources/{source_id}/files` returns paginated files and folder prefixes inside a source.
 
 <Warning>
-File listing is currently **S3 only**. Calls against `gcs`, `sharepoint`, `github`, or `azureblob` sources return `400 Bad Request` with detail `Source type '<ConfigClass>' does not support file listing`.
+File listing is currently supported in **S3** only.
 </Warning>
 
 ```bash
