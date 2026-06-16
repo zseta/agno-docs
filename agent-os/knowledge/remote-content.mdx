@@ -105,7 +105,7 @@ curl -X POST http://localhost:7777/knowledge/remote-content \
 
 ## Per-request overrides with `source_params`
 
-`source_params` lets one configured source serve multiple targets. Today GitHub is the supported case: pass `repo` to point a single `GitHubConfig` at a different repository per request.
+`source_params` lets one configured source serve multiple targets. GitHub is the currently supported case: pass `repo` to point a single `GitHubConfig` at a different repository per request.
 
 ```bash
 curl -X POST http://localhost:7777/knowledge/remote-content \
