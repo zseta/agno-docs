@@ -121,7 +121,7 @@ Without `source_params`, the request uses the values baked into the registered c
 `GET /knowledge/{knowledge_id}/sources/{source_id}/files` returns paginated files and folder prefixes inside a source.
 
 <Warning>
-File listing is currently **S3 only**. Calls against `gcs`, `sharepoint`, `github`, or `azureblob` sources return `400 Bad Request` with detail `Source type '<ConfigClass>' does not support file listing`.
+File listing is currently supported in **S3** only.
 </Warning>
 
 ```bash
