@@ -8222,6 +8222,10 @@
       "destination": "/tutorials/agent-platform/next-steps"
     },
     {
+      "source": "/tutorials/agent-platform/overview",
+      "destination": "/agent-platform/overview"
+    },
+    {
       "source": "/home",
       "destination": "/"
     },
