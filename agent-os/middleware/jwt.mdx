@@ -244,10 +244,30 @@ app.add_middleware(
 For all available scopes and default endpoint mappings, see [Scopes](/agent-os/security/authorization/scopes).
 </Tip>
 
+## User Isolation
+
+RBAC controls which endpoints a caller can hit. User isolation controls which rows they can see and mutate. The two are independent toggles.
+
+```python jwt_with_user_isolation.py
+app.add_middleware(
+    JWTMiddleware,
+    verification_keys=["your-jwt-key"],
+    authorization=True,
+    user_isolation=True,
+)
+```
+
+When `user_isolation=True`, non-admin callers are scoped to their own `user_id` (from the JWT `sub` claim) for sessions, memory, traces and approvals. Callers holding `admin_scope` bypass isolation. See [Per-User Data Isolation](/agent-os/security/rbac#per-user-data-isolation) for the full behavior.
 
 ## Excluded Routes
 
-Skip middleware for specific routes:
+These routes skip JWT and RBAC checks by default:
+
+```python
+["/", "/health", "/info", "/docs", "/redoc", "/openapi.json", "/docs/oauth2-redirect"]
+```
+
+Override them with `excluded_route_paths`:
 
 ```python jwt_excluded_routes.py
 app.add_middleware(
@@ -255,12 +275,17 @@ app.add_middleware(
     verification_keys=["your-key"],
     excluded_route_paths=[
         "/health",
-        "/auth/login", 
+        "/auth/login",
         "/auth/register",
         "/public/*",  # Wildcards supported
     ]
 )
 ```
+
+<Warning>
+`excluded_route_paths` replaces the defaults, it is not additive. Re-include any default routes you want to keep.
+</Warning>
+
 ## Configuration Options
 
 See the [JWTMiddleware Reference](/reference/agent-os/jwt-middleware) for the complete list of configuration options.
@@ -301,6 +326,7 @@ See the [JWTMiddleware Reference](/reference/agent-os/jwt-middleware) for the co
 | `authorization` | Enable RBAC scope checking | `False` |
 | `verify_audience` | Verify `aud` claim matches AgentOS ID | `False` |
 | `audience` | Expected audience claim to validate against the token's audience claim | `AgentOS ID` |
+| `user_isolation` | Opt in to per-user data isolation. When `True`, AgentOS uses the JWT `sub` claim as the `user_id` for every non-admin caller: reads are scoped to it and writes are coerced to it, so callers can't see or persist other users' rows. Callers holding `admin_scope` bypass it. | `False` |
 | `scope_mappings` | Custom route-to-scope mappings (additive to defaults) | `None` |
 | `admin_scope` | Scope that grants full admin access | `"agent_os:admin"` |
 | `excluded_route_paths` | Routes to skip JWT/RBAC checks | See below |
