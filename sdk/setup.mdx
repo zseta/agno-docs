@@ -140,6 +140,9 @@ workbench = Agent(
 
 agent_os = AgentOS(agents=[workbench], tracing=True)
 app = agent_os.get_app()
+
+if __name__ == "__main__":
+    agent_os.serve(app="workbench:app", reload=True)
 ```
 
 Run it:

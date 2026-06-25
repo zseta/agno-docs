@@ -111,6 +111,7 @@
               "features/storage",
               "features/observability",
               "features/security-and-auth",
+              "features/interfaces",
               "features/scheduling"
             ]
           },
@@ -1161,7 +1162,9 @@
                                   "models/providers/native/deepseek/usage/basic",
                                   "models/providers/native/deepseek/usage/basic-stream",
                                   "models/providers/native/deepseek/usage/tool-use",
-                                  "models/providers/native/deepseek/usage/structured-output"
+                                  "models/providers/native/deepseek/usage/structured-output",
+                                  "models/providers/native/deepseek/usage/thinking-mode",
+                                  "models/providers/native/deepseek/usage/reasoning-effort"
                                 ]
                               }
                             ]
@@ -1231,6 +1234,20 @@
                             ]
                           },
                           {
+                            "group": "Inception",
+                            "pages": [
+                              "models/providers/native/inception/overview",
+                              {
+                                "group": "Usage",
+                                "pages": [
+                                  "models/providers/native/inception/usage/basic",
+                                  "models/providers/native/inception/usage/tool-use",
+                                  "models/providers/native/inception/usage/structured-output"
+                                ]
+                              }
+                            ]
+                          },
+                          {
                             "group": "Meta",
                             "pages": [
                               "models/providers/native/meta/overview",
@@ -1247,6 +1264,20 @@
                                   "models/providers/native/meta/usage/image-input-bytes",
                                   "models/providers/native/meta/usage/knowledge",
                                   "models/providers/native/meta/usage/memory"
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "group": "MiniMax",
+                            "pages": [
+                              "models/providers/native/minimax/overview",
+                              {
+                                "group": "Usage",
+                                "pages": [
+                                  "models/providers/native/minimax/usage/basic",
+                                  "models/providers/native/minimax/usage/tool-use",
+                                  "models/providers/native/minimax/usage/structured-output"
                                 ]
                               }
                             ]
@@ -1396,6 +1427,23 @@
                                   "models/providers/native/xai/usage/live-search-agent",
                                   "models/providers/native/xai/usage/live-search-agent-stream",
                                   "models/providers/native/xai/usage/reasoning-agent"
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "group": "Xiaomi MiMo",
+                            "pages": [
+                              "models/providers/native/xiaomi/overview",
+                              {
+                                "group": "Usage",
+                                "pages": [
+                                  "models/providers/native/xiaomi/usage/basic",
+                                  "models/providers/native/xiaomi/usage/string-model",
+                                  "models/providers/native/xiaomi/usage/tool-use",
+                                  "models/providers/native/xiaomi/usage/structured-output",
+                                  "models/providers/native/xiaomi/usage/thinking-mode",
+                                  "models/providers/native/xiaomi/usage/reasoning-agent"
                                 ]
                               }
                             ]
@@ -1684,6 +1732,21 @@
                             ]
                           },
                           {
+                            "group": "Cloudflare",
+                            "pages": [
+                              "models/providers/gateways/cloudflare/overview",
+                              {
+                                "group": "Usage",
+                                "pages": [
+                                  "models/providers/gateways/cloudflare/usage/basic",
+                                  "models/providers/gateways/cloudflare/usage/switch-model",
+                                  "models/providers/gateways/cloudflare/usage/tool-use",
+                                  "models/providers/gateways/cloudflare/usage/structured-output"
+                                ]
+                              }
+                            ]
+                          },
+                          {
                             "group": "CometAPI",
                             "pages": [
                               "models/providers/gateways/cometapi/overview",
@@ -1913,6 +1976,12 @@
                                   "models/providers/gateways/portkey/usage/structured-output"
                                 ]
                               }
+                            ]
+                          },
+                          {
+                            "group": "Tuning Engines",
+                            "pages": [
+                              "models/providers/gateways/tuning-engines/overview"
                             ]
                           },
                           {
@@ -2985,7 +3054,9 @@
                               "models/providers/native/deepseek/usage/basic",
                               "models/providers/native/deepseek/usage/basic-stream",
                               "models/providers/native/deepseek/usage/tool-use",
-                              "models/providers/native/deepseek/usage/structured-output"
+                              "models/providers/native/deepseek/usage/structured-output",
+                              "models/providers/native/deepseek/usage/thinking-mode",
+                              "models/providers/native/deepseek/usage/reasoning-effort"
                             ]
                           }
                         ]
@@ -3055,6 +3126,20 @@
                         ]
                       },
                       {
+                        "group": "Inception",
+                        "pages": [
+                          "models/providers/native/inception/overview",
+                          {
+                            "group": "Usage",
+                            "pages": [
+                              "models/providers/native/inception/usage/basic",
+                              "models/providers/native/inception/usage/tool-use",
+                              "models/providers/native/inception/usage/structured-output"
+                            ]
+                          }
+                        ]
+                      },
+                      {
                         "group": "Meta",
                         "pages": [
                           "models/providers/native/meta/overview",
@@ -3071,6 +3156,20 @@
                               "models/providers/native/meta/usage/image-input-bytes",
                               "models/providers/native/meta/usage/knowledge",
                               "models/providers/native/meta/usage/memory"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "group": "MiniMax",
+                        "pages": [
+                          "models/providers/native/minimax/overview",
+                          {
+                            "group": "Usage",
+                            "pages": [
+                              "models/providers/native/minimax/usage/basic",
+                              "models/providers/native/minimax/usage/tool-use",
+                              "models/providers/native/minimax/usage/structured-output"
                             ]
                           }
                         ]
@@ -3220,6 +3319,23 @@
                               "models/providers/native/xai/usage/live-search-agent",
                               "models/providers/native/xai/usage/live-search-agent-stream",
                               "models/providers/native/xai/usage/reasoning-agent"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "group": "Xiaomi MiMo",
+                        "pages": [
+                          "models/providers/native/xiaomi/overview",
+                          {
+                            "group": "Usage",
+                            "pages": [
+                              "models/providers/native/xiaomi/usage/basic",
+                              "models/providers/native/xiaomi/usage/string-model",
+                              "models/providers/native/xiaomi/usage/tool-use",
+                              "models/providers/native/xiaomi/usage/structured-output",
+                              "models/providers/native/xiaomi/usage/thinking-mode",
+                              "models/providers/native/xiaomi/usage/reasoning-agent"
                             ]
                           }
                         ]
@@ -3494,6 +3610,21 @@
                         ]
                       },
                       {
+                        "group": "Cloudflare",
+                        "pages": [
+                          "models/providers/gateways/cloudflare/overview",
+                          {
+                            "group": "Usage",
+                            "pages": [
+                              "models/providers/gateways/cloudflare/usage/basic",
+                              "models/providers/gateways/cloudflare/usage/switch-model",
+                              "models/providers/gateways/cloudflare/usage/tool-use",
+                              "models/providers/gateways/cloudflare/usage/structured-output"
+                            ]
+                          }
+                        ]
+                      },
+                      {
                         "group": "CometAPI",
                         "pages": [
                           "models/providers/gateways/cometapi/overview",
@@ -3723,6 +3854,12 @@
                               "models/providers/gateways/portkey/usage/structured-output"
                             ]
                           }
+                        ]
+                      },
+                      {
+                        "group": "Tuning Engines",
+                        "pages": [
+                          "models/providers/gateways/tuning-engines/overview"
                         ]
                       },
                       {
@@ -4334,6 +4471,7 @@
                   "observability/langsmith",
                   "observability/langtrace",
                   "observability/langwatch",
+                  "observability/latitude",
                   "observability/maxim",
                   "observability/mlflow",
                   "observability/openlit",
@@ -4416,13 +4554,7 @@
               "agent-os/run-your-os",
               "agent-os/connect-your-os",
               "agent-os/control-plane",
-              {
-                "group": "Security & Authorization",
-                "pages": [
-                  "agent-os/security/overview",
-                  "agent-os/security/rbac"
-                ]
-              }
+              "agent-os/security/overview"
             ]
           },
           {
@@ -4453,6 +4585,18 @@
                 ]
               },
               {
+                "group": "Authorization",
+                "pages": [
+                  "agent-os/security/authorization/overview",
+                  "agent-os/security/authorization/quickstart",
+                  "agent-os/security/authorization/tokens",
+                  "agent-os/security/authorization/self-hosted",
+                  "agent-os/security/authorization/scopes",
+                  "agent-os/security/authorization/roles",
+                  "agent-os/security/authorization/user-isolation"
+                ]
+              },
+              {
                 "group": "Dynamic Agents",
                 "pages": [
                   "agent-os/factories/overview",
@@ -4465,7 +4609,14 @@
                 "group": "Knowledge",
                 "pages": [
                   "agent-os/knowledge/manage-knowledge",
+                  "agent-os/knowledge/remote-content",
                   "agent-os/knowledge/filter-knowledge"
+                ]
+              },
+              {
+                "group": "Learnings",
+                "pages": [
+                  "agent-os/learnings/manage-learnings"
                 ]
               },
               {
@@ -4525,18 +4676,11 @@
                 "pages": [
                   "agent-os/interfaces/overview",
                   {
-                    "group": "WhatsApp",
-                    "pages": [
-                      "agent-os/interfaces/whatsapp/introduction",
-                      "agent-os/interfaces/whatsapp/reference"
-                    ]
-                  },
-                  "agent-os/interfaces/a2a/introduction",
-                  "agent-os/interfaces/ag-ui/introduction",
-                  {
                     "group": "Slack",
                     "pages": [
                       "agent-os/interfaces/slack/introduction",
+                      "agent-os/interfaces/slack/setup",
+                      "agent-os/interfaces/slack/features",
                       "agent-os/interfaces/slack/hitl",
                       "agent-os/interfaces/slack/reference"
                     ]
@@ -4545,9 +4689,20 @@
                     "group": "Telegram",
                     "pages": [
                       "agent-os/interfaces/telegram/introduction",
+                      "agent-os/interfaces/telegram/setup",
                       "agent-os/interfaces/telegram/reference"
                     ]
-                  }
+                  },
+                  {
+                    "group": "WhatsApp",
+                    "pages": [
+                      "agent-os/interfaces/whatsapp/introduction",
+                      "agent-os/interfaces/whatsapp/setup",
+                      "agent-os/interfaces/whatsapp/reference"
+                    ]
+                  },
+                  "agent-os/interfaces/a2a/introduction",
+                  "agent-os/interfaces/ag-ui/introduction"
                 ]
               },
               {
@@ -4599,6 +4754,7 @@
                 "pages": [
                   "agent-os/usage/rbac/basic-symmetric",
                   "agent-os/usage/rbac/basic-asymmetric",
+                  "agent-os/usage/rbac/workos-byot",
                   "agent-os/usage/rbac/advanced-scopes",
                   "agent-os/usage/rbac/per-agent-permissions",
                   "agent-os/usage/rbac/custom-scope-mappings"
@@ -4707,8 +4863,7 @@
             "group": "Get Started",
             "pages": [
               "deploy/introduction",
-              "deploy/templates",
-              "deploy/interfaces"
+              "deploy/templates"
             ]
           },
           {
@@ -4807,14 +4962,13 @@
             "pages": [
               "deploy/templates/dash/overview",
               "deploy/templates/scout/overview",
-              "deploy/templates/coda/overview",
-              "deploy/templates/pal/overview",
-              "deploy/templates/gcode/overview"
+              "deploy/templates/coda/overview"
             ]
           },
           {
             "group": "Interfaces",
             "pages": [
+              "deploy/interfaces/overview",
               "deploy/interfaces/slack/overview",
               "deploy/interfaces/telegram/overview",
               "deploy/interfaces/whatsapp/overview",
@@ -6002,8 +6156,10 @@
                       "examples/models/deepseek/overview",
                       "examples/models/deepseek/basic",
                       "examples/models/deepseek/reasoning-agent",
+                      "examples/models/deepseek/reasoning-effort",
                       "examples/models/deepseek/retry",
                       "examples/models/deepseek/structured-output",
+                      "examples/models/deepseek/thinking-mode",
                       "examples/models/deepseek/thinking-tool-calls",
                       "examples/models/deepseek/tool-use"
                     ]
@@ -6324,6 +6480,16 @@
                     ]
                   },
                   {
+                    "group": "Cloudflare",
+                    "pages": [
+                      "examples/models/cloudflare/overview",
+                      "examples/models/cloudflare/basic",
+                      "examples/models/cloudflare/switch-model",
+                      "examples/models/cloudflare/tool-use",
+                      "examples/models/cloudflare/structured-output"
+                    ]
+                  },
+                  {
                     "group": "CometAPI",
                     "pages": [
                       "examples/models/cometapi/overview",
@@ -6358,6 +6524,15 @@
                       "examples/models/deepinfra/json-output",
                       "examples/models/deepinfra/retry",
                       "examples/models/deepinfra/tool-use"
+                    ]
+                  },
+                  {
+                    "group": "Inception",
+                    "pages": [
+                      "examples/models/inception/overview",
+                      "examples/models/inception/basic",
+                      "examples/models/inception/tool-use",
+                      "examples/models/inception/structured-output"
                     ]
                   },
                   {
@@ -6409,6 +6584,15 @@
                       "examples/models/litellm-openai/audio-input-agent",
                       "examples/models/litellm-openai/basic",
                       "examples/models/litellm-openai/tool-use"
+                    ]
+                  },
+                  {
+                    "group": "MiniMax",
+                    "pages": [
+                      "examples/models/minimax/overview",
+                      "examples/models/minimax/basic",
+                      "examples/models/minimax/tool-use",
+                      "examples/models/minimax/structured-output"
                     ]
                   },
                   {
@@ -6543,6 +6727,18 @@
                       "examples/models/vercel/knowledge",
                       "examples/models/vercel/retry",
                       "examples/models/vercel/tool-use"
+                    ]
+                  },
+                  {
+                    "group": "Xiaomi MiMo",
+                    "pages": [
+                      "examples/models/xiaomi/overview",
+                      "examples/models/xiaomi/basic",
+                      "examples/models/xiaomi/string-model",
+                      "examples/models/xiaomi/tool-use",
+                      "examples/models/xiaomi/structured-output",
+                      "examples/models/xiaomi/thinking-mode",
+                      "examples/models/xiaomi/reasoning-agent"
                     ]
                   }
                 ]
@@ -6954,39 +7150,69 @@
                   {
                     "group": "Interfaces",
                     "pages": [
-                      "examples/agent-os/interfaces/whatsapp/overview",
-                      "examples/agent-os/interfaces/a2a/agent-with-tools",
-                      "examples/agent-os/interfaces/a2a/basic",
-                      "examples/agent-os/interfaces/a2a/multi-agent-a2a/airbnb-agent",
-                      "examples/agent-os/interfaces/a2a/multi-agent-a2a/trip-planning-a2a-client",
-                      "examples/agent-os/interfaces/a2a/multi-agent-a2a/weather-agent",
-                      "examples/agent-os/interfaces/a2a/reasoning-agent",
-                      "examples/agent-os/interfaces/a2a/research-team",
-                      "examples/agent-os/interfaces/a2a/structured-output",
-                      "examples/agent-os/interfaces/agui/agent-with-silent-tools",
-                      "examples/agent-os/interfaces/agui/agent-with-tools",
-                      "examples/agent-os/interfaces/agui/basic",
-                      "examples/agent-os/interfaces/agui/multiple-instances",
-                      "examples/agent-os/interfaces/agui/reasoning-agent",
-                      "examples/agent-os/interfaces/agui/research-team",
-                      "examples/agent-os/interfaces/agui/structured-output",
+                      "examples/agent-os/interfaces/overview",
                       "examples/agent-os/interfaces/all-interfaces",
-                      "examples/agent-os/interfaces/slack/agent-with-user-memory",
-                      "examples/agent-os/interfaces/slack/basic",
-                      "examples/agent-os/interfaces/slack/basic-workflow",
-                      "examples/agent-os/interfaces/slack/channel-summarizer",
-                      "examples/agent-os/interfaces/slack/file-analyst",
-                      "examples/agent-os/interfaces/slack/multiple-instances",
-                      "examples/agent-os/interfaces/slack/reasoning-agent",
-                      "examples/agent-os/interfaces/slack/research-assistant",
-                      "examples/agent-os/interfaces/slack/support-team",
-                      "examples/agent-os/interfaces/whatsapp/agent-with-media",
-                      "examples/agent-os/interfaces/whatsapp/agent-with-user-memory",
-                      "examples/agent-os/interfaces/whatsapp/basic",
-                      "examples/agent-os/interfaces/whatsapp/image-generation-model",
-                      "examples/agent-os/interfaces/whatsapp/image-generation-tools",
-                      "examples/agent-os/interfaces/whatsapp/multiple-instances",
-                      "examples/agent-os/interfaces/whatsapp/reasoning-agent"
+                      {
+                        "group": "Slack",
+                        "pages": [
+                          "examples/agent-os/interfaces/slack/overview",
+                          "examples/agent-os/interfaces/slack/basic",
+                          "examples/agent-os/interfaces/slack/basic-workflow",
+                          "examples/agent-os/interfaces/slack/agent-with-user-memory",
+                          "examples/agent-os/interfaces/slack/channel-summarizer",
+                          "examples/agent-os/interfaces/slack/file-analyst",
+                          "examples/agent-os/interfaces/slack/multiple-instances",
+                          "examples/agent-os/interfaces/slack/reasoning-agent",
+                          "examples/agent-os/interfaces/slack/research-assistant",
+                          "examples/agent-os/interfaces/slack/support-team"
+                        ]
+                      },
+                      {
+                        "group": "WhatsApp",
+                        "pages": [
+                          "examples/agent-os/interfaces/whatsapp/overview",
+                          "examples/agent-os/interfaces/whatsapp/basic",
+                          "examples/agent-os/interfaces/whatsapp/agent-with-media",
+                          "examples/agent-os/interfaces/whatsapp/agent-with-user-memory",
+                          "examples/agent-os/interfaces/whatsapp/image-generation-model",
+                          "examples/agent-os/interfaces/whatsapp/image-generation-tools",
+                          "examples/agent-os/interfaces/whatsapp/multiple-instances",
+                          "examples/agent-os/interfaces/whatsapp/reasoning-agent"
+                        ]
+                      },
+                      {
+                        "group": "A2A",
+                        "pages": [
+                          "examples/agent-os/interfaces/a2a/overview",
+                          "examples/agent-os/interfaces/a2a/basic",
+                          "examples/agent-os/interfaces/a2a/agent-with-tools",
+                          "examples/agent-os/interfaces/a2a/reasoning-agent",
+                          "examples/agent-os/interfaces/a2a/research-team",
+                          "examples/agent-os/interfaces/a2a/structured-output",
+                          {
+                            "group": "Multi-Agent A2A",
+                            "pages": [
+                              "examples/agent-os/interfaces/a2a/multi-agent-a2a/overview",
+                              "examples/agent-os/interfaces/a2a/multi-agent-a2a/airbnb-agent",
+                              "examples/agent-os/interfaces/a2a/multi-agent-a2a/trip-planning-a2a-client",
+                              "examples/agent-os/interfaces/a2a/multi-agent-a2a/weather-agent"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "group": "AG-UI",
+                        "pages": [
+                          "examples/agent-os/interfaces/agui/overview",
+                          "examples/agent-os/interfaces/agui/basic",
+                          "examples/agent-os/interfaces/agui/agent-with-silent-tools",
+                          "examples/agent-os/interfaces/agui/agent-with-tools",
+                          "examples/agent-os/interfaces/agui/multiple-instances",
+                          "examples/agent-os/interfaces/agui/reasoning-agent",
+                          "examples/agent-os/interfaces/agui/research-team",
+                          "examples/agent-os/interfaces/agui/structured-output"
+                        ]
+                      }
                     ]
                   },
                   {
@@ -7339,6 +7565,7 @@
                       "examples/integrations/observability/langsmith-via-openinference",
                       "examples/integrations/observability/langtrace-op",
                       "examples/integrations/observability/langwatch-op",
+                      "examples/integrations/observability/latitude-via-openinference",
                       "examples/integrations/observability/logfire-via-openinference",
                       "examples/integrations/observability/maxim-ops",
                       "examples/integrations/observability/opik-via-openinference",
@@ -7648,6 +7875,7 @@
           },
           {
             "group": "AgentOS API Reference",
+            "openapi": "reference-api/openapi.yaml",
             "pages": [
               "reference-api/overview",
               {
@@ -7705,7 +7933,8 @@
               {
                 "group": "Slack",
                 "pages": [
-                  "reference-api/schema/slack/slack-events"
+                  "reference-api/schema/slack/slack-events",
+                  "reference-api/schema/slack/slack-interactions"
                 ]
               },
               {
@@ -7772,6 +8001,18 @@
                 ]
               },
               {
+                "group": "Learnings",
+                "pages": [
+                  "reference-api/schema/learnings/list-learnings",
+                  "reference-api/schema/learnings/create-learning",
+                  "reference-api/schema/learnings/list-learning-users",
+                  "reference-api/schema/learnings/delete-learning-user",
+                  "reference-api/schema/learnings/get-learning",
+                  "reference-api/schema/learnings/update-learning",
+                  "reference-api/schema/learnings/delete-learning"
+                ]
+              },
+              {
                 "group": "Evals",
                 "pages": [
                   "reference-api/schema/evals/list-evaluation-runs",
@@ -7795,6 +8036,8 @@
                   "reference-api/schema/knowledge/upload-content",
                   "reference-api/schema/knowledge/delete-all-content",
                   "reference-api/schema/knowledge/upload-remote-content",
+                  "reference-api/schema/knowledge/list-content-sources",
+                  "reference-api/schema/knowledge/list-files-in-source",
                   "reference-api/schema/knowledge/get-content-by-id",
                   "reference-api/schema/knowledge/delete-content-by-id",
                   "reference-api/schema/knowledge/update-content",
@@ -7907,6 +8150,10 @@
   },
   "redirects": [
     {
+      "source": "/deploy/interfaces",
+      "destination": "/deploy/interfaces/overview"
+    },
+    {
       "source": "/runtime/build-a-product",
       "destination": "/features/runtime"
     },
@@ -7939,6 +8186,14 @@
       "destination": "/features/security-and-auth"
     },
     {
+      "source": "/agent-os/security/rbac",
+      "destination": "/agent-os/security/authorization/overview"
+    },
+    {
+      "source": "/agent-os/security/authorization/customization",
+      "destination": "/agent-os/security/authorization/scopes#custom-scope-mappings"
+    },
+    {
       "source": "/runtime/interfaces",
       "destination": "/features/interfaces"
     },
@@ -7965,6 +8220,10 @@
     {
       "source": "/tutorials/starter/next-steps",
       "destination": "/tutorials/agent-platform/next-steps"
+    },
+    {
+      "source": "/tutorials/agent-platform/overview",
+      "destination": "/agent-platform/overview"
     },
     {
       "source": "/home",

@@ -1,0 +1,43 @@
+---
+title: "Deepseek Reasoning Effort"
+description: "Cookbook example for `deepseek/reasoning_effort.py`."
+---
+```python
+from agno.agent import Agent
+from agno.models.deepseek import DeepSeek
+
+# ---------------------------------------------------------------------------
+# Create Agent
+# ---------------------------------------------------------------------------
+
+agent = Agent(
+    model=DeepSeek(id="deepseek-v4-pro", reasoning_effort="max"),
+    markdown=True,
+)
+
+task = (
+    "A farmer needs to cross a river with a fox, a chicken and a sack of grain. "
+    "The boat only fits the farmer and one item. The fox cannot be left alone with "
+    "the chicken, and the chicken cannot be left alone with the grain. "
+    "Provide a step-by-step solution."
+)
+
+# ---------------------------------------------------------------------------
+# Run Agent
+# ---------------------------------------------------------------------------
+if __name__ == "__main__":
+    agent.print_response(task, stream=True, show_full_reasoning=True)
+```
+
+## Run the Example
+```bash
+# Clone and setup repo
+git clone https://github.com/agno-agi/agno.git
+cd agno/cookbook/90_models/deepseek
+
+# Create and activate virtual environment
+./scripts/demo_setup.sh
+source .venvs/demo/bin/activate
+
+python reasoning_effort.py
+```

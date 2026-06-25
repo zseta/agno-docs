@@ -1,48 +1,135 @@
 ---
 title: "Parallel"
 description: "Use Parallel tools with Agno agents."
+keywords: [parallel, web search, task api, monitor api, deep research, web monitoring]
 ---
 
 Enable Agno agents with web search and extraction infrastructure from Parallel that prioritizes token efficiency and multi-hop reasoning.
 
-```python
+## Search
 
+Natural-language web search that returns LLM-optimized excerpts. Use when the model needs current facts, specific entities, or web data to ground a response.
+
+```python
 from agno.agent import Agent
 from agno.models.openai import OpenAIResponses
 from agno.tools.parallel import ParallelTools
 
-# ---------------------------------------------------------------------------
-# Create Agent
-# ---------------------------------------------------------------------------
-
 agent = Agent(
-    model=OpenAIResponses(id="gpt-5.1"),
-    tools=[ParallelTools()],
-    instructions="No need to tell me its based on your research.",
+    model=OpenAIResponses(id="gpt-5.4"),
+    tools=[ParallelTools(
+        max_results=10,
+        include_domains=["techcrunch.com", "wired.com"],
+    )],
     markdown=True,
 )
 
-# ---------------------------------------------------------------------------
-# Run Agent
-# ---------------------------------------------------------------------------
-if __name__ == "__main__":
-    agent.print_response(
-        "Tell me about Agno's AgentOS?",
-        stream=True,
-        stream_events=True,
-    )
+agent.print_response("What are the latest developments in AI agents?", stream=True)
 ```
 
-## Run the Example
-```bash
-# Clone and setup repo
-git clone https://github.com/agno-agi/agno.git
-cd agno/cookbook/91_tools
+## Task
 
-# Create and activate virtual environment
-./scripts/demo_setup.sh
-source .venvs/demo/bin/activate
+Deep research that takes a plain-language input and returns comprehensive, cited results. Use for multi-hop research that needs minutes (not seconds) and synthesis across many sources.
 
-python parallel_tools.py
+```python
+from agno.agent import Agent
+from agno.models.openai import OpenAIResponses
+from agno.tools.parallel import ParallelTools
+
+enrichment_tools = ParallelTools(
+    enable_search=False,
+    enable_extract=False,
+    enable_task=True,
+    default_processor="base",
+    default_output_schema={
+        "type": "json",
+        "json_schema": {
+            "type": "object",
+            "properties": {
+                "company_name": {"type": "string"},
+                "headquarters": {"type": "string"},
+                "total_funding": {"type": "string"},
+                "key_investors": {"type": "array", "items": {"type": "string"}},
+            },
+            "required": ["company_name"],
+        },
+    },
+)
+
+agent = Agent(
+    model=OpenAIResponses(id="gpt-5.4"),
+    tools=[enrichment_tools],
+    markdown=True,
+    instructions="Use create_task() to research, then get_task_result() to retrieve.",
+)
+
+agent.print_response("Research Anthropic and return structured company data", stream=True)
 ```
-For details, see [Parallel cookbook](https://github.com/agno-agi/agno/blob/main/cookbook/91_tools/parallel_tools.py).
+
+## Monitor
+
+Continuously track the web for changes relevant to a natural-language query, on a schedule you control. Use for news tracking, regulatory watchlists, or competitor monitoring.
+
+```python
+from agno.agent import Agent
+from agno.models.openai import OpenAIResponses
+from agno.tools.parallel import ParallelTools
+
+monitor_tools = ParallelTools(
+    enable_search=False,
+    enable_extract=False,
+    enable_monitor=True,
+    default_monitor_frequency="1d",
+)
+
+agent = Agent(
+    model=OpenAIResponses(id="gpt-5.4"),
+    tools=[monitor_tools],
+    markdown=True,
+)
+
+# Create monitors
+agent.print_response("Create a monitor to track OpenAI product launches", stream=True)
+
+# Later: check for events
+agent.print_response("List my monitors and fetch recent events", stream=True)
+```
+
+## Run the Examples
+
+<Steps>
+  <Step title="Clone and set up">
+    ```bash
+    git clone https://github.com/agno-agi/agno.git
+    cd agno
+    ```
+  </Step>
+  <Step title="Create virtual environment">
+    ```bash
+    ./scripts/demo_setup.sh
+    source .venvs/demo/bin/activate
+    ```
+  </Step>
+  <Step title="Export your API key">
+    ```bash
+    export PARALLEL_API_KEY=***
+    ```
+    <Tip>
+    The API key is optional. Keyless access is rate-limited; setting a key raises the ceiling.
+    </Tip>
+  </Step>
+  <Step title="Run an example">
+    ```bash
+    # Search
+    python cookbook/91_tools/parallel/news_search.py
+
+    # Task (deep research)
+    python cookbook/91_tools/parallel/company_enrichment.py
+
+    # Monitor (continuous tracking)
+    python cookbook/91_tools/parallel/competitor_tracker.py
+    ```
+  </Step>
+</Steps>
+
+For more examples, see the [Parallel cookbook](https://github.com/agno-agi/agno/tree/main/cookbook/91_tools/parallel).

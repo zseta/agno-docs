@@ -1,0 +1,258 @@
+---
+title: WorkOS BYOT (Bring Your Own Token)
+sidebarTitle: WorkOS BYOT
+---
+
+Use WorkOS as the JWT issuer for AgentOS. WorkOS signs tokens with its keys; AgentOS verifies them against the WorkOS JWKS and reads scopes from the `permissions` claim. See the [WorkOS User Management docs](https://workos.com/docs/user-management) for broader context on how WorkOS issues tokens.
+
+This example provisions everything via the WorkOS API: permissions, three roles (`admin`, `member`, `viewer`), one organization, and three users. It mints a real WorkOS-signed access token per user and prints a curl command for each.
+
+<Steps>
+
+  <Step title="Create a Python file">
+    ```python workos_byot.py
+    """
+    WorkOS BYOT with AgentOS - 3 roles, real WorkOS tokens, RBAC provisioned via API.
+
+    Roles (permission slugs match AgentOS scopes):
+    - admin  -> agent_os:admin                          (full access)
+    - member -> agents:read, agents:run, sessions:read  (can list/run agents)
+    - viewer -> sessions:read                           (no agents:read -> 403 on /agents)
+
+    One-time WorkOS dashboard prerequisites:
+    - Enable RBAC (so permissions/roles can be created).
+    - Enable Email + Password authentication (so the password grant works).
+    """
+
+    import os
+
+    import httpx
+    import jwt
+    from agno.agent import Agent
+    from agno.db.sqlite import SqliteDb
+    from agno.models.openai import OpenAIResponses
+    from agno.os import AgentOS
+    from agno.os.middleware.jwt import JWTMiddleware
+    from workos import WorkOSClient
+    from workos.organization_membership._resource import RoleSingle
+    from workos.user_management import PasswordPlaintext
+
+
+    def _env(name: str) -> str | None:
+        value = os.getenv(name)
+        return value.strip().strip("\"'").strip() if value else None
+
+
+    WORKOS_CLIENT_ID = _env("WORKOS_CLIENT_ID")
+    WORKOS_API_KEY = _env("WORKOS_API_KEY")
+    if not WORKOS_CLIENT_ID or not WORKOS_API_KEY:
+        raise SystemExit(
+            "Set WORKOS_CLIENT_ID and WORKOS_API_KEY (from the same WorkOS "
+            "environment) before running."
+        )
+
+    _JWKS_FILE = "/tmp/agno_workos_jwks.json"
+
+    workos = WorkOSClient(api_key=WORKOS_API_KEY, client_id=WORKOS_CLIENT_ID)
+
+    # RBAC definition - permission slugs match AgentOS scope names.
+    ORG_NAME = "Agno BYOT Demo"
+    DEMO_DOMAIN = "agno-byot-demo.com"
+    DEMO_PASSWORD = "Agno-Demo-Passw0rd!"
+
+    PERMISSIONS = ["agents:read", "agents:run", "sessions:read", "agent_os:admin"]
+    ROLES = {
+        "admin": ["agent_os:admin"],
+        "member": ["agents:read", "agents:run", "sessions:read"],
+        "viewer": ["sessions:read"],
+    }
+    USERS = [
+        ("admin", "admin", "admin"),
+        ("member", "member", "member"),
+        ("viewer", "viewer", "viewer"),
+    ]
+
+
+    def _download_workos_jwks(client_id: str, dest: str) -> str:
+        """Fetch the public WorkOS JWKS and write it to a local file.
+        `jwks_file` requires a local path, not a URL."""
+        url = f"https://api.workos.com/sso/jwks/{client_id}"
+        response = httpx.get(url, timeout=10.0)
+        response.raise_for_status()
+        with open(dest, "w") as f:
+            f.write(response.text)
+        return dest
+
+
+    # RBAC provisioning via the WorkOS API (idempotent). Demo-only.
+    # In production, your users log in through your existing WorkOS flow; AgentOS
+    # only has to verify the token (see the JWTMiddleware setup below).
+
+    def _ensure_permissions() -> None:
+        for slug in PERMISSIONS:
+            try:
+                workos.authorization.create_permission(slug=slug, name=slug)
+            except Exception:
+                pass
+
+
+    def _ensure_roles() -> None:
+        for slug, perms in ROLES.items():
+            try:
+                workos.authorization.create_environment_role(slug=slug, name=slug)
+            except Exception:
+                pass
+            workos.authorization.set_environment_role_permissions(slug, permissions=perms)
+
+
+    def _ensure_org() -> str:
+        for org in workos.organizations.list_organizations(limit=100).data:
+            if org.name == ORG_NAME:
+                return org.id
+        return workos.organizations.create_organization(name=ORG_NAME).id
+
+
+    def _ensure_user(email: str) -> str:
+        password = PasswordPlaintext(password=DEMO_PASSWORD)
+        try:
+            return workos.user_management.create_user(
+                email=email, password=password, email_verified=True
+            ).id
+        except Exception:
+            user_id = workos.user_management.list_users(email=email).data[0].id
+            workos.user_management.update_user(user_id, password=password)
+            return user_id
+
+
+    def _ensure_membership(user_id: str, org_id: str, role_slug: str) -> None:
+        try:
+            workos.organization_membership.create_organization_membership(
+                user_id=user_id,
+                organization_id=org_id,
+                role=RoleSingle(role_slug=role_slug),
+            )
+        except Exception:
+            pass
+
+
+    def _mint_token(email: str) -> str:
+        """Mint a real WorkOS access token via the password grant.
+        Single-org users get org-scoped tokens that carry permissions."""
+        auth = workos.user_management.authenticate_with_password(
+            email=email, password=DEMO_PASSWORD
+        )
+        return auth.access_token
+
+
+    # AgentOS configured to verify WorkOS tokens via JWKS + `permissions` claim.
+    # This is the actual WorkOS integration - the only part needed in production.
+
+    _download_workos_jwks(WORKOS_CLIENT_ID, _JWKS_FILE)
+
+    db = SqliteDb(db_file="tmp/workos_byot.db")
+
+    research_agent = Agent(
+        id="research-agent",
+        name="Research Agent",
+        model=OpenAIResponses(id="gpt-5-mini"),
+        db=db,
+        add_history_to_context=True,
+        markdown=True,
+    )
+
+    # AuthorizationConfig can't set claim names. WorkOS uses `permissions`
+    # (not the default `scopes`), so JWTMiddleware is required.
+    agent_os = AgentOS(
+        id="my-agent-os",
+        description="AgentOS verifying WorkOS-issued tokens (BYOT)",
+        agents=[research_agent],
+    )
+
+    app = agent_os.get_app()
+
+    app.add_middleware(
+        JWTMiddleware,
+        jwks_file=_JWKS_FILE,
+        algorithm="RS256",
+        scopes_claim="permissions",
+        admin_scope="agent_os:admin",
+        authorization=True,
+    )
+
+
+    if __name__ == "__main__":
+        print("\n" + "=" * 70)
+        print("WorkOS BYOT - provisioning RBAC (permissions, roles, org, users)")
+        print("=" * 70)
+
+        _ensure_permissions()
+        _ensure_roles()
+        org_id = _ensure_org()
+        print("Organization: " + ORG_NAME + " (" + org_id + ")")
+
+        tokens = []
+        for label, local_part, role_slug in USERS:
+            email = f"{local_part}@{DEMO_DOMAIN}"
+            user_id = _ensure_user(email)
+            _ensure_membership(user_id, org_id, role_slug)
+            token = _mint_token(email)
+            perms = jwt.decode(token, options={"verify_signature": False}).get(
+                "permissions", []
+            )
+            tokens.append((label, role_slug, perms, token))
+            print(f"Provisioned {label:7} {email:32} role={role_slug} perms={perms}")
+
+        print("\n" + "=" * 70)
+        print("Test commands (each token signed by WorkOS, verified via JWKS)")
+        print("=" * 70)
+        for label, role_slug, perms, token in tokens:
+            print(f"\n# {label} ({role_slug}, permissions={perms}):")
+            print(
+                f'curl -i -H "Authorization: Bearer {token}" http://localhost:7777/agents'
+            )
+
+        print("\n# No token -> 401:")
+        print("curl -i http://localhost:7777/agents")
+
+        agent_os.serve(app="workos_byot:app", port=7777, reload=True)
+    ```
+  </Step>
+
+  <Snippet file="create-venv-step.mdx" />
+
+  <Step title="Install dependencies">
+    ```bash
+    uv pip install -U agno openai pyjwt workos httpx "fastapi[standard]" uvicorn sqlalchemy
+    ```
+  </Step>
+
+  <Step title="Export your credentials">
+    Get your API key and Client ID from the [WorkOS dashboard](https://dashboard.workos.com/api-keys). Both must come from the **same** WorkOS environment:
+
+    ```bash
+    export WORKOS_API_KEY="sk_..."
+    export WORKOS_CLIENT_ID="client_..."
+    export OPENAI_API_KEY="your_openai_api_key_here"
+    ```
+  </Step>
+
+  <Step title="Run the AgentOS">
+    ```bash
+    python workos_byot.py
+    ```
+
+    The script provisions RBAC in WorkOS, mints a WorkOS-signed token per user, and prints a curl command for each.
+  </Step>
+
+  <Step title="Test RBAC">
+    Run the curl commands printed by the script. Expected outcomes on `GET /agents`:
+
+    | User | Permissions | Result |
+    |------|-------------|--------|
+    | admin | `agent_os:admin` | `200 OK` |
+    | member | `agents:read`, `agents:run`, `sessions:read` | `200 OK` |
+    | viewer | `sessions:read` | `403 Forbidden` |
+    | (no token) | — | `401 Unauthorized` |
+  </Step>
+
+</Steps>

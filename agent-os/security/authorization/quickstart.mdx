@@ -1,0 +1,142 @@
+---
+title: "Quickstart"
+sidebarTitle: "Quickstart"
+description: "Enable authorization, set a verification key, and make your first authenticated request."
+---
+
+```python
+from agno.agent import Agent
+from agno.models.openai import OpenAIResponses
+from agno.os import AgentOS
+
+
+agent = Agent(
+    id="my-agent",
+    model=OpenAIResponses(id="gpt-5.2"),
+)
+
+agent_os = AgentOS(
+    id="my-agent-os",
+    agents=[agent],
+    authorization=True,
+)
+
+app = agent_os.get_app()
+```
+
+`authorization=True` enables JWT verification. AgentOS also needs a public key to verify tokens against. Generate one from the control plane and wire it in.
+
+## Generate a Verification Key from the Control Plane
+
+<Steps>
+  <Step title="Toggle JWT authorization">
+    Enable JWT authorization when connecting a new AgentOS, or later from the OS Settings page.
+  </Step>
+
+  <Step title="Copy the public key">
+    Copy the public key for your AgentOS from the modal.
+  </Step>
+
+  <Step title="Set the verification key">
+    Set the `JWT_VERIFICATION_KEY` environment variable to your public key in your `.env` file or export it directly in your terminal:
+    ```bash
+    export JWT_VERIFICATION_KEY="your-public-key"
+    ```
+
+    Or, if you manage keys via a JWKS file, point AgentOS at it instead:
+    ```bash
+    export JWT_JWKS_FILE="/path/to/jwks.json"
+    ```
+  </Step>
+</Steps>
+
+Authorization is now active for your AgentOS.
+
+<Note>
+The control plane only issues **RS256** keys, which is also the default. See [authorization troubleshooting](/faq/rbac-auth-failed) for common setup issues.
+</Note>
+
+<video
+  autoPlay
+  muted
+  controls
+  className="w-full aspect-video"
+  src="/videos/auth-on-connect-web.mp4"
+></video>
+
+## Sending Authenticated Requests
+
+Authenticated requests carry a verified caller identity. AgentOS uses this to enforce per-endpoint permissions, scope data to the caller, and audit who did what.
+
+Send the JWT in the `Authorization: Bearer <token>` header:
+
+```bash
+curl -H "Authorization: Bearer $TOKEN" http://localhost:7777/agents
+```
+
+Where the token comes from depends on your issuer:
+- **Control plane**: minted by `os.agno.com` and copied from the OS Settings page.
+- **Self-hosted**: minted by your backend or a third-party IDP. See [Self-Hosted](/agent-os/security/authorization/self-hosted) for setup.
+
+See [JWT Tokens](/agent-os/security/authorization/tokens) for the claim structure each token must include.
+
+Requests without a valid JWT return `401 Unauthorized`. Requests whose JWT lacks the scopes the endpoint requires return `403 Forbidden`.
+
+## Configurable Options
+
+Configure JWT verification using `AuthorizationConfig`:
+
+```python
+from agno.os import AgentOS
+from agno.os.config import AuthorizationConfig
+
+agent_os = AgentOS(
+    id="my-agent-os",
+    agents=[agent],
+    authorization=True,
+    authorization_config=AuthorizationConfig(
+        verification_keys=["your-jwt-verification-key"],
+        algorithm="RS256",
+    ),
+)
+```
+
+Use a JWKS file instead:
+
+```python
+authorization_config=AuthorizationConfig(
+    jwks_file="/path/to/jwks.json",
+    algorithm="RS256",
+)
+```
+
+## Environment Variables
+
+| Variable | Purpose |
+|----------|---------|
+| `JWT_VERIFICATION_KEY` | Single public key or shared secret. Added to `verification_keys`. |
+| `JWT_JWKS_FILE` | Path to a static JWKS file. |
+
+Env vars work alongside `AuthorizationConfig`. Pass keys in code, env vars, or both.
+
+## Excluded Routes
+
+These routes are excluded from authorization checks by default:
+
+`/`, `/health`, `/info`, `/docs`, `/redoc`, `/openapi.json`, `/docs/oauth2-redirect`
+
+## Error Responses
+
+| Status Code | Description |
+|-------------|-------------|
+| `401 Unauthorized` | Missing or invalid JWT token |
+| `403 Forbidden` | Insufficient scopes for the requested operation |
+
+## Next Steps
+
+| Task | Guide |
+|------|-------|
+| Understand JWT claim structure | [Tokens](/agent-os/security/authorization/tokens) |
+| Issue tokens from your own backend | [Self-Hosted](/agent-os/security/authorization/self-hosted) |
+| See the full scope reference | [Scopes](/agent-os/security/authorization/scopes) |
+| Assign roles to users | [Roles](/agent-os/security/authorization/roles) |
