@@ -16,7 +16,7 @@ ClickHouse is an OLAP columnar engine. It is designed for the workload traces ac
 
 - **Append-heavy ingest.** Spans arrive continuously. ClickHouse inserts coalesce into large columnar parts.
 - **Time-bucketed aggregates.** Trace dashboards group by minute, hour, day. Columnar storage scans only the columns the query touches.
-- **Low-cardinality filters.** Filtering by `status`, `agent_id`, `span_kind` over billions of rows is what `LowCardinality(String)` and the merge tree index are built for.
+- **Low-cardinality filters.** Filtering by `status` or `span_kind` over billions of rows is what `LowCardinality(String)` and the merge tree index are built for. Filtering by `agent_id` / `session_id` rides the merge tree's primary index.
 - **Cheap retention.** `PARTITION BY toYYYYMM(start_time)` lets you drop a month of traces with one `ALTER TABLE`.
 
 What ClickHouse is not built for:
@@ -38,7 +38,7 @@ from agno.db.postgres import PostgresDb
 from agno.models.openai import OpenAIResponses
 from agno.os import AgentOS
 from agno.tools.hackernews import HackerNewsTools
-from agno.tracing.setup import setup_tracing
+from agno.tracing import setup_tracing
 
 # Row-store for sessions, memories, evals.
 primary_db = PostgresDb(db_url="postgresql+psycopg://ai:ai@localhost:5532/ai")
@@ -95,6 +95,8 @@ docker run -d \
   -p 9000:9000 \
   clickhouse/clickhouse-server
 ```
+
+The command above is the minimum to get running. Traces don't persist across container restarts. For a persistent local setup with mounted volumes, use the cookbook script [`cookbook/scripts/run_clickhouse.sh`](https://github.com/agno-agi/agno/blob/main/cookbook/scripts/run_clickhouse.sh).
 
 ### ClickHouse Cloud
 
