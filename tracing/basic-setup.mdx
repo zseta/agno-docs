@@ -188,6 +188,14 @@ Once configured, traces and spans are automatically stored in your database. The
       agents=[my_agent],
       db=traces_db,  # AgentOS reads traces from this db
   )
+  
+  app = agent_os.get_app()
+
+if __name__ == "__main__":
+    """Run your AgentOS.
+    """
+    agent_os.serve(app="clickhouse_tracing:app", reload=True)
+
   ```
 
   `ClickhouseDb` is **traces-only** — sessions, memories, and component configs are intentionally not supported there. See the [ClickHouse provider page](/database/providers/clickhouse/overview) for the full rationale and schema details.
