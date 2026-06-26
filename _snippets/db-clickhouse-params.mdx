@@ -1,0 +1,14 @@
+| Parameter         | Type              | Default       | Description                                                                                          |
+| ----------------- | ----------------- | ------------- | ---------------------------------------------------------------------------------------------------- |
+| `host`            | `str`             | `"localhost"` | ClickHouse server host.                                                                              |
+| `port`            | `int`             | `8123`        | HTTP port. Use `8443` for TLS / ClickHouse Cloud.                                                    |
+| `username`        | `str`             | `"default"`   | ClickHouse username.                                                                                 |
+| `password`        | `str`             | `""`          | ClickHouse password.                                                                                 |
+| `database`        | `str`             | `"agno"`      | ClickHouse database name. Created at startup if missing.                                             |
+| `secure`          | `bool`            | `False`       | Use HTTPS when `True`.                                                                               |
+| `client`          | `Optional[Client]`| -             | Pre-built `clickhouse_connect` client. When provided, the connection arguments above are ignored.    |
+| `traces_table`    | `Optional[str]`   | -             | Override for the traces table name.                                                                  |
+| `spans_table`     | `Optional[str]`   | -             | Override for the spans table name.                                                                   |
+| `versions_table`  | `Optional[str]`   | -             | Override for the schema-versions table name.                                                         |
+| `id`              | `Optional[str]`   | -             | Stable identifier for this DB instance. If omitted, derived deterministically from connection params. |
+| `create_schema`   | `bool`            | `True`        | Create database and tables on startup if missing.                                                    |
