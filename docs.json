@@ -2267,6 +2267,13 @@
                         ]
                       },
                       {
+                        "group": "AgentOS",
+                        "pages": [
+                          "tools/toolkits/agent-os/studio",
+                          "tools/toolkits/agent-os/scheduler"
+                        ]
+                      },
+                      {
                         "group": "Additional Toolkits",
                         "pages": [
                           "tools/toolkits/others/airflow",
@@ -2317,7 +2324,6 @@
                           "tools/toolkits/others/replicate",
                           "tools/toolkits/others/resend",
                           "tools/toolkits/others/salesforce",
-                          "tools/toolkits/others/scheduler",
                           "tools/toolkits/others/spotify",
                           "tools/toolkits/others/shopify",
                           "tools/toolkits/others/todoist",
@@ -4632,7 +4638,8 @@
                       "agent-os/studio/cel-expressions"
                     ]
                   },
-                  "agent-os/studio/registry"
+                  "agent-os/studio/registry",
+                  "agent-os/studio/tools"
                 ]
               },
               {
@@ -16060,6 +16067,10 @@
     {
       "source": "/tools/toolkits/yfinance",
       "destination": "/tools/toolkits/others/yfinance"
+    },
+    {
+      "source": "/tools/toolkits/others/scheduler",
+      "destination": "/tools/toolkits/agent-os/scheduler"
     },
     {
       "source": "/tools/mcp/mcp",
