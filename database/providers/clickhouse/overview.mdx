@@ -1,0 +1,119 @@
+---
+title: ClickHouse
+description: Use ClickHouse as a dedicated traces backend for high-volume OLAP scans.
+sidebarTitle: Overview
+---
+
+Agno supports using [ClickHouse](https://clickhouse.com/) as a database with the `ClickhouseDb` class.
+
+<Warning>
+  `ClickhouseDb` is **traces-only**. It implements `upsert_trace`, `create_spans`, and the read paths for traces and spans. Sessions, memories, knowledge, evals, and component configs are not stored here. Pair it with a row-store (Postgres, MySQL, MongoDB) for that data.
+</Warning>
+
+## Why ClickHouse only for traces
+
+ClickHouse is an OLAP columnar engine. It is designed for the workload traces actually produce:
+
+- **Append-heavy ingest.** Spans arrive continuously. ClickHouse inserts coalesce into large columnar parts.
+- **Time-bucketed aggregates.** Trace dashboards group by minute, hour, day. Columnar storage scans only the columns the query touches.
+- **Low-cardinality filters.** Filtering by `status`, `agent_id`, `span_kind` over billions of rows is what `LowCardinality(String)` and the merge tree index are built for.
+- **Cheap retention.** `PARTITION BY toYYYYMM(start_time)` lets you drop a month of traces with one `ALTER TABLE`.
+
+What ClickHouse is not built for:
+
+| Workload | Why it's a poor fit |
+|----------|---------------------|
+| Row-level updates | Mutations are asynchronous and heavy. There is no OLTP `UPDATE`. |
+| Multi-row transactions | No transaction boundaries across rows. |
+| Single-row reads by primary key | The merge tree is optimized for range scans, not point lookups. |
+
+Session and memory storage hit all three of those patterns, which is why Agno uses a row-store for them and reserves ClickHouse for tracing.
+
+## Usage
+
+```python clickhouse_for_traces.py
+from agno.agent import Agent
+from agno.db.clickhouse import ClickhouseDb
+from agno.db.postgres import PostgresDb
+from agno.models.openai import OpenAIResponses
+from agno.os import AgentOS
+from agno.tools.hackernews import HackerNewsTools
+from agno.tracing.setup import setup_tracing
+
+# Row-store for sessions, memories, evals.
+primary_db = PostgresDb(db_url="postgresql+psycopg://ai:ai@localhost:5532/ai")
+
+# OLAP store dedicated to traces.
+traces_db = ClickhouseDb(
+    host="localhost",
+    port=8123,
+    username="ai",
+    password="ai",
+    database="agno_traces",
+)
+
+# Batch processing is strongly recommended for ClickHouse.
+setup_tracing(
+    db=traces_db,
+    batch_processing=True,
+    max_queue_size=2048,
+    max_export_batch_size=512,
+    schedule_delay_millis=5000,
+)
+
+agent = Agent(
+    name="HackerNews Agent",
+    model=OpenAIResponses(id="gpt-5.2"),
+    tools=[HackerNewsTools()],
+    instructions="You are a hacker news agent. Answer questions concisely.",
+    markdown=True,
+    db=primary_db,
+)
+
+agent_os = AgentOS(
+    agents=[agent],
+    db=traces_db,
+)
+app = agent_os.get_app()
+```
+
+<Tip>
+  Always enable `batch_processing=True` with ClickHouse. The default `SimpleSpanProcessor` issues one insert per span and will hit the server's `parts_to_throw_insert` limit under load. ClickHouse strongly prefers a smaller number of larger inserts.
+</Tip>
+
+### Run ClickHouse
+
+Install [docker desktop](https://docs.docker.com/desktop/install/mac-install/) and run **ClickHouse** on port **8123** (HTTP) and **9000** (native) using:
+
+```bash
+docker run -d \
+  --name clickhouse \
+  -e CLICKHOUSE_DB=ai \
+  -e CLICKHOUSE_USER=ai \
+  -e CLICKHOUSE_PASSWORD=ai \
+  -p 8123:8123 \
+  -p 9000:9000 \
+  clickhouse/clickhouse-server
+```
+
+### ClickHouse Cloud
+
+```python
+traces_db = ClickhouseDb(
+    host="<your-host>.clickhouse.cloud",
+    port=8443,
+    username="default",
+    password="<password>",
+    database="agno_traces",
+    secure=True,
+)
+```
+
+## Params
+
+<Snippet file="db-clickhouse-params.mdx" />
+
+## Developer Resources
+
+- [Tracing setup](/tracing/basic-setup)
+- [Cookbook example](https://github.com/agno-agi/agno/tree/main/cookbook/05_agent_os/tracing/dbs/basic_agent_with_clickhousedb.py)

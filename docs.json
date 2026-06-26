@@ -624,6 +624,12 @@
                           "database/providers/neon/overview"
                         ]
                       },
+                      {
+                        "group": "ClickHouse",
+                        "pages": [
+                          "database/providers/clickhouse/overview"
+                        ]
+                      },
                       "database/providers/selecting-tables"
                     ]
                   }
