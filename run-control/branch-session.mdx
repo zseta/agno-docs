@@ -3,14 +3,14 @@ title: Branch a Session
 description: Deep-copy every run from a session into a brand-new session.
 ---
 
-`branch_session` clones an entire session — every run, plus session state and metadata — into a new session with a fresh `session_id`. Use it to spin off an independent conversation thread from a known starting state.
+`branch_session` clones an entire session into a new session with a fresh `session_id`. Every run, plus session state and metadata, is copied. Use it to spin off an independent conversation thread from a known starting state.
 
 ## Basic Usage
 
 ```python
 new_session_id = agent.branch_session(session_id="sess-original")
 
-# Continue in the new session — independent of the original
+# Continue in the new session. Independent of the original.
 result = agent.run(
     input="What if we went a different direction?",
     session_id=new_session_id,

@@ -208,6 +208,6 @@ Same request shape, same response shape. Team runs have `team_id` instead of `ag
 | `POST /runs/{run_id}/continue` | `agent.continue_run(run_id=..., ...)` |
 | `POST /sessions/{session_id}/branch` | `agent.branch_session(session_id=...)` |
 | `GET /runs/{run_id}/checkpoints` | Inspect `run_output.messages` directly, or use the HTTP endpoint |
-| `GET /runs/{run_id}/checkpoints/{i}` | (HTTP-only — derive locally if needed) |
+| `GET /runs/{run_id}/checkpoints/{i}` | (HTTP-only. Derive locally if needed.) |
 
 All async variants exist (`acontinue_run`, `abranch_session`).

@@ -36,7 +36,7 @@ For valid integer indices on a specific run, call the [checkpoints endpoint](/ru
 | | Fork | Regenerate |
 |---|---|---|
 | What's kept | Up to `continue_from` (you choose) | Everything up to last user message + tool exchanges |
-| Tools re-invoked? | Depends on cut point | No — intermediate tool exchanges survive |
+| Tools re-invoked? | Depends on cut point | No. Intermediate tool exchanges survive. |
 | Source visibility | Always visible | `replace_original=True` hides; `False` keeps visible |
 | Use case | "Try a different reasoning path" | "Redo the final summary" |
 
