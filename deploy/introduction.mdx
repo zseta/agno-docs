@@ -1,76 +1,84 @@
 ---
-title: "Deploy AgentOS"
+title: "AgentOS Templates"
 sidebarTitle: "Introduction"
-description: "Deploy your agent platform to your cloud."
+description: "Production-ready AgentOS codebases: Starters set up where it runs; Apps ship what it does."
 mode: "wide"
 ---
 
-We provide pre-built templates for deploying an agent platform to your cloud.
+**AgentOS is the agent backend for every frontend. Templates are complete codebases that take you from clone to a running platform in minutes.**
 
-Agent platform templates take care of:
+Every template is a GitHub repo you clone and own. There are two kinds:
 
-1. **Codebase setup.** Everything wired up, ready to build on.
-2. **Infrastructure setup.** Containers, database, and networking wired up.
-3. **Coding agent setup.** Coding agents manage code, logs, and infrastructure.
+| Kind | The job | Pick one when |
+|------|---------|---------------|
+| **Starters** | Where AgentOS runs. A clean platform wired for one target: Railway, Docker, or AWS. | You're building your own agents. |
+| **Apps** | What the agent does. A complete agent product: Dash, Coda, or Scout. | You want a working product to deploy and adapt. |
 
-Each template comes with:
+## One backend, every frontend
 
-- **AgentOS server:** Runs agents and handles API requests. Runs as a container in your cloud.
-- **PostgreSQL database:** Stores sessions, memory, and traces. Runs in your cloud.
-- **Webhook endpoints:** Receive events from Slack, Telegram, and WhatsApp.
+Your platform serves every surface at once:
 
-Templates are the recommended path for building agent platforms. They package the system so it is easy to start, easy to maintain, and a joy to build on.
+| Surface | How it connects |
+|---------|-----------------|
+| Your product | REST API with 80+ endpoints: runs, sessions, memory, knowledge, evals. |
+| Chat interfaces | Slack is wired in. WhatsApp, Telegram, and Discord follow the same pattern. |
+| AI apps | Claude and ChatGPT drive your platform through the MCP server at `/mcp`. |
+| Coding agents | Claude Code, Codex, and Cursor build and improve the platform with bundled skills. |
+| AgentOS UI | [os.agno.com](https://os.agno.com): chat with agents, inspect sessions, traces, memory, and evals. |
+
+## What's inside every Starter
+
+Every Starter ships the same platform core. Only the deploy layer differs.
+
+| Component | What it does |
+|-----------|--------------|
+| **Agent Builder** | Flagship agent. Creates agents, teams, and workflows from chat through the AgentOS Studio. |
+| **Platform Manager** | Flagship agent. Read-only ops: eval history, deployment checks, schedules, codebase questions. |
+| **WebSearch** | Reference agent. The simplest pattern to copy when building your own. |
+| **MCP server** | `/mcp` endpoint. Any MCP client can run your agents, teams, and workflows. |
+| **Coding-agent skills** | `/create-new-agent`, `/improve-agent`, `/eval-and-improve`, and more in `.agents/skills/`. |
+| **Eval suite** | Judge and reliability cases. Results log to Postgres, visible at os.agno.com. |
+| **PostgreSQL + pgvector** | Sessions, memory, knowledge, and traces stay in your database. |
 
 ## Get started
 
 <Steps>
-  <Step title="Choose a template">
-    Choose between a **blank template** and a **solution template**.
-
+  <Step title="Pick a template">
     <Tabs>
-      <Tab title="Blank Template">
-        Deploy a clean installation of AgentOS to your infrastructure.
-
+      <Tab title="Starters">
         <CardGroup cols={3}>
-          <Card title="Docker" icon="docker" href="/deploy/templates/docker/deploy">
-            Run AgentOS using Docker.
-          </Card>
           <Card title="Railway" icon="train" href="/deploy/templates/railway/deploy">
-            Run AgentOS on Railway.
+            The reference Starter. One script deploys AgentOS and PostgreSQL.
+          </Card>
+          <Card title="Docker" icon="docker" href="/deploy/templates/docker/deploy">
+            Run locally or self-host anywhere Docker runs.
           </Card>
           <Card title="AWS" icon="aws" href="/deploy/templates/aws/deploy">
-            Run AgentOS on AWS ECS.
+            ECS with infrastructure-as-code.
           </Card>
         </CardGroup>
       </Tab>
-      <Tab title="Solution Template">
-        Production-ready codebases with agents already set up.
-
+      <Tab title="Apps">
         <CardGroup cols={3}>
           <Card title="Dash" icon="chart-mixed" href="/deploy/templates/dash/overview">
-            Self-learning data agent.
-          </Card>
-          <Card title="Scout" icon="radar" href="/deploy/templates/scout/overview">
-            Company intelligence agent.
+            Self-learning data agent over your database.
           </Card>
           <Card title="Coda" icon="code" href="/deploy/templates/coda/overview">
-            Code companion that lives on Slack.
+            Code companion that lives in Slack.
+          </Card>
+          <Card title="Scout" icon="radar" href="/deploy/templates/scout/overview">
+            Company brain across Slack, Drive, and wikis.
           </Card>
         </CardGroup>
       </Tab>
     </Tabs>
 
     [Browse all templates →](/deploy/templates)
-
   </Step>
-  <Step title="Connect to AgentOS UI">
-
-  Open [os.agno.com](https://os.agno.com). Chat with agents, trace runs, manage knowledge, and approve sensitive actions.
-
+  <Step title="Set up with a coding agent">
+    Every template leads with a copy-paste prompt. Paste it into Claude Code, Cursor, or Codex and the agent takes you from clone to a verified, running platform. Manual steps are on each template's page if you prefer to drive.
   </Step>
-  <Step title="Secure your AgentOS">
-
-  Configure [authentication and RBAC](/agent-os/security/overview) for production.
-
+  <Step title="Connect your frontends">
+    Run `uvx agno connect` to register the platform with the coding agents on your machine, or connect the [AgentOS UI](https://os.agno.com). Once deployed to production, add `https://<your-domain>/mcp` as a custom connector in Claude and ChatGPT.
   </Step>
 </Steps>

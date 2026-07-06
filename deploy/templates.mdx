@@ -1,66 +1,56 @@
 ---
-title: "Templates"
-sidebarTitle: "Templates"
-description: "Agent platforms and pre-built apps. Clone, deploy, and iterate with coding agents."
+title: "Browse Templates"
+sidebarTitle: "Browse Templates"
+description: "The template catalog: Starters for Railway, Docker, and AWS; Apps for analytics, code review, and company knowledge."
 ---
 
-Clone a template, deploy to your cloud, and use coding agents like Claude Code to build and improve agents on top.
+Clone a template, run the setup prompt in your coding agent, and deploy to your cloud.
 
-## Agent Platforms
+## Starters
 
-Infrastructure starters for building your own agents. Pick where you want to run, then add your agents on top.
+Pick where your platform runs. Every Starter ships the same core: flagship agents, MCP server, coding-agent skills, and evals. Only the deploy layer differs.
 
 <CardGroup cols={3}>
+  <Card title="Railway" icon="train" href="/deploy/templates/railway/deploy">
+    The reference Starter. One script provisions AgentOS and PostgreSQL.
+  </Card>
   <Card title="Docker" icon="docker" href="/deploy/templates/docker/deploy">
     Run locally or self-host anywhere Docker runs.
   </Card>
-  <Card title="Railway" icon="train" href="/deploy/templates/railway/deploy">
-    One-click cloud deployment. Best for getting started.
-  </Card>
   <Card title="AWS" icon="aws" href="/deploy/templates/aws/deploy">
-    Full control with infrastructure-as-code.
+    ECS with infrastructure-as-code.
   </Card>
 </CardGroup>
 
-| Platform | Best for | You manage | Cost |
-|----------|----------|------------|------|
-| Docker | Local dev, self-hosted production | Everything | Free |
+| Starter | Best for | You manage | Cost |
+|---------|----------|------------|------|
 | Railway | Fast cloud deployment, small teams | Just code | ~$20/mo |
-| AWS | Enterprise deployments, full control | Infrastructure-as-code | ~$75/mo |
+| Docker | Local dev, self-hosted production | Everything | Free |
+| AWS | Enterprise deployments, full control | Infrastructure-as-code | ~$75-100/mo |
 
-## Solutions
+More Starters are on the way: Fly.io, Google Cloud Run, Kubernetes (Helm), Azure Container Apps, Render, and Modal.
 
-Pre-built agent systems with self-learning, context retrieval, and production infrastructure already wired up. Clone the repo, configure your data sources, and you're running.
+## Apps
+
+Pick what the agent does. Each App is a complete agent product with self-learning, context retrieval, and production infrastructure wired up.
 
 <CardGroup cols={3}>
   <Card title="Dash" icon="chart-mixed" href="/deploy/templates/dash/overview">
     **Self-learning data agent.** Connects to your databases, learns your schema, improves with every query.
   </Card>
-  <Card title="Scout" icon="radar" href="/deploy/templates/scout/overview">
-    **Company intelligence agent.** Navigates Slack, Drive, and wikis to answer questions.
-  </Card>
   <Card title="Coda" icon="code-branch" href="/deploy/templates/coda/overview">
     **Code companion.** PR reviews, issue triage, architecture questions. Lives in Slack.
   </Card>
+  <Card title="Scout" icon="radar" href="/deploy/templates/scout/overview">
+    **Company intelligence agent.** Navigates Slack, Drive, and wikis to answer questions.
+  </Card>
 </CardGroup>
 
-## What's Included
+### What's included
 
-Each app ships with capabilities that typically take weeks to build:
-
-| Capability | What It Does |
+| Capability | What it does |
 |------------|--------------|
-| **Self-learning** | Agent improves from feedback. Every conversation makes the next one better. |
-| **Context retrieval** | RAG, knowledge graphs, multi-source navigation. Grounded answers, not hallucinations. |
-| **Production infrastructure** | PostgreSQL, pgvector, webhook endpoints. Deploy to Docker, Railway, or AWS. |
-| **Interfaces** | Slack, Telegram, WhatsApp ready. Add more with a few lines of config. |
-
-## Improving Your Agents
-
-Each solution includes tools for iterating on agent quality:
-
-| Solution | Improvement Tools |
-|----------|-------------------|
-| Dash | Automated improvement loop (`python -m evals improve`) |
-| Scout | Probe library with `/loop` support |
-| Coda | Eval suite for routing and synthesis |
+| **Self-learning** | Agents improve from feedback and store learnings for later runs. |
+| **Context retrieval** | RAG, knowledge graphs, multi-source navigation. Grounded answers. |
+| **Production infrastructure** | PostgreSQL, pgvector, webhook endpoints. Deploys like a Starter. |
+| **Interfaces** | Slack, Telegram, WhatsApp ready. |

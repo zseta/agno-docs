@@ -4872,30 +4872,31 @@
         ]
       },
       {
-        "tab": "Deploy",
+        "tab": "Templates",
         "groups": [
           {
             "group": "Get Started",
             "pages": [
               "deploy/introduction",
-              "deploy/templates"
+              "deploy/templates",
+              "deploy/templates/improve-agents"
             ]
           },
           {
-            "group": "Templates",
+            "group": "Starters",
             "pages": [
-              {
-                "group": "Docker",
-                "pages": [
-                  "deploy/templates/docker/deploy",
-                  "deploy/templates/docker/reference"
-                ]
-              },
               {
                 "group": "Railway",
                 "pages": [
                   "deploy/templates/railway/deploy",
                   "deploy/templates/railway/reference"
+                ]
+              },
+              {
+                "group": "Docker",
+                "pages": [
+                  "deploy/templates/docker/deploy",
+                  "deploy/templates/docker/reference"
                 ]
               },
               {
@@ -4968,16 +4969,15 @@
                     ]
                   }
                 ]
-              },
-              "deploy/templates/improve-agents"
+              }
             ]
           },
           {
-            "group": "Solutions",
+            "group": "Apps",
             "pages": [
               "deploy/templates/dash/overview",
-              "deploy/templates/scout/overview",
-              "deploy/templates/coda/overview"
+              "deploy/templates/coda/overview",
+              "deploy/templates/scout/overview"
             ]
           },
           {
