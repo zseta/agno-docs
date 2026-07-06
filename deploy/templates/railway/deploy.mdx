@@ -4,7 +4,7 @@ sidebarTitle: "Deploy"
 description: "Set up the reference Starter with a coding-agent prompt, run it on Docker, and deploy to Railway with one script."
 ---
 
-The reference [Starter](/deploy/introduction). [`agno-agi/agentos-railway`](https://github.com/agno-agi/agentos-railway) runs locally on Docker and deploys AgentOS with PostgreSQL (pgvector) to [Railway](https://railway.com) with one script.
+[`agno-agi/agentos-railway`](https://github.com/agno-agi/agentos-railway) is the reference [Starter](/deploy/introduction): it runs locally on Docker and deploys AgentOS with PostgreSQL (pgvector) to [Railway](https://railway.com) with one script.
 
 It ships with three agents:
 
@@ -87,7 +87,7 @@ Chat with **Agent Builder**: "Build an agent that tracks AI news and writes a da
 | AgentOS UI | [os.agno.com](https://os.agno.com) → **Connect OS** → `http://localhost:8000`. |
 | Claude and ChatGPT apps | Hosted sessions can't reach localhost. Deploy to production first, then add `https://<your-domain>/mcp` as a custom connector. |
 | Slack | Set `SLACK_BOT_TOKEN` and `SLACK_SIGNING_SECRET`. See [Slack setup](/deploy/interfaces/slack/overview). |
-| Your product | REST API with 80+ endpoints, explorable at `/docs`. |
+| Your product | REST API with 80+ endpoints. Browse them at `/docs`. |
 
 ## Deploy to production
 
@@ -146,7 +146,15 @@ Open `https://<your-domain>/docs` to confirm the API is serving.
 
 <Check>Your AgentOS is live on Railway.</Check>
 
-Token-Based Authorization gives you three things: no public access (requests without a valid token are rejected), per-request identity (`user_id`, `session_id`, and custom claims parsed from the token), and granular permissions (user tokens run agents and read their own sessions; admin tokens read everything). The same middleware protects `/mcp`: clients authenticate with a bearer token, either a JWT minted at os.agno.com or a service-account PAT (`uvx agno connect` mints one automatically). To opt out inside a private VPC behind another auth layer, set `authorization=False` in `app/main.py`.
+### Production auth
+
+Token-Based Authorization gives you three things:
+
+1. **No public access.** The server rejects requests without a valid token.
+2. **Per-request identity.** Middleware parses `user_id`, `session_id`, and custom claims from the token.
+3. **Granular permissions.** User tokens run agents and read their own sessions. Admin tokens read everything.
+
+The same middleware protects `/mcp`: clients authenticate with a bearer token, either a JWT minted at os.agno.com or a service-account PAT (`uvx agno connect` mints one automatically). To opt out inside a private VPC behind another auth layer, set `authorization=False` in `app/main.py`.
 
 ### Redeploy after code changes
 
@@ -154,7 +162,7 @@ Token-Based Authorization gives you three things: no public access (requests wit
 ./scripts/railway/redeploy.sh
 ```
 
-For auto-deploy on merge, connect your repo in the Railway dashboard: your project → `agent-os` service → **Settings** → **Source** → **Connect Repo**, deploy branch `main`. Env changes still sync with `./scripts/railway/env-sync.sh`.
+For auto-deploy on merge, connect your repo in the Railway dashboard: your project → `agent-os` service → **Settings** → **Source** → **Connect Repo**, then set the deploy branch to `main`. Env changes still sync with `./scripts/railway/env-sync.sh`.
 
 ## Environment variables
 
@@ -172,7 +180,7 @@ The variables you touch during setup. Full table in the [reference](/deploy/temp
 
 <CardGroup cols={3}>
   <Card title="Build with coding agents" icon="wand-magic-sparkles" href="/deploy/templates/improve-agents">
-    Skills for the create, improve, evaluate, maintain lifecycle.
+    Skills for the create → improve → evaluate → maintain lifecycle.
   </Card>
   <Card title="Railway reference" icon="book" href="/deploy/templates/railway/reference">
     Commands, environment variables, troubleshooting.

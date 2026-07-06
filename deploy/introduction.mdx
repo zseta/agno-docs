@@ -1,7 +1,7 @@
 ---
 title: "AgentOS Templates"
 sidebarTitle: "Introduction"
-description: "Production-ready AgentOS codebases: Starters set up where it runs; Apps ship what it does."
+description: "Complete AgentOS codebases: Starters cover where AgentOS runs; Apps ship what the agent does."
 mode: "wide"
 ---
 
@@ -32,7 +32,7 @@ Every Starter ships the same platform core. Only the deploy layer differs.
 
 | Component | What it does |
 |-----------|--------------|
-| **Agent Builder** | Flagship agent. Creates agents, teams, and workflows from chat through the AgentOS Studio. |
+| **Agent Builder** | Flagship agent. Creates agents, teams, and workflows from chat using the AgentOS Studio. |
 | **Platform Manager** | Flagship agent. Read-only ops: eval history, deployment checks, schedules, codebase questions. |
 | **WebSearch** | Reference agent. The simplest pattern to copy when building your own. |
 | **MCP server** | `/mcp` endpoint. Any MCP client can run your agents, teams, and workflows. |
@@ -48,7 +48,7 @@ Every Starter ships the same platform core. Only the deploy layer differs.
       <Tab title="Starters">
         <CardGroup cols={3}>
           <Card title="Railway" icon="train" href="/deploy/templates/railway/deploy">
-            The reference Starter. One script deploys AgentOS and PostgreSQL.
+            The reference Starter. One script provisions AgentOS and PostgreSQL.
           </Card>
           <Card title="Docker" icon="docker" href="/deploy/templates/docker/deploy">
             Run locally or self-host anywhere Docker runs.
@@ -76,7 +76,7 @@ Every Starter ships the same platform core. Only the deploy layer differs.
     [Browse all templates →](/deploy/templates)
   </Step>
   <Step title="Set up with a coding agent">
-    Every template leads with a copy-paste prompt. Paste it into Claude Code, Cursor, or Codex and the agent takes you from clone to a verified, running platform. Manual steps are on each template's page if you prefer to drive.
+    Every template leads with a copy-paste prompt. Paste it into Claude Code, Cursor, or Codex; the agent handles the clone, credentials, Docker, and verification. Each template's page also lists the manual steps.
   </Step>
   <Step title="Connect your frontends">
     Run `uvx agno connect` to register the platform with the coding agents on your machine, or connect the [AgentOS UI](https://os.agno.com). Once deployed to production, add `https://<your-domain>/mcp` as a custom connector in Claude and ChatGPT.

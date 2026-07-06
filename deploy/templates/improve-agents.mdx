@@ -1,7 +1,7 @@
 ---
 title: "Build with Coding Agents"
 sidebarTitle: "Coding Agents"
-description: "The bundled skills that let Claude Code, Codex, and Cursor drive the create, improve, evaluate, maintain lifecycle."
+description: "Bundled skills that let Claude Code, Codex, and Cursor create, improve, evaluate, and maintain your agents."
 ---
 
 Every template is designed for coding agents to drive the full agent-development lifecycle: create, improve, evaluate, maintain.
@@ -59,7 +59,7 @@ The bundled agents demonstrate three patterns to copy:
 | Pattern | Example | When to use |
 |---------|---------|-------------|
 | Direct tools | `agents/web_search.py` | The agent needs fine-grained control over each tool call. |
-| Context provider | `agents/platform_manager.py` | Collapse many tools into one `query_<thing>` interface that hands off to a sub-agent. |
+| Context provider | `agents/platform_manager.py` | You want many tools collapsed into one `query_<thing>` interface that hands off to a sub-agent. |
 | Studio builder | `agents/agent_builder.py` | Users create and refine components from chat; deletes keep a confirmation gate. |
 
 ## Teams and workflows
@@ -73,7 +73,7 @@ Agents for open questions, teams for routing, workflows for processes.
 
 ## Scheduled tasks
 
-The scheduler is on by default. Two reference workflows come registered:
+The scheduler is on by default. Two reference workflows are registered out of the box:
 
 | Workflow | What it does | Default |
 |----------|--------------|---------|

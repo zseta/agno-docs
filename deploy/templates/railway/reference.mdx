@@ -121,7 +121,7 @@ The deployment check runs daily by default (`ENABLE_DEPLOY_CHECK=True`); it is d
   </Accordion>
 </AccordionGroup>
 
-## Format, validate, evals
+## Format, validate, and run evals
 
 The format, validate, and eval scripts run on the host and need a venv. Set it up once:
 
@@ -136,7 +136,7 @@ source .venv/bin/activate
 | Lint and type-check | `./scripts/validate.sh` |
 | Run smoke evals | `python -m evals --tag smoke` |
 
-The MCP smoke check needs no venv; `./scripts/mcp_check.sh` runs inside the container.
+`./scripts/mcp_check.sh` runs inside the container, so it needs no venv.
 
 ## Environment variables
 
@@ -167,7 +167,7 @@ The MCP smoke check needs no venv; `./scripts/mcp_check.sh` runs inside the cont
 Install the CLI with `brew install railway` or `npm install -g @railway/cli`, then run `railway login`.
   </Accordion>
   <Accordion title="up.sh pauses asking for a JWT key">
-Expected. Mint the key at [os.agno.com](https://os.agno.com): **Connect OS** → **Live** → **Settings** → **OS & Security** → **Token-Based Authorization (JWT)**, then paste the full PEM. To do it later, skip the prompt, add `JWT_VERIFICATION_KEY` to `.env.production`, and run `./scripts/railway/env-sync.sh`.
+Expected. Mint the key at [os.agno.com](https://os.agno.com): connect your OS (**Connect OS** → **Live**, enter your Railway domain), then turn on **Token-Based Authorization (JWT)** under **Settings** → **OS & Security** and paste the full PEM. To do it later, skip the prompt, add `JWT_VERIFICATION_KEY` to `.env.production`, and run `./scripts/railway/env-sync.sh`.
   </Accordion>
   <Accordion title="App refuses to serve in production">
 JWT auth is on whenever `RUNTIME_ENV` is not `dev`. Set `JWT_VERIFICATION_KEY` or `JWT_JWKS_FILE` and sync. To opt out inside a private VPC behind another auth layer, set `authorization=False` in `app/main.py`.
