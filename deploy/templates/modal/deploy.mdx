@@ -1,0 +1,180 @@
+---
+title: "AgentOS on Modal"
+sidebarTitle: "Deploy"
+description: "Set up the Modal Starter with a coding-agent prompt, run it on Docker, and deploy to Modal with Neon Postgres using one script."
+---
+
+[`agno-agi/agentos-modal`](https://github.com/agno-agi/agentos-modal) is the Modal [Starter](/deploy/introduction): it runs locally on Docker and deploys AgentOS with [Neon](https://neon.tech) serverless Postgres (pgvector) to [Modal](https://modal.com) with one script.
+
+It ships with three agents:
+
+| Agent | Role |
+|-------|------|
+| **Agent Builder** | Creates agents, teams, and workflows through the AgentOS Studio. |
+| **Platform Manager** | Read-only ops: eval history, deployment checks, schedules, codebase questions. |
+| **WebSearch** | Searches the web with Parallel. The simplest agent to copy. |
+
+## Set up with a coding agent
+
+The fastest way to a running platform. Copy the prompt into Claude Code, Cursor, or Codex; the agent clones the repo, configures credentials, starts Docker, proves the MCP endpoint end to end, and connects the frontends you pick.
+
+```text expandable
+Help me set up an AgentOS on this machine. Work step by step and verify each step before moving to the next. When a step needs me (an API key, a Docker install, a sign-in), stop, tell me exactly what to do, and wait for my input. Never read or print secrets.
+
+1. Clone https://github.com/agno-agi/agentos-modal.git and cd in. Then read AGENTS.md end to end — it is the source of truth for how this platform works and answers most questions you'll hit along the way.
+2. Run `cp example.env .env`, open .env in my favorite editor, and ask me to set the OPENAI_API_KEY.
+3. Confirm docker is installed, running and `docker info` succeeds. If Docker is missing, ask me to install Docker Desktop and wait until it's running.
+4. Start the platform with `docker compose up -d --build`, then poll http://localhost:8000/docs until it returns 200 (first build takes a few minutes). If it never comes up, read `docker compose logs agentos-api` and fix what you find.
+5. Prove it end to end with ./scripts/mcp_check.sh — it should print "MCP OK" and a real agent answer. Show me that answer: it's my platform talking.
+6. Ask me which frontends I want connected, then set up the ones I pick:
+   - Coding agents (including you): run `uvx agno connect` — it registers http://localhost:8000/mcp in Claude Code, Claude Desktop, Codex, and Cursor, and verifies with a real handshake. Use the default user scope, not --project (that would write a token into the repo).
+   - The AgentOS web UI: walk me through os.agno.com → Connect OS → http://localhost:8000, named "Local AgentOS".
+   - Claude and ChatGPT apps (web or desktop): their sessions run in the cloud and can't reach localhost, so work with me on deploying to production first using ./scripts/modal/up.sh (needs the modal CLI and neonctl, both authenticated; the script pauses while I mint a JWT key at os.agno.com). Then I add https://<workspace>--agentos.modal.run/mcp as a custom connector in the chat app's connector settings.
+7. Finish with a short summary of what's running and where, plus a few first prompts to try — start with asking Agent Builder to "Build an agent that tracks AI news and writes a daily brief".
+```
+
+Prefer to drive yourself? Follow the manual steps below.
+
+## Manual setup
+
+> **Prerequisites:** [Docker](https://www.docker.com/get-started/) installed and running. An [OpenAI API key](https://platform.openai.com).
+
+<Steps>
+  <Step title="Clone and configure">
+```bash
+git clone https://github.com/agno-agi/agentos-modal.git agentos
+cd agentos
+
+cp example.env .env
+```
+
+Edit `.env` and set `OPENAI_API_KEY`.
+  </Step>
+
+  <Step title="Start the platform">
+```bash
+docker compose up -d --build
+```
+
+The first build takes a few minutes. Confirm the API at [localhost:8000/docs](http://localhost:8000/docs).
+  </Step>
+
+  <Step title="Verify end to end">
+```bash
+./scripts/mcp_check.sh
+```
+
+Prints `MCP OK` with the tool count and a real agent answer through the MCP endpoint.
+  </Step>
+
+  <Step title="Connect the AgentOS UI">
+1. Open [os.agno.com](https://os.agno.com) and sign in.
+2. Click **Connect OS**, enter `http://localhost:8000`, and name it **Local AgentOS**.
+  </Step>
+
+  <Step title="Build your first agent">
+Chat with **Agent Builder**: "Build an agent that tracks AI news and writes a daily brief". Then ask **Platform Manager**: "How healthy is the platform?"
+  </Step>
+</Steps>
+
+<Check>Your AgentOS is running locally.</Check>
+
+## Connect your frontends
+
+| Frontend | How |
+|----------|-----|
+| Coding agents (Claude Code, Codex, Cursor) | `uvx agno connect` registers `http://localhost:8000/mcp` and verifies with a real handshake. |
+| AgentOS UI | [os.agno.com](https://os.agno.com) → **Connect OS** → `http://localhost:8000`. |
+| Claude and ChatGPT apps | Hosted sessions can't reach localhost. Deploy to production first, then add `https://<workspace>--agentos.modal.run/mcp` as a custom connector. |
+| Slack | Set `SLACK_BOT_TOKEN` and `SLACK_SIGNING_SECRET`. See [Slack setup](/deploy/interfaces/slack/overview). |
+| Your product | REST API with 80+ endpoints. Browse them at `/docs`. |
+
+## Deploy to production
+
+> **Prerequisites:** [Modal CLI](https://modal.com/docs/guide) installed and authenticated (`pip install modal`, then `modal token new`). [neonctl](https://neon.tech/docs/reference/neon-cli) installed and authenticated (`brew install neonctl`, then `neonctl auth`).
+
+<Steps>
+  <Step title="Create a production env">
+```bash
+cp .env .env.production
+```
+
+Edit `.env.production` with production values: a different OpenAI key, production-only credentials, a different Slack workspace.
+  </Step>
+
+  <Step title="Deploy">
+```bash
+./scripts/modal/up.sh
+```
+
+Creates a Neon Postgres project with pgvector (Modal has no managed Postgres), saves the connection details to your env file, writes the `agentos-secrets` Modal secret, and deploys the app from `modal_app.py`. The script then pins `AGENTOS_URL` to the stable `https://<workspace>--agentos.modal.run` URL so scheduled jobs reach the platform.
+
+`modal_app.py` keeps the container always warm with `min_containers=1` and caps it at `max_containers=1`; the in-process scheduler must not run twice.
+  </Step>
+
+  <Step title="Mint your JWT key">
+The script pauses for a `JWT_VERIFICATION_KEY`. Token-Based Authorization is on by default; without a key, the platform refuses to serve production traffic.
+
+1. Open [os.agno.com](https://os.agno.com), click **Connect OS** → **Live**, enter your modal.run URL, and name it **Live AgentOS**.
+2. Go to **Settings** → **OS & Security** and turn on **Token-Based Authorization (JWT)**.
+3. Copy the public key and paste the full PEM into the `up.sh` prompt. The script saves it to your env file and runs a second deploy to apply it.
+
+If you skip the prompt, add the key to `.env.production` later and run `./scripts/modal/env-sync.sh`.
+
+<Note>Live AgentOS connections are a paid feature. Use code `PLATFORM30` for one month off.</Note>
+  </Step>
+
+  <Step title="Confirm it's live">
+```bash
+modal app logs agentos
+```
+
+Open `https://<workspace>--agentos.modal.run/docs` to confirm the API is serving.
+  </Step>
+</Steps>
+
+<Check>Your AgentOS is live on Modal.</Check>
+
+### Production auth
+
+Token-Based Authorization gives you three things:
+
+1. **No public access.** The server rejects requests without a valid token.
+2. **Per-request identity.** Middleware parses `user_id`, `session_id`, and custom claims from the token.
+3. **Granular permissions.** User tokens run agents and read their own sessions. Admin tokens read everything.
+
+The same middleware protects `/mcp`: clients authenticate with a bearer token, either a JWT minted at os.agno.com or a service-account PAT (`uvx agno connect` mints one automatically). To opt out inside a private VPC behind another auth layer, set `authorization=False` in `app/main.py`.
+
+### Redeploy after code changes
+
+```bash
+./scripts/modal/redeploy.sh
+```
+
+Modal rebuilds the image from the Dockerfile, reusing cached layers where nothing changed, and rolls the always-warm container. Env changes sync with `./scripts/modal/env-sync.sh`: it rewrites the `agentos-secrets` secret and redeploys, since secrets are read at container start.
+
+## Environment variables
+
+The variables you touch during setup. Full table in the [reference](/deploy/templates/modal/reference#environment-variables).
+
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `OPENAI_API_KEY` | Yes | Models and embeddings. |
+| `JWT_VERIFICATION_KEY` | Production | Public key from os.agno.com. The platform refuses production traffic without it. |
+| `AGENTOS_URL` | No | Scheduler base URL. `up.sh` pins it to your modal.run URL. |
+| `SLACK_BOT_TOKEN` / `SLACK_SIGNING_SECRET` | No | Set both to enable the Slack interface. |
+| `PARALLEL_API_KEY` | No | WebSearch uses the Parallel SDK when set, keyless MCP otherwise. |
+
+## Next steps
+
+<CardGroup cols={3}>
+  <Card title="Build with coding agents" icon="wand-magic-sparkles" href="/deploy/templates/improve-agents">
+    Skills for the create → improve → evaluate → maintain lifecycle.
+  </Card>
+  <Card title="Modal reference" icon="book" href="/deploy/templates/modal/reference">
+    Commands, environment variables, troubleshooting.
+  </Card>
+  <Card title="Interfaces" icon="comments" href="/deploy/interfaces/overview">
+    Connect WhatsApp, Telegram, Discord, or a custom UI.
+  </Card>
+</CardGroup>
