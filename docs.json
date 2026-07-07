@@ -4969,6 +4969,20 @@
                     ]
                   }
                 ]
+              },
+              {
+                "group": "Fly",
+                "pages": [
+                  "deploy/templates/fly/deploy",
+                  "deploy/templates/fly/reference"
+                ]
+              },
+              {
+                "group": "GCP",
+                "pages": [
+                  "deploy/templates/gcp/deploy",
+                  "deploy/templates/gcp/reference"
+                ]
               }
             ]
           },
@@ -4977,7 +4991,8 @@
             "pages": [
               "deploy/templates/dash/overview",
               "deploy/templates/coda/overview",
-              "deploy/templates/scout/overview"
+              "deploy/templates/scout/overview",
+              "deploy/templates/context/overview"
             ]
           },
           {

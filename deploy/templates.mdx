@@ -1,7 +1,7 @@
 ---
 title: "Browse Templates"
 sidebarTitle: "Browse Templates"
-description: "The template catalog: Starters for Railway, Docker, and AWS; Apps for analytics, code review, and company knowledge."
+description: "The template catalog: Starters for Railway, Docker, AWS, Fly.io, and Google Cloud Run; Apps for analytics, code review, company knowledge, and personal context."
 ---
 
 Clone a template, run the setup prompt in your coding agent, and deploy to your cloud.
@@ -20,15 +20,23 @@ Pick where your platform runs. The core is identical across Starters: flagship a
   <Card title="AWS" icon="aws" href="/deploy/templates/aws/deploy">
     ECS with infrastructure-as-code.
   </Card>
+  <Card title="Fly" icon="plane" href="/deploy/templates/fly/deploy">
+    One script deploys a single always-on machine to Fly.io.
+  </Card>
+  <Card title="GCP" icon="google" href="/deploy/templates/gcp/deploy">
+    Deploy to Cloud Run with Cloud SQL in one script.
+  </Card>
 </CardGroup>
 
 | Starter | Best for | You manage | Cost |
 |---------|----------|------------|------|
 | Railway | Fast cloud deployment, small teams | Just code | ~$20/mo |
 | Docker | Local dev, self-hosted production | Everything | Free |
-| AWS | Enterprise deployments, full control | Infrastructure-as-code | ~$75-100/mo |
+| AWS | Enterprise deployments, full control | Infrastructure-as-code | ~$100-110/mo |
+| Fly | Single always-on machine, low cost | The Fly app and its Postgres | ~$25/mo |
+| GCP | Teams already on Google Cloud | Your GCP project and IAM | ~$135-145/mo |
 
-More Starters are on the way: Fly.io, Google Cloud Run, Kubernetes (Helm), Azure Container Apps, Render, and Modal.
+More Starters are on the way: Kubernetes (Helm), Azure Container Apps, Render, and Modal.
 
 ## Apps
 
@@ -43,6 +51,9 @@ Pick what the agent does. Each App is a complete agent product with self-learnin
   </Card>
   <Card title="Scout" icon="radar" href="/deploy/templates/scout/overview">
     **Company intelligence agent.** Navigates Slack, Drive, and wikis to answer questions.
+  </Card>
+  <Card title="Context" icon="address-book" href="/deploy/templates/context/overview">
+    **Private CRM and knowledge base.** One agent in front; your AI tools share it over MCP.
   </Card>
 </CardGroup>
 

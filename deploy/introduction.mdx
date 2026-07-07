@@ -11,8 +11,8 @@ Every template is a GitHub repo you clone and own. There are two kinds:
 
 | Kind | The job | Pick one when |
 |------|---------|---------------|
-| **Starters** | Where AgentOS runs. A clean platform wired for one target: Railway, Docker, or AWS. | You're building your own agents. |
-| **Apps** | What the agent does. A complete agent product: Dash, Coda, or Scout. | You want a working product to deploy and adapt. |
+| **Starters** | Where AgentOS runs. A clean platform wired for one target: Railway, Docker, AWS, Fly.io, or Google Cloud Run. | You're building your own agents. |
+| **Apps** | What the agent does. A complete agent product: Dash, Coda, Scout, or Context. | You want a working product to deploy and adapt. |
 
 ## One backend, every frontend
 
@@ -56,6 +56,12 @@ Every Starter ships the same platform core. Only the deploy layer differs.
           <Card title="AWS" icon="aws" href="/deploy/templates/aws/deploy">
             ECS with infrastructure-as-code.
           </Card>
+          <Card title="Fly" icon="plane" href="/deploy/templates/fly/deploy">
+            A single always-on machine on Fly.io.
+          </Card>
+          <Card title="GCP" icon="google" href="/deploy/templates/gcp/deploy">
+            Cloud Run with Cloud SQL.
+          </Card>
         </CardGroup>
       </Tab>
       <Tab title="Apps">
@@ -68,6 +74,9 @@ Every Starter ships the same platform core. Only the deploy layer differs.
           </Card>
           <Card title="Scout" icon="radar" href="/deploy/templates/scout/overview">
             Company brain across Slack, Drive, and wikis.
+          </Card>
+          <Card title="Context" icon="address-book" href="/deploy/templates/context/overview">
+            Private CRM and knowledge base your AI tools share over MCP.
           </Card>
         </CardGroup>
       </Tab>
