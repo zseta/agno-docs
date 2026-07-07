@@ -1,14 +1,14 @@
 ---
 title: Run Locally
-description: "Run your agent platform locally."
+description: "Start AgentOS and Postgres with docker compose, then connect the AgentOS UI."
 ---
 
-Today we're going to run an agent platform made of:
+The reference Starter runs two containers:
 
-- AgentOS on FastAPI
-- Postgres + PgVector
+- **agentos-api**: AgentOS on FastAPI, port 8000.
+- **agentos-db**: Postgres with PgVector, port 5432.
 
-Two containers. Stateless FastAPI in front of Postgres, the same stack you run in production.
+Stateless FastAPI in front of Postgres. The same stack you run in production.
 
 ## Prerequisites
 
@@ -18,10 +18,10 @@ Two containers. Stateless FastAPI in front of Postgres, the same stack you run i
 ## Run your agent platform
 
 <Steps>
-  <Step title="Clone the template">
+  <Step title="Clone the Starter">
     ```bash
-    git clone https://github.com/agno-agi/agent-platform-railway.git agent-platform
-    cd agent-platform
+    git clone https://github.com/agno-agi/agentos-railway.git agentos
+    cd agentos
     ```
 
     <Tip>
@@ -34,7 +34,13 @@ Two containers. Stateless FastAPI in front of Postgres, the same stack you run i
     cp example.env .env
     ```
 
-    Open `.env` and set `OPENAI_API_KEY`. Everything else has sensible defaults.
+    Open `.env` and set `OPENAI_API_KEY`. Everything else has working defaults. Optional keys:
+
+    | Key | Purpose |
+    | --- | ------- |
+    | `PARALLEL_API_KEY` | Authenticates the WebSearch agent's Parallel connection. Without it, the agent falls back to Parallel's keyless MCP server. |
+    | `SLACK_BOT_TOKEN` + `SLACK_SIGNING_SECRET` | Set both to expose Agent Builder on Slack. |
+    | `ENABLE_SCHEDULED_EVALS` | `True` schedules a daily eval run. Off by default because it uses model calls. |
   </Step>
 
   <Step title="Start the platform">
@@ -42,21 +48,19 @@ Two containers. Stateless FastAPI in front of Postgres, the same stack you run i
     docker compose up -d --build
     ```
 
-    This runs two containers: a FastAPI app on port 8000 and a Postgres on port 5432.
+    Compose starts the FastAPI app on port 8000 and Postgres on port 5432. It sets `RUNTIME_ENV=dev`, which turns JWT auth off for local development. Production requires JWT auth; see [Run on Railway](/agent-platform/run-railway).
   </Step>
 
   <Step title="Verify it's running">
     Open [http://localhost:8000/docs](http://localhost:8000/docs).
 
-    You'll see the OpenAPI spec: every agent action exposed as a REST endpoint.
+    You'll see the OpenAPI spec: runs, sessions, memory, knowledge, and evals exposed as REST endpoints.
 
     <Frame caption="AgentOS API">
       <img src="/videos/first-agent-api.gif" alt="AgentOS API" />
     </Frame>
   </Step>
 </Steps>
-
-You now have an agent platform made of AgentOS on FastAPI and Postgres. The AgentOS server exposes 50+ actions through a REST API.
 
 AgentOS also comes with a UI at [os.agno.com](https://os.agno.com).
 
@@ -66,31 +70,34 @@ AgentOS also comes with a UI at [os.agno.com](https://os.agno.com).
 2. Click **Connect OS**, choose **Local**, enter `http://localhost:8000` as the URL, and name it **Local AgentOS**.
 3. Click **Connect**.
 
-You should see two agents:
+You should see three agents:
 
-| Agent             | Pattern             | What it does                                                            |
-| ----------------- | ------------------- | ----------------------------------------------------------------------- |
-| **code_search**   | Context provider    | Reads files in the workspace and answers questions about the codebase. |
-| **web_search**    | Direct tools        | Searches the web and synthesizes answers grounded in citations.        |
+| Agent | What it does |
+| ----- | ------------ |
+| **Agent Builder** | Creates agents, teams, and workflows at runtime from the registry in `app/registry.py`. Components are versioned; deletes pause for your approval. |
+| **Platform Manager** | Read-only monitor. Answers codebase questions, reports eval history, runs deployment checks, and lists schedules and runtime-built components. |
+| **WebSearch** | Searches the web with Parallel tools and answers with cited sources. |
 
 Try a prompt against each:
 
-> _"What's in this repo?"_ → `code_search` lists the directory and explains the structure.
+> _"Build an agent that tracks AI news and writes a daily brief"_ → Agent Builder creates and publishes the agent. Click **Refresh** and it appears in the Agents list.
 
-> _"What did Anthropic publish about agents recently?"_ → `web_search` returns a summary.
+> _"How healthy is the platform?"_ → Platform Manager answers from deployment checks, eval history, and schedules.
 
-Open **Sessions** and **Traces** in the sidebar. Every run is captured with full message history, tool calls, and timing. This is what powers the iteration loop on the next page.
+> _"What's the latest research from Anthropic?"_ → WebSearch returns a cited summary.
 
-## Summary
+Open **Sessions** and **Traces** in the sidebar. Every run is captured with full message history, tool calls, and timing. Sessions and traces power the improve loop in [Improve an Agent](/agent-platform/improve-agent).
 
-We now have a locally running agent platform with:
+## What else is running
 
-- Our agent runtime (AgentOS) running on port 8000 with request isolation, session management, scheduling, and 50+ endpoints.
-- A Postgres database for storing sessions, memory, knowledge, and traces.
-- A `docs/` folder of Claude Code prompts for managing the entire agent development lifecycle: create, improve, extend, eval, and review.
+| Surface | Details |
+| ------- | ------- |
+| Workflows | `deployment-check` verifies DB, auth, scheduler, and component wiring. `run-evals` runs the eval suite. Both are REST endpoints and visible in the UI. |
+| Schedules | Registered at startup. The deployment check runs daily by default (`ENABLE_DEPLOY_CHECK`); scheduled evals are opt-in (`ENABLE_SCHEDULED_EVALS`). |
+| MCP server | Any MCP client can call your agents through `/mcp`. Run `uvx agno connect` to register `http://localhost:8000/mcp` with Claude Code, Claude Desktop, Codex, and Cursor. |
 
 <Tip>
-  Hot-reload is on. Edits to `agents/*.py` and `app/*.py` should be live in ~2s.
+  Hot-reload is on: uvicorn watches `agents/`, `app/`, `db/`, `evals/`, and `workflows/`. Edits go live in about 2 seconds.
 </Tip>
 
 ## Next

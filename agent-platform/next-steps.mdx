@@ -1,89 +1,98 @@
 ---
 title: Next Steps
-description: "Go beyond: teams, workflows, scheduled tasks, and interfaces."
+description: "Teams, workflows, schedules, interfaces, other Starters, and Apps."
 ---
 
-You've made it. You now have a deployed agent platform with evals, JWT auth, and a set of Claude Code prompts that cover the full ADLC.
+You now have a deployed platform with JWT auth, an eval suite, and coding-agent skills that cover the lifecycle: create, improve, evaluate, maintain.
 
-The sections below cover the next level: teams and workflows for multi-step logic, scheduled tasks for proactive runs, and interfaces that put your agents where your users are.
+## Beyond single agents
 
-## Going beyond agents
+| Pattern | Use it when | Docs |
+| ------- | ----------- | ---- |
+| **Agent** | A single model with tools and instructions can handle the request | [Agents](/agents/overview) |
+| **Team** | The right specialist is not known up front; a leader routes or coordinates | [Teams](/teams/overview) |
+| **Workflow** | The process must run the same way every time | [Workflows](/workflows/overview) |
 
-| Pattern        | Use it when                                                              | Reference                                  |
-| -------------- | ------------------------------------------------------------------------ | ------------------------------------------ |
-| **Agent**      | A single LLM with tools and instructions can handle the request.         | [Agents overview](/agents/overview)        |
-| **Team**       | The right specialist isn't known up front. A leader routes or coordinates. | [Teams overview](/teams/overview)         |
-| **Workflow**   | The process needs to run the same way every time. Determinism matters.   | [Workflows overview](/workflows/overview)  |
-
-Teams come in three modes:
-
-| Mode             | Behavior                                                                  |
-| ---------------- | ------------------------------------------------------------------------- |
-| **Coordinate**   | A leader plans the work, calls the right specialists, synthesizes.        |
-| **Route**        | A router picks one specialist to handle the request.                      |
-| **Broadcast**    | Every specialist runs in parallel; you aggregate.                         |
+Agent Builder creates all three as Studio components from chat. For the code path, `workflows/` ships two reference workflows to copy from: `deployment-check` and `run-evals`.
 
 ## Scheduled tasks
 
-The scheduler is on by default in `app/main.py`. Schedule any agent or workflow on a cron:
+The scheduler is on in `app/main.py` (`scheduler=True`). `app/schedules.py` registers crons at startup:
 
-| Use case                  | Example                                                                |
-| ------------------------- | ---------------------------------------------------------------------- |
-| **Maintenance**           | Purge sessions older than 90 days. Vacuum Postgres tables.             |
-| **Proactive runs**        | Every weekday morning, summarize overnight news and post to Slack.     |
-| **Catch regressions**     | Run `python -m evals` weekly against production agents.                |
+| Workflow | Default | What it does |
+| -------- | ------- | ------------ |
+| `deployment-check` | Daily cron on | Deterministic readiness report: DB, auth, scheduler URL, MCP, Slack config. No model calls. |
+| `run-evals` | Cron off | Runs the `EVALS_TAG` cases and returns a report. Enable with `ENABLE_SCHEDULED_EVALS=True`. |
 
-See [scheduling](/features/scheduling) for the cron API.
+To add your own, define a workflow in `workflows/`, register it in `AgentOS(workflows=[...])`, and add a cron in `register_schedules()`. See [scheduling](/features/scheduling).
 
-## Connect to interfaces
+## Connect interfaces
 
-Your agents should be available where your users are. Slack threads. Discord channels. Telegram for the field team. Or a custom UI inside your product.
+Slack is wired in `app/main.py` and activates when `SLACK_BOT_TOKEN` and `SLACK_SIGNING_SECRET` are set:
 
-Expose the agent via an interface in `app/main.py`:
-
-```python
+```python app/main.py
 from agno.os.interfaces.slack import Slack
 
 interfaces: list = []
 if SLACK_BOT_TOKEN and SLACK_SIGNING_SECRET:
     interfaces.append(
         Slack(
-            agent=code_search,
+            agent=agent_builder,
             streaming=True,
             token=SLACK_BOT_TOKEN,
             signing_secret=SLACK_SIGNING_SECRET,
             resolve_user_identity=True,
         )
     )
-
-agent_os = AgentOS(
-    ...
-    interfaces=interfaces,
-)
 ```
 
-| Interface          | Reference                                                       |
-| ------------------ | --------------------------------------------------------------- |
-| Slack              | [Slack interface](/agent-os/interfaces/slack/introduction)      |
-| Telegram           | [Telegram interface](/agent-os/interfaces/telegram/introduction) |
-| WhatsApp           | [WhatsApp interface](/agent-os/interfaces/whatsapp/introduction) |
-| Custom UI / AG-UI  | [AG-UI interface](/agent-os/interfaces/ag-ui/introduction)      |
-| All interfaces     | [Interfaces overview](/agent-os/interfaces/overview)            |
+Point `agent=` at any registered agent. Mirror the same conditional for other interfaces:
+
+| Interface | Docs |
+| --------- | ---- |
+| Slack | [Slack interface](/agent-os/interfaces/slack/introduction) |
+| Telegram | [Telegram interface](/agent-os/interfaces/telegram/introduction) |
+| WhatsApp | [WhatsApp interface](/agent-os/interfaces/whatsapp/introduction) |
+| Custom UI | [AG-UI interface](/agent-os/interfaces/ag-ui/introduction) |
+| All interfaces | [Interfaces overview](/agent-os/interfaces/overview) |
+
+## Use the platform from MCP clients
+
+`enable_mcp_server=True` in `app/main.py` mounts an MCP server at `/mcp`. Claude, ChatGPT, Cursor, and Claude Code can run your agents, teams, and workflows through tools like `run_agent`. Register the endpoint with the coding agents on your machine:
+
+```bash
+uvx agno connect
+```
+
+See the [AgentOS MCP server](/agent-os/mcp/mcp).
 
 ## Keep the repo coherent
 
-As you ship more agents, configuration drifts, env vars rot, and new agents miss imports. The template ships a fifth Claude Code prompt for the recurring sweep:
+As agents accumulate, configuration drifts: env vars go stale and new agents miss registration. Run the maintenance skill before a release or after a refactor:
 
 ```
-Run docs/review-and-improve.md
+/review-and-improve
 ```
 
-It auto-fixes mechanical drift (stale paths, missing `example.env` entries, agents on disk not registered in `app/main.py`) and surfaces the rest as a punch list. Best run before public releases and periodically during active development.
+It diffs docs against code, auto-fixes mechanical drift (stale paths, missing `example.env` entries, agents on disk missing from `app/main.py`), and surfaces the rest as a punch list.
 
-## You're done
+## Other Starters
 
-You now have an agent platform that:
+This platform is built from [agentos-railway](https://github.com/agno-agi/agentos-railway), the reference Starter. Its siblings run the same portable core on other targets: Docker, Fly.io, Google Cloud Run, AWS, Kubernetes, Azure, Render, and Modal. Swap the deploy layer; keep everything else.
 
-- Runs locally and on Railway, with JWT auth built-in.
-- Stores sessions, memory, knowledge, and traces in a Postgres database.
-- Manages and improves itself through five Claude Code prompts.
+| Starter | Docs |
+| ------- | ---- |
+| Railway | [Deploy to Railway](/deploy/templates/railway/deploy) |
+| Docker | [Deploy with Docker](/deploy/templates/docker/deploy) |
+| All templates | [Templates](/deploy/templates) |
+
+## Apps
+
+Starters cover where AgentOS runs. Apps cover what the agent does: complete, forkable agent products built on the same scaffolding.
+
+| App | What it does | Docs |
+| --- | ------------ | ---- |
+| Dash | Text-to-SQL analytics agent over your database | [Dash](/deploy/templates/dash/overview) |
+| Coda | Code companion in Slack | [Coda](/deploy/templates/coda/overview) |
+| Scout | Company brain over your org's knowledge sources | [Scout](/deploy/templates/scout/overview) |
+| Context | Personal work-context proxy over your own knowledge | [Context](/deploy/templates/context/overview) |

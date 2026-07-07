@@ -1,110 +1,146 @@
 ---
 title: Evals
-description: "Lock in agent behavior with regression tests."
+description: "Regression-test agents with agno.eval Cases and run the suite with python -m evals."
 ---
 
-Next, let's lock in our agent behavior with evals.
-
-Think of Evals as regression tests for your agents. Same prompts, same agents, run on a schedule. Notify when behavior drifts.
-
-When we run `docs/improve-agent.md`, we're looking for out-of-distribution improvements. Evals make sure in-distribution cases continue to pass. The two work together.
+Evals are regression tests for agents. Same prompts, same agents, checked before every change and on a schedule. `/improve-agent` looks for out-of-distribution improvements; evals make sure in-distribution cases keep passing.
 
 ## Cases
 
-Cases live in `evals/cases.py`. Each case sends one input to an agent and (optionally) checks two things:
-
-- **judge**: `AgentAsJudgeEval` scores the response against `criteria` (binary pass/fail) using an LLM.
-- **reliability**: `ReliabilityEval` checks which tools fired against `expected_tool_calls`.
-
-Results are stored in your database via `eval_db` (visible at [os.agno.com](https://os.agno.com)).
-
-A case looks like this:
+Cases live in `evals/cases.py`. Each is an `agno.eval.Case`:
 
 ```python evals/cases.py
+from agno.eval import Case
+
+from agents.web_search import web_search
+from db import get_postgres_db
+
+eval_db = get_postgres_db()
+
 CASES: tuple[Case, ...] = (
     Case(
         name="web_search_recent_anthropic_research",
         agent=web_search,
-        input="What did Anthropic publish about agents recently?",
+        input="What did Anthropic publish about agent research recently?",
+        tags=("live",),
+        timeout_seconds=120,
         criteria=(
             "Answers the question by citing at least one real Anthropic URL "
             "(anthropic.com domain). The response is grounded in fetched content."
         ),
-        expected_tool_calls=(_WEB_SEARCH_TOOL,),
+        expected_tool_calls=("web_search",),
     ),
     # add more cases here
 )
 ```
 
-A case can use either check or both. If both are set, the agent runs once and feeds the same response into both.
+A case runs its agent once and applies up to two checks against the same response:
+
+| Field | Eval | Checks |
+| ----- | ---- | ------ |
+| `criteria` | `AgentAsJudgeEval` | An LLM judge scores the response against the rubric. Binary pass/fail. |
+| `expected_tool_calls` | `ReliabilityEval` | The named tools actually fired. |
+
+Set either or both. Tags group cases into subsets:
+
+| Tag | Purpose |
+| --- | ------- |
+| `smoke` | Fast checks that the platform's core surfaces still work |
+| `release` | Broader checks before a release |
+| `live` | Current web and source checks. Useful, but not deterministic release gates |
+
+`evals/__main__.py` hands the cases to Agno's suite runner:
+
+```python evals/__main__.py
+import sys
+
+from agno.eval import cli
+
+from evals.cases import CASES, eval_db
+
+sys.exit(cli(CASES, db=eval_db))
+```
+
+Results log to Postgres through `eval_db`. Connect your OS at [os.agno.com](https://os.agno.com) to see eval history next to sessions and traces, including when a case started failing.
 
 ## Run the suite
 
+The suite runs on the host and imports agents directly from `agents/`. It needs Postgres on port 5432; the API does not have to be running.
+
 <Steps>
-  <Step title="Create a virtual environment">
-
-    To run the eval suite, let's create a local virtual environment
-
+  <Step title="Set up a virtual environment">
     ```bash
     ./scripts/venv_setup.sh
-    ```
-
-    Activate it
-
-    ```bash
     source .venv/bin/activate
     ```
-
   </Step>
 
-  <Step title="Run the eval suite">
-
+  <Step title="Run">
     ```bash
-    python -m evals                # full suite
+    python -m evals --tag smoke             # fast platform checks
+    python -m evals --tag release           # pre-release confidence
+    python -m evals --name <case>           # one case while iterating
+    python -m evals --list                  # list matching cases without running
+    python -m evals --json-output out.json  # machine-readable results
+    python -m evals -v                      # stream each run with full panels
     ```
 
-    Other options:
-
-    ```bash
-    python -m evals -v             # stream the agent run with full panels
-    python -m evals --case <name>  # single case while iterating
-    ```
-
+    `python -m evals` with no flags runs every case. The run ends with an `Eval Summary` table. Exit codes: `0` all selected cases passed, `1` any failure, `2` no case matched the selector.
   </Step>
-
 </Steps>
 
-Each case prints the response, the judge verdict, and the reliability verdict. The run ends with an `Eval Summary` table.
+## Cases with side effects
 
-Results write to Postgres via `eval_db`. You can view the Eval history on [os.agno.com](https://os.agno.com) alongside your sessions and traces. You can see when a case started failing and what changed.
+Agent Builder's create, edit, and publish tools execute immediately, so cases that probe it write real components to the database. Bracket those cases with the snapshot-diff hooks from `evals/cases.py`:
 
-## Diagnose failures with Claude Code
+```python
+Case(
+    name="agent_builder_creates_directly",
+    agent=agent_builder,
+    input="Create an agent called 'Recipe Finder' ...",
+    tags=("smoke", "release"),
+    expected_tool_calls=("create_agent",),
+    setup=snapshot_component_ids,
+    teardown=cleanup_new_components,
+)
+```
 
-Open Claude Code and paste:
+`setup` records the component IDs that exist before the case. `teardown` hard-deletes anything new afterward, and runs on pass, fail, error, and timeout alike.
+
+## Diagnose failures
+
+Open Claude Code and run:
 
 ```
-Run docs/eval-and-improve.md
+/eval-and-improve
 ```
 
-Claude runs the full suite, triages every failure (bad criteria, real regression, flaky LLM judge), and proposes in-scope fixes. It edits the agent or the case, re-runs, and shows you the diff.
+Claude runs the suite, triages each failure (agent regression, overspecified rubric, judge variance, environment), fixes what is in scope, and re-runs until green. It edits a case only when the assertion itself was wrong.
 
-## When to run evals
+## When to run
 
-| Trigger                               | Frequency             |
-| ------------------------------------- | --------------------- |
-| Before deploying a change to an agent | Every time            |
-| As part of CI                         | Every PR              |
-| Against production                    | On a weekly cron      |
-| After bumping a model version         | Every time            |
+| Trigger | Run |
+| ------- | --- |
+| Before deploying an agent change | `python -m evals --tag smoke` |
+| Before a release | `python -m evals --tag release` |
+| After bumping a model or the agno version | `python -m evals --tag release` |
+| On a schedule against production | `ENABLE_SCHEDULED_EVALS=True` |
 
-The weekly production cron is the most valuable one. Wire it into your platform's scheduler. See [scheduling](/features/scheduling) for the cron API.
+The `run-evals` workflow (`workflows/run_evals.py`) runs a tagged subset on a daily cron. It is registered for on-demand runs; the cron is off by default because it spends model calls.
+
+| Variable | Default | Effect |
+| -------- | ------- | ------ |
+| `ENABLE_SCHEDULED_EVALS` | `False` | `True` schedules the run-evals workflow daily |
+| `EVALS_TAG` | `smoke` | Tag the scheduled run selects |
+
+See [scheduling](/features/scheduling) for the cron API.
 
 ## What good cases look like
 
 - **Specific.** "Returns a JSON object with `ticker` and `price`" beats "Returns the right answer".
-- **Stable.** Avoid prompts whose correct answer changes daily. Use phrasing like "describes a real, recent..." instead of locking in a specific result.
+- **Stable.** Avoid prompts whose correct answer changes daily. Phrase as "describes a real, recent..." instead of locking in one result.
 - **Scoped to one behavior.** One case per behavior makes failures easy to read.
-- **Anchored to tools.** `expected_tool_calls` catches the failure mode where the agent confidently makes things up instead of calling a tool.
+- **Anchored to tools.** `expected_tool_calls` catches the agent answering from memory instead of calling a tool.
 
 ## Next
 

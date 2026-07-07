@@ -1,41 +1,105 @@
 ---
 title: Create an Agent
-description: "Use Claude Code to create a new agent."
+description: "Add an agent with Agent Builder, the /create-new-agent skill, or by hand."
 ---
 
-Next we're going to create a new agent using Claude Code.
+The platform gives you three ways to add an agent:
 
-A great side-effect of having a unified platform is that coding agents can manage it end-to-end. The codebase comes with five prompts that cover the full ADLC.
+| Path | Where it runs | What you get |
+| ---- | ------------- | ------------ |
+| **Agent Builder** | Chat: AgentOS UI, Slack, or an MCP client | A versioned Studio component in the database |
+| **`/create-new-agent`** | Claude Code in the repo | A registered agent file in `agents/` |
+| **By hand** | Your editor | Same as the skill, wired manually |
 
-Let's try `docs/create-new-agent.md`
+## Agent Builder
 
-## Run the prompt
+`agents/agent_builder.py` ships with the platform. It is wired with `StudioTools` and the registry in `app/registry.py`, which exposes web search, reasoning tools, the agno-docs MCP, the default model, the shared database, and the reference agents. It interviews you, decides between an agent, a team, or a workflow, discovers the exact registry component names, and creates the component.
 
-Open Claude Code in your `agent-platform` directory and paste:
+Open [os.agno.com](https://os.agno.com), click **Chat** under **Agent Builder**, and try:
 
 ```
-Run docs/create-new-agent.md
+Build an agent that tracks AI news and writes a daily brief
 ```
 
-Claude will ask a few questions and build your agent out.
+The create, edit, and publish tools execute immediately. Creating a component publishes version 1; later edits save as drafts until published. Deletes pause for human confirmation: approve in the AgentOS UI, with the Slack approve button, or from an MCP client via `continue_run`.
 
-Once the spec is locked in, Claude generates `agents/<slug>.py`, registers it in `app/main.py`, adds three starter prompts to `app/config.yaml`, restarts the container, and hits the new endpoint with cURL. It reads the container logs to confirm the right tools fired.
+Click **Refresh** in the top right and the new agent appears in the **Agents** dropdown.
 
-## Test your agents on the AgentOS UI
+## The /create-new-agent skill
 
-Open [os.agno.com](https://os.agno.com), select your new agent in the sidebar, and try a few prompts:
+Coding-agent skills live in `.agents/skills/`. `.claude/skills` is a committed symlink into it, so Claude Code picks them up on every clone; Codex and Cursor can symlink the same folder. Open Claude Code in your `agentos` directory and run:
 
-- **The golden path.** What you built the agent for.
-- **Edge cases.** Unusual inputs, ambiguous questions, partial information.
-- **Adversarial inputs.** Prompt injection, out-of-scope requests, attempts to make it do something it shouldn't.
+```
+/create-new-agent
+```
 
-## Summary
+The skill:
 
-Congrats on creating a new agent. Here are the details if you're looking to do this manually:
+1. Asks for the agent's purpose, tools, and slug, or runs guided discovery from your role and recurring tasks.
+2. Grounds toolkit choices in the agno-docs MCP: import paths, constructor args, env vars, pip dependencies.
+3. Generates `agents/<slug>.py`, registers it in `app/main.py`, and adds three quick prompts to `app/config.yaml`.
+4. Smoke-tests the new endpoint with cURL and reads the container logs to confirm the right tools fired.
 
-- Create a file in `agents/<slug>.py`.
-- Register the agent in `app/main.py`.
-- Add quick-start prompts in `app/config.yaml`.
+## By hand
+
+Create `agents/<slug>.py`. Every agent in the platform follows the same shape:
+
+```python agents/my_agent.py
+"""
+My Agent
+========
+"""
+
+from agno.agent import Agent
+
+from app.settings import default_model
+from db import get_postgres_db
+
+INSTRUCTIONS = """\
+<what the agent does, which tools it uses, the rules to follow>
+"""
+
+my_agent = Agent(
+    id="my-agent",
+    name="My Agent",
+    model=default_model(),
+    db=get_postgres_db(),
+    tools=[...],
+    instructions=INSTRUCTIONS,
+    enable_agentic_memory=True,
+    add_datetime_to_context=True,
+    add_history_to_context=True,
+    num_history_runs=5,
+)
+```
+
+Then wire it in:
+
+1. Import it in `app/main.py` and append it to `agents=[...]`.
+2. Add quick prompts to `app/config.yaml` under `chat.quick_prompts.<slug>`.
+3. Optional: add it to the `Registry` in `app/registry.py` so Agent Builder can compose it into teams and workflows.
+
+Compose runs uvicorn with a scoped `--reload`, so the new agent loads in a couple of seconds. Verify it registered:
+
+```bash
+curl -s http://localhost:8000/agents | jq -r '.[].id'
+```
+
+Three reference patterns to copy from:
+
+| Pattern | Reference | Best for |
+| ------- | --------- | -------- |
+| Direct tools | `agents/web_search.py` | The agent needs a known set of tools |
+| Context provider | `agents/platform_manager.py` | One `query_<thing>` tool hands off to a sub-agent |
+| Studio builder | `agents/agent_builder.py` | The agent creates or edits AgentOS components |
+
+## Test it
+
+Open [os.agno.com](https://os.agno.com), select the new agent, and probe three areas:
+
+- **Golden path.** What you built the agent for.
+- **Edge cases.** Ambiguous questions, partial information, out-of-scope requests.
+- **Adversarial input.** Prompt injection and attempts to pull the agent off-purpose.
 
 ## Next
 

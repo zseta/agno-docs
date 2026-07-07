@@ -1,46 +1,62 @@
 ---
 title: Improve an Agent
-description: "Use Claude Code to recursively improve your agents."
+description: "Harden agents with the /improve-agent probe loop; apply targeted changes with /extend-agent."
 ---
 
-Next we're going to improve our agents using Claude Code.
+Two skills in `.agents/skills/` iterate on an existing agent:
 
-The biggest advantage of having a unified agent platform is that coding agents can read logs to iteratively improve our agents. The codebase comes with two prompts:
+| Skill | Who drives | Use it to |
+| ----- | ---------- | --------- |
+| `/improve-agent` | Claude | Harden the agent against its own `INSTRUCTIONS` |
+| `/extend-agent` | You | Add a tool or capability, refine instructions, fix a known bug |
 
-- `docs/improve-agent.md`. Claude derives probes from the agent's instructions, judges responses, and edits until they pass. **Autonomous.**
-- `docs/extend-agent.md`. Add a tool, refine a prompt, fix a bug. **User-driven.**
+Both edit `agents/<slug>.py` against the live container. Compose runs uvicorn with a scoped `--reload`, so each edit is live in a couple of seconds.
 
-Both edit `agents/<slug>.py` directly. Hot-reload picks up the change in ~2s, so the test → judge → edit cycle is fairly tight.
+## Harden with /improve-agent
 
-## Improve: autonomous probe-and-judge
-
-Open Claude Code in your `agent-platform` directory and paste:
-
-```
-Run docs/improve-agent.md
-```
-
-Claude reads the target agent's `INSTRUCTIONS` and derives 8–12 probes across four categories: golden path, edge cases, tool selection, and adversarial. For each probe, it cURLs the live container, reads tool calls from the logs, and judges PASS or FAIL against what the instructions promise.
-
-For every failure, Claude picks a lever and edits: tighten a rule, add a rule, swap a tool, bump `num_history_runs`. Claude re-runs only the failed probes. Caps at five iterations.
-
-## Extend: user-driven changes
-
-When you have a specific change in mind, paste:
+Open Claude Code in your `agentos` directory and run:
 
 ```
-Run docs/extend-agent.md
+/improve-agent
 ```
 
-Claude asks what to change. You describe a tool to add, a prompt to refine, a bug to fix. The agno-docs MCP is loaded so toolkit research is grounded in the real API. Each iteration is one small, verified change.
+Claude asks for the target slug, reads the agent's `INSTRUCTIONS`, and derives 8-12 probes across four categories: golden path, edge cases, tool selection, and adversarial. For each probe it calls the live agent over REST, reads which tools fired from the container logs, and judges PASS or FAIL against what the instructions promise.
+
+For every failure, Claude picks one lever per iteration:
+
+| Lever | When |
+| ----- | ---- |
+| `INSTRUCTIONS` | Most fixes. Tighten or add a rule. |
+| Tools | Add a missing tool, or remove a misused one. |
+| Context provider | Swap mode when the routing layer is the problem. |
+| `num_history_runs` | Raise if context is lost across turns; lower if old turns leak in. |
+| Model | Bump only if the agent is genuinely under-capable. Last resort. |
+
+Claude re-runs only the failed probes, spot-checks one or two passing probes for regressions, and caps at five iterations. The run ends with a diff and a suggested commit message.
+
+<Warning>
+Probes against `agent-builder` create real Studio components: its create, edit, and publish tools execute immediately. The skill brackets the loop with `snapshot_component_ids()` and `delete_new_components()` from `evals/cases.py`, so probe runs never leave components behind.
+</Warning>
+
+## Change with /extend-agent
+
+When you have a specific change in mind, run:
+
+```
+/extend-agent
+```
+
+Claude reads the agent, restates its purpose, and asks what to change: add a tool, add a capability (knowledge base, memory, sub-agent, scheduled task), refine instructions, or fix a bug. Toolkit research goes through the agno-docs MCP, so import paths and constructor args match the real API. Each iteration is one change, smoke-tested against the live container before the next.
 
 ## When to run each
 
-- **Just created an agent and want to harden it before deploying.** Use **improve**.
-- **Users report the agent is missing the point.** Use **improve**.
-- **You want to add a new tool or knowledge base.** Use **extend**.
-- **You hit a specific bug.** Use **extend**.
-- **You just extended an agent and want to make sure nothing regressed.** Use **improve** again.
+| Situation | Run |
+| --------- | --- |
+| Just created an agent and want to harden it before deploying | `/improve-agent` |
+| Users report the agent misses the point | `/improve-agent` |
+| You want a new tool or knowledge base | `/extend-agent` |
+| You hit a specific bug | `/extend-agent` |
+| You just extended an agent and want to catch regressions | `/improve-agent` |
 
 ## Next
 
