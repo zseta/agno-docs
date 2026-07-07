@@ -116,7 +116,7 @@ If you must run production without auth (inside a private VPC behind another aut
 
 ## Scaling
 
-`railway.json` deploys one replica at 4Gi memory and 2 vCPU. Keep `numReplicas` at 1: the scheduler runs in-process and the Starter is designed to run as a single replica. Multi-replica HA is not supported yet. Raise `limits` as usage grows.
+`railway.json` deploys one replica at 4Gi memory and 2 vCPU. Keep `numReplicas` at 1: the scheduler runs in-process and the Starter is designed to run as a single replica. Multi-replica HA isn't supported yet, so as usage grows, raise `limits` instead of adding replicas.
 
 ## Operations
 
