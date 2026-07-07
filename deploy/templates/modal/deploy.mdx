@@ -83,9 +83,9 @@ Chat with **Agent Builder**: "Build an agent that tracks AI news and writes a da
 
 | Frontend | How |
 |----------|-----|
-| Coding agents (Claude Code, Codex, Cursor) | `uvx agno connect` registers `http://localhost:8000/mcp` and verifies with a real handshake. |
+| Coding agents (Claude Code, Codex, Cursor) | `uvx agno connect` registers `http://localhost:8000/mcp` with the MCP clients on your machine. |
 | AgentOS UI | [os.agno.com](https://os.agno.com) → **Connect OS** → `http://localhost:8000`. |
-| Claude and ChatGPT apps | Hosted sessions can't reach localhost. Deploy to production first, then add `https://<workspace>--agentos.modal.run/mcp` as a custom connector. |
+| Claude and ChatGPT apps | Hosted sessions can't reach localhost. Deploy to production first, then register `https://<workspace>--agentos.modal.run/mcp` as a remote MCP server; sign-in uses OAuth. |
 | Slack | Set `SLACK_BOT_TOKEN` and `SLACK_SIGNING_SECRET`. See [Slack setup](/deploy/interfaces/slack/overview). |
 | Your product | REST API with 80+ endpoints. Browse them at `/docs`. |
 
@@ -124,6 +124,18 @@ If you skip the prompt, add the key to `.env.production` later and run `./script
 <Note>Live AgentOS connections are a paid feature. Use code `PLATFORM30` for one month off.</Note>
   </Step>
 
+  <Step title="Connect your MCP clients">
+Re-run `uvx agno connect`, this time pointed at your deployed domain:
+
+```bash
+uvx agno connect --url https://<workspace>--agentos.modal.run
+```
+
+Production is JWT-gated, so this connection needs a token; `uvx agno connect` mints a service-account token (`agno_pat_...`) for it. The bare `uvx agno connect` only re-registers `http://localhost:8000/mcp`.
+
+For claude.ai and ChatGPT on the web, register `https://<workspace>--agentos.modal.run/mcp` as a remote MCP server and sign in with OAuth.
+  </Step>
+
   <Step title="Confirm it's live">
 ```bash
 modal app logs agentos
@@ -143,7 +155,7 @@ Token-Based Authorization gives you three things:
 2. **Per-request identity.** Middleware parses `user_id`, `session_id`, and custom claims from the token.
 3. **Granular permissions.** User tokens run agents and read their own sessions. Admin tokens read everything.
 
-The same middleware protects `/mcp`: clients authenticate with a bearer token, either a JWT minted at os.agno.com or a service-account PAT (`uvx agno connect` mints one automatically). To opt out inside a private VPC behind another auth layer, set `authorization=False` in `app/main.py`.
+The same middleware protects `/mcp`: clients authenticate with a bearer token, either a JWT minted at os.agno.com or the service-account token that `uvx agno connect --url` mints. To opt out inside a private VPC behind another auth layer, set `authorization=False` in `app/main.py`.
 
 ### Redeploy after code changes
 

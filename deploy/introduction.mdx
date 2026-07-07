@@ -1,30 +1,27 @@
 ---
 title: "AgentOS Templates"
 sidebarTitle: "Introduction"
-description: "Complete AgentOS codebases: Starters cover where AgentOS runs; Apps ship what the agent does."
+description: "Pre-built AgentOS codebases you clone and own: Starters for your cloud, Apps with the agents built in."
 mode: "wide"
 ---
 
-**AgentOS is the agent backend for every frontend. Templates are complete codebases that take you from clone to a running platform in minutes.**
+We provide pre-built templates for running AgentOS in your cloud. Every template is a GitHub repo you clone and own, with everything wired up:
 
-Every template is a GitHub repo you clone and own. There are two kinds:
+1. **The codebase.** Agents, evals, an MCP server, and coding-agent skills, ready to build on.
+2. **The infrastructure.** Containers, PostgreSQL, and deploy scripts for your platform of choice.
+3. **The setup.** Copy one prompt into your coding agent and it takes you from clone to a running platform.
 
-| Kind | The job | Pick one when |
-|------|---------|---------------|
-| **Starters** | Where AgentOS runs. A clean platform wired for one target: Railway, Docker, AWS, Fly.io, or Google Cloud Run. | You're building your own agents. |
-| **Apps** | What the agent does. A complete agent product: Dash, Coda, Scout, or Context. | You want a working product to deploy and adapt. |
+There are two kinds. **Starters** are clean AgentOS installations, one per platform: Railway, Docker, AWS, Fly.io, or Google Cloud Run. Start with one when you're building your own agents. **Apps** are complete agent products (Dash, Coda, Scout, and Context) that you deploy and make your own.
 
 ## One backend, every frontend
 
-Your platform serves every surface at once:
+AgentOS is a secure, scalable backend for building agents once and making them available everywhere:
 
-| Surface | How it connects |
-|---------|-----------------|
-| Your product | REST API with 80+ endpoints: runs, sessions, memory, knowledge, evals. |
-| Chat interfaces | Slack is wired in. WhatsApp, Telegram, and Discord follow the same pattern. |
-| AI apps | Claude and ChatGPT drive your platform through the MCP server at `/mcp`. |
-| Coding agents | Claude Code, Codex, and Cursor build and improve the platform with bundled skills. |
-| AgentOS UI | [os.agno.com](https://os.agno.com): chat with agents, inspect sessions, traces, memory, and evals. |
+1. **AI apps.** Claude and ChatGPT can use your agents through the MCP server at `/mcp`.
+2. **Chat interfaces.** Chat with your agents from Slack, WhatsApp, Telegram, and Discord.
+3. **Coding agents.** Let Claude Code and Codex run your platform using the skills in `.agents/skills/`.
+4. **Your product.** Embed agents directly into your product with the AgentOS REST API: 80+ endpoints for runs, sessions, memory, knowledge, evals, and more.
+5. **AgentOS UI.** Chat with agents, inspect sessions, traces, memory, and evals at [os.agno.com](https://os.agno.com).
 
 ## What's inside every Starter
 
@@ -32,8 +29,8 @@ Every Starter ships the same platform core. Only the deploy layer differs.
 
 | Component | What it does |
 |-----------|--------------|
-| **Agent Builder** | Flagship agent. Creates agents, teams, and workflows from chat using the [AgentOS Studio](/agent-os/studio/introduction). |
-| **Platform Manager** | Flagship agent. Read-only ops: eval history, deployment checks, schedules, codebase questions. |
+| **Agent Builder** | Platform agent. Creates agents, teams, and workflows from chat using the [AgentOS Studio](/agent-os/studio/introduction). |
+| **Platform Manager** | Platform agent. Read-only ops: eval history, deployment checks, schedules, codebase questions. |
 | **WebSearch** | Reference agent. The simplest pattern to copy when building your own. |
 | **MCP server** | `/mcp` endpoint. Any MCP client can run your agents, teams, and workflows. |
 | **Coding-agent skills** | `/create-new-agent`, `/improve-agent`, `/eval-and-improve`, and more in `.agents/skills/`. |
@@ -88,6 +85,6 @@ Every Starter ships the same platform core. Only the deploy layer differs.
     Every Starter leads with a copy-paste prompt. Paste it into Claude Code, Cursor, or Codex; the agent handles the clone, credentials, Docker, and verification. Each Starter page also lists the manual steps; App pages walk through setup directly.
   </Step>
   <Step title="Connect your frontends">
-    Run `uvx agno connect` to register the platform with the coding agents on your machine, or connect the [AgentOS UI](https://os.agno.com). Once deployed to production, add `https://<your-domain>/mcp` as a custom connector in Claude and ChatGPT.
+    Run `uvx agno connect` to register the platform with the coding agents on your machine, or connect the [AgentOS UI](https://os.agno.com). Once deployed to production, register `https://<your-domain>/mcp` as a remote MCP server in Claude and ChatGPT; they sign in with OAuth.
   </Step>
 </Steps>
