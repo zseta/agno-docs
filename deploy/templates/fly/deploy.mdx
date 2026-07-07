@@ -1,16 +1,16 @@
 ---
 title: "AgentOS on Fly.io"
 sidebarTitle: "Deploy"
-description: "Set up the Fly.io Starter with a coding-agent prompt, run it on Docker, and deploy a single always-on machine with one script."
+description: "Set up the Fly.io Starter with a coding-agent prompt, run it on Docker, and deploy to Fly.io as a single always-on machine with one script."
 ---
 
-[`agno-agi/agentos-fly`](https://github.com/agno-agi/agentos-fly) is the Fly.io [Starter](/deploy/introduction). It runs the same platform core as the [Railway reference](/deploy/templates/railway/deploy) locally on Docker, and one script deploys it to [Fly.io](https://fly.io) as a single always-on machine with unmanaged Fly Postgres.
+[`agno-agi/agentos-fly`](https://github.com/agno-agi/agentos-fly) is the Fly.io [Starter](/deploy/introduction): it runs locally on Docker and deploys AgentOS with unmanaged Fly Postgres to [Fly.io](https://fly.io) as a single always-on machine with one script.
 
 It ships with three agents:
 
 | Agent | Role |
 |-------|------|
-| **Agent Builder** | Creates agents, teams, and workflows through the AgentOS Studio. |
+| **Agent Builder** | Creates agents, teams, and workflows through the [AgentOS Studio](/agent-os/studio/introduction). |
 | **Platform Manager** | Read-only ops: eval history, deployment checks, schedules, codebase questions. |
 | **WebSearch** | Searches the web with Parallel. The simplest agent to copy. |
 

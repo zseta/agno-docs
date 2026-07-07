@@ -5,7 +5,7 @@ description: "Lock in agent behavior with regression tests."
 
 Next, let's lock in our agent behavior with evals.
 
-Think of Evals as regression tests for your agents. Same prompts, same agents, run on a schedule. Notify when behavior drifts.
+Evals are regression tests for your agents. Same prompts, same agents, run on a schedule. Notify when behavior drifts.
 
 When we run `/improve-agent`, we're looking for out-of-distribution improvements. Evals make sure in-distribution cases continue to pass. The two work together.
 
@@ -15,8 +15,6 @@ Cases live in `evals/cases.py`. Each case sends one input to an agent and (optio
 
 - **judge**: `AgentAsJudgeEval` scores the response against `criteria` (binary pass/fail) using an LLM.
 - **reliability**: `ReliabilityEval` checks which tools fired against `expected_tool_calls`.
-
-Results are stored in your database via `eval_db` (visible at [os.agno.com](https://os.agno.com)).
 
 A case looks like this:
 
@@ -43,13 +41,13 @@ A case can use either check or both. If both are set, the agent runs once and fe
 <Steps>
   <Step title="Create a virtual environment">
 
-    To run the eval suite, let's create a local virtual environment
+    To run the eval suite, create a local virtual environment:
 
     ```bash
     ./scripts/venv_setup.sh
     ```
 
-    Activate it
+    Activate it:
 
     ```bash
     source .venv/bin/activate
@@ -76,7 +74,7 @@ A case can use either check or both. If both are set, the agent runs once and fe
 
 Each case prints the response, the judge verdict, and the reliability verdict. The run ends with an `Eval Summary` table.
 
-Results write to Postgres via `eval_db`. You can view the Eval history on [os.agno.com](https://os.agno.com) alongside your sessions and traces. You can see when a case started failing and what changed.
+Results write to Postgres via `eval_db`. You can view the eval history on [os.agno.com](https://os.agno.com) alongside your sessions and traces. You can see when a case started failing and what changed.
 
 ## Diagnose failures with Claude Code
 

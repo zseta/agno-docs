@@ -14,7 +14,7 @@ The Railway project is `agentos-railway`; the app service is `agent-os`.
 | Sync env variables | `./scripts/railway/env-sync.sh` (syncs `.env.production`; pass `.env` to sync that instead) |
 | Tail logs | `railway logs --service agent-os` |
 | Open the dashboard | `railway open` |
-| Scale replicas | Edit `railway.json`: `{"deploy": {"numReplicas": 2}}` |
+| Scale replicas | Keep `numReplicas: 1` in `railway.json`; each replica runs the in-process scheduler, so scale-out double-fires every cron. |
 | Tear down | `./scripts/railway/down.sh` (add `--yes` to skip the confirmation) |
 
 <Warning>`down.sh` deletes the Railway project: the `agent-os` service, the pgvector database, and its volume, including all data.</Warning>

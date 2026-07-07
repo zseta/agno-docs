@@ -32,7 +32,7 @@ Every Starter ships the same platform core. Only the deploy layer differs.
 
 | Component | What it does |
 |-----------|--------------|
-| **Agent Builder** | Flagship agent. Creates agents, teams, and workflows from chat using the AgentOS Studio. |
+| **Agent Builder** | Flagship agent. Creates agents, teams, and workflows from chat using the [AgentOS Studio](/agent-os/studio/introduction). |
 | **Platform Manager** | Flagship agent. Read-only ops: eval history, deployment checks, schedules, codebase questions. |
 | **WebSearch** | Reference agent. The simplest pattern to copy when building your own. |
 | **MCP server** | `/mcp` endpoint. Any MCP client can run your agents, teams, and workflows. |
@@ -54,7 +54,7 @@ Every Starter ships the same platform core. Only the deploy layer differs.
             Run locally or self-host anywhere Docker runs.
           </Card>
           <Card title="AWS" icon="aws" href="/deploy/templates/aws/deploy">
-            ECS with infrastructure-as-code.
+            ECS Express Mode with RDS PostgreSQL.
           </Card>
           <Card title="Fly" icon="plane" href="/deploy/templates/fly/deploy">
             A single always-on machine on Fly.io.
@@ -69,7 +69,7 @@ Every Starter ships the same platform core. Only the deploy layer differs.
           <Card title="Dash" icon="chart-mixed" href="/deploy/templates/dash/overview">
             Self-learning data agent over your database.
           </Card>
-          <Card title="Coda" icon="code" href="/deploy/templates/coda/overview">
+          <Card title="Coda" icon="code-branch" href="/deploy/templates/coda/overview">
             Code companion that lives in Slack.
           </Card>
           <Card title="Scout" icon="radar" href="/deploy/templates/scout/overview">
@@ -85,7 +85,7 @@ Every Starter ships the same platform core. Only the deploy layer differs.
     [Browse all templates →](/deploy/templates)
   </Step>
   <Step title="Set up with a coding agent">
-    Every template leads with a copy-paste prompt. Paste it into Claude Code, Cursor, or Codex; the agent handles the clone, credentials, Docker, and verification. Each template's page also lists the manual steps.
+    Every Starter leads with a copy-paste prompt. Paste it into Claude Code, Cursor, or Codex; the agent handles the clone, credentials, Docker, and verification. Each Starter page also lists the manual steps; App pages walk through setup directly.
   </Step>
   <Step title="Connect your frontends">
     Run `uvx agno connect` to register the platform with the coding agents on your machine, or connect the [AgentOS UI](https://os.agno.com). Once deployed to production, add `https://<your-domain>/mcp` as a custom connector in Claude and ChatGPT.

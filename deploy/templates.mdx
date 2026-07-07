@@ -18,7 +18,7 @@ Pick where your platform runs. The core is identical across Starters: flagship a
     Run locally or self-host anywhere Docker runs.
   </Card>
   <Card title="AWS" icon="aws" href="/deploy/templates/aws/deploy">
-    ECS with infrastructure-as-code.
+    One script deploys to ECS Express Mode with RDS PostgreSQL.
   </Card>
   <Card title="Fly" icon="plane" href="/deploy/templates/fly/deploy">
     One script deploys a single always-on machine to Fly.io.
@@ -32,7 +32,7 @@ Pick where your platform runs. The core is identical across Starters: flagship a
 |---------|----------|------------|------|
 | Railway | Fast cloud deployment, small teams | Just code | ~$20/mo |
 | Docker | Local dev, self-hosted production | Everything | Free |
-| AWS | Enterprise deployments, full control | Infrastructure-as-code | ~$100-110/mo |
+| AWS | Enterprise deployments, full control | The ECS service and RDS instance | ~$100-110/mo |
 | Fly | Single always-on machine, low cost | The Fly app and its Postgres | ~$25/mo |
 | GCP | Teams already on Google Cloud | Your GCP project and IAM | ~$135-145/mo |
 
@@ -64,4 +64,4 @@ Pick what the agent does. Each App is a complete agent product with self-learnin
 | **Self-learning** | Agents improve from feedback and store learnings for later runs. |
 | **Context retrieval** | RAG, knowledge graphs, multi-source navigation. Grounded answers. |
 | **Production infrastructure** | PostgreSQL, pgvector, webhook endpoints. Deploys like a Starter. |
-| **Interfaces** | Slack, Telegram, WhatsApp ready. |
+| **Interfaces** | Slack wired in. Add Telegram or WhatsApp through [AgentOS interfaces](/deploy/interfaces/overview). |

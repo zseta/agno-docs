@@ -11,7 +11,7 @@ A multi-agent system built on [`agno-agi/agentos-railway`](https://github.com/ag
 
 | Agent | What it does |
 |-------|--------------|
-| **Agent Builder** | Creates agents, teams, and workflows through the AgentOS Studio. |
+| **Agent Builder** | Creates agents, teams, and workflows through the [AgentOS Studio](/agent-os/studio/introduction). |
 | **Platform Manager** | Read-only ops: eval history, deployment checks, schedules, codebase questions. |
 | **WebSearch** | Searches the web with Parallel. The simplest agent to copy. |
 
@@ -22,7 +22,7 @@ You'll run it locally with Docker, then deploy to Railway. Prerequisites:
 
 Prefer a coding agent to drive the setup? [AgentOS on Railway](/deploy/templates/railway/deploy) has a copy-paste prompt for Claude Code, Cursor, or Codex.
 
-## Run Locally
+## Run locally
 
 <Steps>
   <Step title="Clone the repository">
@@ -35,7 +35,7 @@ Prefer a coding agent to drive the setup? [AgentOS on Railway](/deploy/templates
     ```bash
     cp example.env .env
     ```
-    Add your `OPENAI_API_KEY` to `.env`
+    Add your `OPENAI_API_KEY` to `.env`.
   </Step>
   <Step title="Start the application">
     ```bash
@@ -57,7 +57,7 @@ Prefer a coding agent to drive the setup? [AgentOS on Railway](/deploy/templates
 
 Your multi-agent system is now running at `localhost:8000`.
 
-## Try Your Agents
+## Try your agents
 
 ### Agent Builder
 
@@ -80,7 +80,7 @@ WebSearch answers questions with live web results and is the simplest agent to c
 
 - What's the latest news on AI agents?
 
-## Deploy to Production
+## Deploy to production
 
 <Steps>
   <Step title="Install Railway CLI">
@@ -123,7 +123,7 @@ WebSearch answers questions with live web results and is the simplest agent to c
 
 Your multi-agent system is now live.
 
-## Manage Your Deployment
+## Manage your deployment
 
 ```bash
 railway logs --service agent-os     # Tail logs

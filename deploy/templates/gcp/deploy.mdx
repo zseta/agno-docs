@@ -10,7 +10,7 @@ It ships with three agents:
 
 | Agent | Role |
 |-------|------|
-| **Agent Builder** | Creates agents, teams, and workflows through the AgentOS Studio. |
+| **Agent Builder** | Creates agents, teams, and workflows through the [AgentOS Studio](/agent-os/studio/introduction). |
 | **Platform Manager** | Read-only ops: eval history, deployment checks, schedules, codebase questions. |
 | **WebSearch** | Searches the web with Parallel. The simplest agent to copy. |
 
@@ -93,8 +93,6 @@ Chat with **Agent Builder**: "Build an agent that tracks AI news and writes a da
 
 > **Prerequisites:** [gcloud CLI](https://cloud.google.com/sdk/docs/install) installed and authenticated (`gcloud auth login`), a project selected (`gcloud config set project <id>`) with billing enabled, and Docker running. The image is built locally and pushed.
 
-<Note>Always-on Cloud Run at this Starter's sizing (2 vCPU / 4 GiB, min 1 instance, no CPU throttling) lists at about $110/mo, and the Cloud SQL `db-g1-small` instance adds $25-35/mo. The budget knob is 1 vCPU / 2 GiB at about $58/mo: edit the `--cpu` and `--memory` flags in `scripts/gcp/up.sh`.</Note>
-
 <Steps>
   <Step title="Create a production env">
 ```bash
@@ -112,6 +110,8 @@ Edit `.env.production` with production values: a different OpenAI key, productio
 Enables the required APIs, builds a `linux/amd64` image and pushes it to Artifact Registry, provisions Cloud SQL Postgres on a private IP, stores your keys in Secret Manager, and deploys the `agent-os` Cloud Run service. The first run takes 15-20 minutes: the one-time VPC peering is about 5 of those and the Cloud SQL instance another 5-10.
 
 After the service URL exists, the script rolls a second revision that sets `AGENTOS_URL` to it so scheduled jobs reach the platform.
+
+<Note>Always-on Cloud Run at this Starter's sizing (2 vCPU / 4 GiB, min 1 instance, no CPU throttling) lists at about $110/mo, and the Cloud SQL `db-g1-small` instance adds $25-35/mo. The budget knob is 1 vCPU / 2 GiB at about $58/mo: edit the `--cpu` and `--memory` flags in `scripts/gcp/up.sh`.</Note>
   </Step>
 
   <Step title="Mint your JWT key">

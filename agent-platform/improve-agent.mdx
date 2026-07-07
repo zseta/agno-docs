@@ -36,11 +36,13 @@ Claude asks what to change. You describe a tool to add, a prompt to refine, a bu
 
 ## When to run each
 
-- **Just created an agent and want to harden it before deploying.** Use **improve**.
-- **Users report the agent is missing the point.** Use **improve**.
-- **You want to add a new tool or knowledge base.** Use **extend**.
-- **You hit a specific bug.** Use **extend**.
-- **You just extended an agent and want to make sure nothing regressed.** Use **improve** again.
+| Situation | Skill |
+|-----------|-------|
+| Just created an agent and want to harden it before deploying | `/improve-agent` |
+| Users report the agent is missing the point | `/improve-agent` |
+| You want to add a new tool or knowledge base | `/extend-agent` |
+| You hit a specific bug | `/extend-agent` |
+| You just extended an agent and want to confirm nothing regressed | `/improve-agent` |
 
 ## Next
 

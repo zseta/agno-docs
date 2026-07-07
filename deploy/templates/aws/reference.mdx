@@ -155,7 +155,8 @@ source .venv/bin/activate
 | `PARALLEL_API_KEY` | No | - | WebSearch uses the Parallel SDK when set, keyless MCP otherwise. |
 | `SLACK_BOT_TOKEN` | No | - | Set with the signing secret to enable Slack. |
 | `SLACK_SIGNING_SECRET` | No | - | Set with the bot token to enable Slack. |
-| `DB_HOST` / `DB_PORT` / `DB_USER` / `DB_PASS` / `DB_DATABASE` | No | matches compose | Postgres connection. `env-sync.sh` skips these; production values come from the provisioned RDS instance. |
+| `DB_HOST` / `DB_PORT` / `DB_USER` / `DB_DATABASE` | No | matches compose | Postgres connection. `env-sync.sh` skips these; production values come from the provisioned RDS instance. |
+| `DB_PASS` | No | matches compose | Postgres password. Secret-shaped: `env-sync.sh` pushes it to Secrets Manager when present. `up.sh` generates the production value, so keep it out of `.env.production`. |
 | `DB_DRIVER` | No | `postgresql+psycopg` | SQLAlchemy driver. |
 | `AGNO_DEBUG` | No | `False` | Verbose Agno logs. Compose sets it for dev. |
 | `WAIT_FOR_DB` | No | `False` | The entrypoint blocks on the database before starting. Compose sets it. |
