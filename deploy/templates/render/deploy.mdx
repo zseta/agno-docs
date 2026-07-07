@@ -105,7 +105,7 @@ Edit `.env.production` with production values: a different OpenAI key, productio
   <Step title="Launch the Blueprint">
 Open [dashboard.render.com](https://dashboard.render.com) → **New +** → **Blueprint**, connect your copy of the repo, and apply. Render reads `render.yaml`, prompts for `OPENAI_API_KEY`, builds the Dockerfile, and creates the `basic-256mb` Postgres. The first build takes about 10 minutes.
 
-The web service runs on the `starter` plan, the cheapest that never sleeps; the in-process scheduler and MCP streams need an always-on instance. It runs as a single instance by design. Two instances double-fire every cron.
+The web service runs on the `starter` plan, the cheapest that never sleeps; the in-process scheduler and MCP streams need an always-on instance. It runs as a single instance by design, because two instances would double-fire every cron.
   </Step>
 
   <Step title="Wire the rest">

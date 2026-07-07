@@ -8,7 +8,7 @@ Now that your agents are running, let's use Claude Code to improve them.
 On a unified platform, coding agents can read logs to iteratively improve our agents. The codebase ships two skills for this:
 
 - `/improve-agent`. Claude derives probes from the agent's instructions, judges responses, and edits until they pass. **Autonomous.**
-- `/extend-agent`. Add a tool, refine a prompt, fix a bug. **User-driven.**
+- `/extend-agent`. You drive this one: add a tool, refine a prompt, or fix a bug.
 
 Both edit `agents/<slug>.py` directly. Hot-reload picks up the change in ~2s, so the test → judge → edit cycle is tight.
 

@@ -4,7 +4,7 @@ sidebarTitle: "Reference"
 description: "Commands, customization, environment variables, and troubleshooting for the GCP Starter."
 ---
 
-The Cloud Run service is `agent-os`, the Cloud SQL instance is `agentos-db`, and the Artifact Registry repo is `agentos`. Scripts target the current gcloud project and `us-central1`; override with `GCP_PROJECT_ID` and `GCP_REGION`. For setup and the first deploy, see [Deploy](/deploy/templates/gcp/deploy).
+The Cloud Run service is `agent-os`, the Cloud SQL instance is `agentos-db`, and the Artifact Registry repo is `agentos`. The scripts target the current gcloud project and `us-central1`; override them with `GCP_PROJECT_ID` and `GCP_REGION`. For setup and the first deploy, see [Deploy](/deploy/templates/gcp/deploy).
 
 ## Manage
 
@@ -180,6 +180,6 @@ Your organization likely enforces Domain Restricted Sharing (`constraints/iam.al
 `AGENTOS_URL` is still the localhost default. `up.sh` sets it to your Cloud Run URL automatically; for a custom domain, set it by hand and run `./scripts/gcp/env-sync.sh`.
   </Accordion>
   <Accordion title="down.sh says the service is not found">
-Region mismatch: `down.sh` is targeting a different region than the one you deployed to. `up.sh` records `GCP_REGION` in your env file and `down.sh` reads it from there. If the file is gone, rerun with `GCP_REGION=<region> ./scripts/gcp/down.sh`; a wrong-region teardown looks clean while the real resources keep billing.
+It's a region mismatch. `down.sh` is targeting a different region than the one you deployed to. `up.sh` records `GCP_REGION` in your env file and `down.sh` reads it from there. If the file is gone, rerun with `GCP_REGION=<region> ./scripts/gcp/down.sh`; a wrong-region teardown looks clean while the real resources keep billing.
   </Accordion>
 </AccordionGroup>

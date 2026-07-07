@@ -29,7 +29,7 @@ Provider setup guides:
 - [Google Drive](/tutorials/scout/connect-google-drive)
 - [MCP servers](/tutorials/scout/connect-mcp-servers)
 
-Scout treats your company's sources the way coding agents treat a codebase: it navigates. Search the channel, open the doc, follow the link, expand the thread. Context is assembled at question time from the live source.
+Scout treats your company's sources the way coding agents treat a codebase. It navigates: search the channel, open the doc, follow the link, expand the thread. Context is assembled at question time from the live source.
 
 ### Self-Building Knowledge
 
@@ -74,7 +74,7 @@ railway login
 ./scripts/railway/up.sh
 ```
 
-Edit `.env.production` where production values differ from local. The Railway scripts read `.env.production` first and fall back to `.env`. The `up.sh` script provisions PostgreSQL and the app service.
+Edit `.env.production` if any values should differ from local. The Railway scripts read `.env.production` first and fall back to `.env`. The `up.sh` script provisions PostgreSQL and the app service.
 
 Expect the first deploy to fail: production Scout refuses to serve traffic without a `JWT_VERIFICATION_KEY`. To fix it:
 

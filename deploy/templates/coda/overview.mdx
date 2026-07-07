@@ -47,7 +47,7 @@ Set `DIGEST_CHANNEL` and `TRIAGE_CHANNEL` in `.env` to the Slack channel IDs the
 
 ### Self-Learning
 
-Coda learns and improves with use through Agno's [Learning Machine](/learning/overview). It picks up your coding standards, conventions, and patterns:
+Coda learns and improves with use, powered by Agno's [Learning Machine](/learning/overview). It picks up your coding standards, conventions, and patterns:
 
 | Week 1 | Week 4 |
 |--------|--------|
@@ -145,14 +145,14 @@ Restart to pick up the credentials:
 docker compose up -d
 ```
 
-Two ways to talk to Coda:
+There are two ways to talk to Coda:
 
 | Where | How |
 |-------|-----|
 | Direct message | Find Coda under **Apps** in the Slack sidebar and message it directly |
 | In a channel | Run `/invite @Coda`, then mention **@Coda** in any message |
 
-Each Slack thread is its own conversation. Follow-ups in the same thread reach Coda without another mention.
+Each Slack thread is its own conversation. Follow-ups in the same thread don't need to @mention Coda again.
 
 If Coda is deployed, point your Slack app's **Event Subscriptions** Request URL at `https://<your-domain>/slack/events`.
 

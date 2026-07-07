@@ -37,14 +37,14 @@ Dash runs as an Agno team in coordinate mode. A Leader routes each request to tw
 
 ### Self-Learning
 
-Two paths run in parallel. The **online path** answers questions using retrieved context; the **offline path** captures learnings for future queries. Dash improves through stored knowledge and learnings:
+Two paths run in parallel. The **online path** answers questions using retrieved context; the **offline path** captures learnings for future queries. Dash stores knowledge and learnings in two systems:
 
 | System | Stores | How It Evolves |
 |--------|--------|----------------|
 | **Knowledge** | Validated queries, table schemas, business rules | Curated by your team and refined by Dash |
 | **Learnings** | Error patterns, column quirks, team conventions | Managed automatically by the Learning Machine |
 
-When a churn query returns wrong numbers because it filtered on the `status` column instead of `ended_at IS NULL`, Dash saves the fix. Next time, it knows. When your team defines MRR as the sum of active subscriptions excluding trials, that rule lives in `knowledge/business/` and every future query respects it.
+When a churn query returns wrong numbers because it filtered on the `status` column instead of `ended_at IS NULL`, Dash saves the fix and doesn't make that mistake again. When your team defines MRR as the sum of active subscriptions excluding trials, that rule lives in `knowledge/business/` and every future query respects it.
 
 ### Insights You Can Act On
 
