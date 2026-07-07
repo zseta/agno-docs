@@ -171,7 +171,7 @@ The production override uses Compose merge tags that need Docker Compose v2.24.4
 JWT auth is on whenever `RUNTIME_ENV` is not `dev`. Set `JWT_VERIFICATION_KEY` or `JWT_JWKS_FILE` in `.env` and recreate the container with `docker compose -f compose.yaml -f compose.prod.yaml up -d`. To opt out inside a private network behind another auth layer, set `authorization=False` in `app/main.py` and restart.
   </Accordion>
   <Accordion title="Changing DB_PASS has no effect">
-Postgres reads the password only when the `pgdata` volume is first initialized, so on a host that already ran the dev Compose the database keeps the old password and the API blocks waiting for it. Change it in place and set `.env` to match:
+Postgres reads the password only when the `pgdata` volume is first initialized. On a host that already ran the dev Compose, the database keeps the old password and the API blocks waiting for it. Change it in place and set `.env` to match:
 
 ```bash
 docker compose exec agentos-db psql -U ai -c "ALTER USER ai WITH PASSWORD '<new>';"

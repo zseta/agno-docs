@@ -23,7 +23,7 @@ It plugs into Claude, ChatGPT, Claude Code, Codex, and Cursor over MCP and gives
 2. **Maintain a knowledge base.** @context writes product specs, parses customer interview notes, manages project briefs, and runs deep research, then keeps it all organized in one place.
 3. **Run your day, plan your week, prep ahead.** Repeatable playbooks handle the routine, on demand or on a schedule.
 4. **Represent you.** A teammate types *"@your-context my claude fixed the auth bug"* and it lands in your queue. It works outbound too: @context can message people and channels on Slack on your behalf, and @-mention a teammate's @context to drop an update in their queue.
-5. **Draft and schedule.** Connect Gmail and Calendar, and @context drafts follow-ups straight into Gmail for you to send and routes calendar changes through your approvals queue.
+5. **Draft and schedule.** Connect Gmail and Calendar. @context drafts follow-ups straight into Gmail for you to send. Calendar changes route through your approvals queue.
 
 The built-in playbooks:
 
@@ -148,7 +148,7 @@ Env changes sync with `./scripts/railway/env-sync.sh`. Code changes redeploy wit
 
 ### Point MCP Clients at Production
 
-The deployed server is JWT-gated, so your MCP clients need a bearer token. One command mints one and rewires everything:
+The deployed server is JWT-gated, so your MCP clients need a bearer token. One command mints a token and rewires everything:
 
 ```bash
 ./scripts/venv_setup.sh          # once; minting needs pyjwt + cryptography

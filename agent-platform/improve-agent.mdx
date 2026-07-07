@@ -3,14 +3,14 @@ title: Improve an Agent
 description: "Use Claude Code to recursively improve your agents."
 ---
 
-Next we're going to improve our agents using Claude Code.
+Now that your agents are running, let's use Claude Code to improve them.
 
-The biggest advantage of having a unified agent platform is that coding agents can read logs to iteratively improve our agents. The codebase ships two skills for this:
+On a unified platform, coding agents can read logs to iteratively improve our agents. The codebase ships two skills for this:
 
 - `/improve-agent`. Claude derives probes from the agent's instructions, judges responses, and edits until they pass. **Autonomous.**
 - `/extend-agent`. Add a tool, refine a prompt, fix a bug. **User-driven.**
 
-Both edit `agents/<slug>.py` directly. Hot-reload picks up the change in ~2s, so the test → judge → edit cycle is fairly tight.
+Both edit `agents/<slug>.py` directly. Hot-reload picks up the change in ~2s, so the test → judge → edit cycle is tight.
 
 ## Improve: autonomous probe-and-judge
 
@@ -20,9 +20,9 @@ Open Claude Code in your `agent-platform` directory and run:
 /improve-agent
 ```
 
-Claude reads the target agent's `INSTRUCTIONS` and derives 8–12 probes across four categories: golden path, edge cases, tool selection, and adversarial. For each probe, it cURLs the live container, reads tool calls from the logs, and judges PASS or FAIL against what the instructions promise.
+Claude reads the target agent's `INSTRUCTIONS` and derives 8-12 probes across four categories: golden path, edge cases, tool selection, and adversarial. For each probe, it cURLs the live container, reads tool calls from the logs, and judges PASS or FAIL against what the instructions promise.
 
-For every failure, Claude picks a lever and edits: tighten a rule, add a rule, swap a tool, bump `num_history_runs`. Claude re-runs only the failed probes. Caps at five iterations.
+For every failure, Claude picks a lever and edits: tighten a rule, add a rule, swap a tool, bump `num_history_runs`. Claude re-runs only the failed probes. The loop caps at five iterations.
 
 ## Extend: user-driven changes
 

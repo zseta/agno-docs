@@ -5,7 +5,7 @@ description: "Lock in agent behavior with regression tests."
 
 Next, let's lock in our agent behavior with evals.
 
-Evals are regression tests for your agents. Same prompts, same agents, run on a schedule. Notify when behavior drifts.
+Evals are regression tests for your agents. Same prompts, same agents, run on a schedule. You get notified when behavior drifts.
 
 When we run `/improve-agent`, we're looking for out-of-distribution improvements. Evals make sure in-distribution cases continue to pass. The two work together.
 
@@ -41,7 +41,7 @@ A case can use either check or both. If both are set, the agent runs once and fe
 <Steps>
   <Step title="Create a virtual environment">
 
-    To run the eval suite, create a local virtual environment:
+    The eval suite runs on the host and needs a local virtual environment:
 
     ```bash
     ./scripts/venv_setup.sh
@@ -74,7 +74,7 @@ A case can use either check or both. If both are set, the agent runs once and fe
 
 Each case prints the response, the judge verdict, and the reliability verdict. The run ends with an `Eval Summary` table.
 
-Results write to Postgres via `eval_db`. You can view the eval history on [os.agno.com](https://os.agno.com) alongside your sessions and traces. You can see when a case started failing and what changed.
+Results write to Postgres via `eval_db`. The eval history shows up on [os.agno.com](https://os.agno.com) alongside your sessions and traces, so you can see when a case started failing and what changed.
 
 ## Diagnose failures with Claude Code
 

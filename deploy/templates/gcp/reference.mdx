@@ -168,7 +168,7 @@ source .venv/bin/activate
 Install the [Google Cloud SDK](https://cloud.google.com/sdk/docs/install), then run `gcloud auth login` and `gcloud config set project <id>`.
   </Accordion>
   <Accordion title="up.sh pauses asking for a JWT key">
-Expected. The script deploys first because Cloud Run only reveals the URL once the service exists, then pauses so you can mint the key against it. At [os.agno.com](https://os.agno.com): connect your OS (**Connect OS** → **Live**, enter your Cloud Run URL), then turn on **Token-Based Authorization (JWT)** under **Settings** → **OS & Security** and paste the full PEM. To do it later, skip the prompt, add `JWT_VERIFICATION_KEY` to `.env.production`, and run `./scripts/gcp/env-sync.sh`.
+Expected. The script deploys first (Cloud Run only reveals the URL once the service exists), then pauses so you can mint the key against it. At [os.agno.com](https://os.agno.com): connect your OS (**Connect OS** → **Live**, enter your Cloud Run URL), then turn on **Token-Based Authorization (JWT)** under **Settings** → **OS & Security** and paste the full PEM. To do it later, skip the prompt, add `JWT_VERIFICATION_KEY` to `.env.production`, and run `./scripts/gcp/env-sync.sh`.
   </Accordion>
   <Accordion title="App refuses to serve in production">
 JWT auth is on whenever `RUNTIME_ENV` is not `dev`. Set `JWT_VERIFICATION_KEY` or `JWT_JWKS_FILE` and sync. To opt out inside a private VPC behind another auth layer, set `authorization=False` in `app/main.py`.

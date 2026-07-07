@@ -191,7 +191,7 @@ JWT auth is on whenever `RUNTIME_ENV` is not `dev`. Set `JWT_VERIFICATION_KEY` o
 The revision is still converging. Wait a couple of minutes and check `az containerapp logs show -g agentos -n agent-os --follow`.
   </Accordion>
   <Accordion title="up.sh failed partway through">
-Run it again. Generated names (`AZURE_ACR_NAME`, `AZURE_PG_NAME`) and `DB_PASS` persist in your env file, and the script reuses the existing Postgres server and Container Apps environment instead of recreating them.
+Run it again. Generated names (`AZURE_ACR_NAME`, `AZURE_PG_NAME`) and `DB_PASS` persist in your env file, and the script reuses the existing Postgres server and Container Apps environment.
   </Accordion>
   <Accordion title="Scheduled jobs never fire">
 `AGENTOS_URL` is still the localhost default. `up.sh` sets it to your Container Apps URL automatically; for a custom domain, set it by hand and run `./scripts/azure/env-sync.sh`.

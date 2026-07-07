@@ -143,7 +143,7 @@ source .venv/bin/activate
 | Variable | Required | Default | Description |
 |----------|----------|---------|-------------|
 | `OPENAI_API_KEY` | Yes | - | Models and embeddings. The Blueprint prompts for it at launch. |
-| `RENDER_API_KEY` | Deploy scripts | - | Drives the Render API in `scripts/render/`. Read from your environment or env file; `env-sync.sh` never pushes `RENDER_*` keys to the service. |
+| `RENDER_API_KEY` | Deploy scripts | - | Drives the Render API in `scripts/render/`. The scripts read it from your environment or env file; `env-sync.sh` never pushes `RENDER_*` keys to the service. |
 | `RUNTIME_ENV` | No | `prd` | `dev` disables JWT. Compose sets it for local. Never put it in an env file that syncs to Render, or production deploys unauthenticated. |
 | `JWT_VERIFICATION_KEY` | Production | - | Public key from os.agno.com. Quote the value so the multi-line PEM parses as one variable. |
 | `JWT_JWKS_FILE` | Production | - | Path to a JWKS file. Alternative to `JWT_VERIFICATION_KEY`. |
@@ -183,6 +183,6 @@ Render builds the pushed branch; local uncommitted changes stay on your machine.
 `AGENTOS_URL` is still the localhost default. `up.sh` pins it to your onrender.com URL automatically; `env-sync.sh` also pins it when your env file has none. For a custom domain, set it by hand and run `./scripts/render/env-sync.sh`.
   </Accordion>
   <Accordion title="Scheduler or MCP streams stop working">
-The service is on the `free` plan, which sleeps between requests. The in-process scheduler and MCP streams need an always-on instance. Set `plan: starter` (or higher) in `render.yaml` and push.
+The service is on the `free` plan, which sleeps between requests; the in-process scheduler and MCP streams stop when it does. Set `plan: starter` (or higher) in `render.yaml` and push.
   </Accordion>
 </AccordionGroup>

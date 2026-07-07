@@ -1,7 +1,7 @@
 ---
 title: "AgentOS on self-hosted Docker"
 sidebarTitle: "Deploy"
-description: "Set up the self-hosted Starter with a coding-agent prompt, run it on Docker, and take the same Compose stack to production on any host you control."
+description: "Set up the self-hosted Starter with a coding-agent prompt, run it on Docker, and go to production with one Compose override on a host you control."
 ---
 
 [`agno-agi/agentos-docker`](https://github.com/agno-agi/agentos-docker) is the self-hosted [Starter](/deploy/introduction): it runs AgentOS with PostgreSQL (pgvector) on Docker Compose and takes the same stack to production on any host you control, from a VPS or home server to this laptop. The deploy layer is a single Compose override; there is no provider CLI and nothing to provision.
@@ -120,7 +120,7 @@ AGENTOS_URL=https://<your-public-url>
 DB_PASS=<generate a strong one>
 ```
 
-Left unset, `AGENTOS_URL` makes the daily deployment check flag the platform as misconfigured, and chat-app connectors have nothing to point at. `DB_PASS` replaces the dev default (`ai`).
+If `AGENTOS_URL` stays unset, the daily deployment check flags the platform as misconfigured, and chat-app connectors have nothing to point at. `DB_PASS` replaces the dev default (`ai`).
 
 <Note>On a host that already ran the dev Compose, changing `DB_PASS` in `.env` does not update the database. See [troubleshooting](/deploy/templates/docker/reference#troubleshooting).</Note>
   </Step>

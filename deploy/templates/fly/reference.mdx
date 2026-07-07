@@ -122,7 +122,7 @@ The deployment check runs daily by default (`ENABLE_DEPLOY_CHECK=True`); it is d
   </Accordion>
 
   <Accordion title="Enable pgvector for knowledge bases">
-Fly's stock `postgres-flex` image ships without pgvector. Sessions and memory work; knowledge bases (RAG) fail at `CREATE EXTENSION` time. Build a derivative image:
+Fly's stock `postgres-flex` image does not ship pgvector. Sessions and memory work; knowledge bases (RAG) fail at `CREATE EXTENSION` time. Build a derivative image:
 
 ```dockerfile
 FROM flyio/postgres-flex:17
