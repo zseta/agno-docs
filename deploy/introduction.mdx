@@ -1,37 +1,23 @@
 ---
 title: "AgentOS Templates"
 sidebarTitle: "Introduction"
-description: "Pre-built AgentOS codebases you clone and own: Starters for your cloud, Apps with the agents built in."
+description: "Agno provides pre-built starter templates you can fork, clone and own."
 mode: "wide"
 ---
 
-We provide pre-built templates for running AgentOS in your cloud. Every template is a GitHub repo you clone and own, with everything wired up:
+The Agno team provides a number of starter templates for running AgentOS, and agentic applications built on top of it. Each template is a pre-configured git repo you clone. There are two kinds of templates:
 
-1. **The codebase.** Agents, evals, an MCP server, and coding-agent skills, ready to build on.
-2. **The infrastructure.** Containers, PostgreSQL, and deploy scripts for your platform of choice.
-3. **The setup.** Copy one prompt into your coding agent and it takes you from clone to a running platform.
+1. **AgentOS Starters:** clean AgentOS installations, one per cloud: Railway, AWS, GCP, Azure.
+2. **Application Blueprints:** complete agentic products that you can deploy for internal use.
 
-There are two kinds. **Starters** are clean AgentOS installations, one per platform: Railway, Docker, AWS, Fly.io, or Google Cloud Run. Start with one when you're building your own agents. **Apps** are complete agent products (Dash, Coda, Scout, and Context) that you deploy and make your own.
+## What's inside every Template
 
-## One backend, every frontend
-
-AgentOS is a secure, scalable backend for building agents once and making them available everywhere:
-
-1. **AI apps.** Claude and ChatGPT can use your agents through the MCP server at `/mcp`.
-2. **Chat interfaces.** Chat with your agents from Slack, WhatsApp, Telegram, and Discord.
-3. **Coding agents.** Let Claude Code and Codex run your platform using the skills in `.agents/skills/`.
-4. **Your product.** Embed agents directly into your product with the AgentOS REST API: 80+ endpoints for runs, sessions, memory, knowledge, evals, and more.
-5. **AgentOS UI.** Chat with agents, inspect sessions, traces, memory, and evals from the control plane at [os.agno.com](https://os.agno.com).
-
-## What's inside every Starter
-
-Every Starter ships the same platform core. Only the deploy layer differs.
+Every starter template comes with a similar platform core. Only the deploy layer differs.
 
 | Component | What it does |
 |-----------|--------------|
 | **Agent Builder** | Platform agent. Creates agents, teams, and workflows from chat using the [AgentOS Studio](/agent-os/studio/introduction). |
 | **Platform Manager** | Platform agent. Read-only ops: eval history, deployment checks, schedules, codebase questions. |
-| **WebSearch** | Reference agent. The simplest pattern to copy when building your own. |
 | **MCP server** | `/mcp` endpoint. Any MCP client can run your agents, teams, and workflows. |
 | **Coding-agent skills** | `/create-new-agent`, `/improve-agent`, `/eval-and-improve`, and more in `.agents/skills/`. |
 | **Eval suite** | Judge and reliability cases. Results are logged to Postgres and show up at os.agno.com. |
