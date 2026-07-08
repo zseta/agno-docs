@@ -4878,7 +4878,6 @@
             "group": "Get Started",
             "pages": [
               "deploy/introduction",
-              "deploy/templates",
               "deploy/templates/improve-agents"
             ]
           },
@@ -8115,6 +8114,10 @@
     ]
   },
   "redirects": [
+    {
+      "source": "/deploy/templates",
+      "destination": "/deploy/introduction"
+    },
     {
       "source": "/deploy/interfaces",
       "destination": "/deploy/interfaces/overview"
