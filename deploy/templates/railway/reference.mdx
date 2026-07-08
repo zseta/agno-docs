@@ -17,7 +17,7 @@ The Railway project is `agentos-railway`; the app service is `agent-os`.
 | Scale replicas | Keep `numReplicas: 1` in `railway.json`; each replica runs the in-process scheduler, so scale-out double-fires every cron. |
 | Tear down | `./scripts/railway/down.sh` (add `--yes` to skip the confirmation) |
 
-<Warning>`down.sh` deletes the Railway project: the `agent-os` service, the pgvector database, and its volume, including all data.</Warning>
+<Warning>`down.sh` deletes the Railway project: the `agent-os` service, the pgvector database, and its volume, including all data. It also comments out the stale `AGENTOS_URL` in your env files so a future `up.sh` starts clean.</Warning>
 
 ## Customize
 
@@ -158,7 +158,7 @@ source .venv/bin/activate
 | `DB_HOST` / `DB_PORT` / `DB_USER` / `DB_PASS` / `DB_DATABASE` | No | matches compose | Postgres connection. |
 | `DB_DRIVER` | No | `postgresql+psycopg` | SQLAlchemy driver. |
 | `AGNO_DEBUG` | No | `False` | Verbose Agno logs. Compose sets it for dev. |
-| `WAIT_FOR_DB` | No | `False` | The entrypoint blocks on the database before starting. Compose sets it. |
+| `WAIT_FOR_DB` | No | `False` | If `True`, the entrypoint blocks on the database before starting. Compose sets it. |
 
 ## Troubleshooting
 

@@ -162,7 +162,7 @@ source .venv/bin/activate
 | `NEON_PROJECT_ID` | No | - | Written by `up.sh`; identifies the Neon project for `down.sh`. `env-sync.sh` never pushes it to the app. |
 | `PGSSLMODE` | No | - | The deploy scripts set it to `require` in the Modal secret. Neon requires TLS. |
 | `AGNO_DEBUG` | No | `False` | Verbose Agno logs. Compose sets it for dev. |
-| `WAIT_FOR_DB` | No | `False` | The entrypoint blocks on the database before starting. Compose sets it. |
+| `WAIT_FOR_DB` | No | `False` | If `True`, the entrypoint blocks on the database before starting. Compose sets it. |
 
 ## Troubleshooting
 

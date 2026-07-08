@@ -17,7 +17,7 @@ The [AWS Starter](/deploy/templates/aws/deploy) names the Express service `agent
 | Scale out | Keep the scaling target at one task. Each replica runs the in-process scheduler, so scale-out double-fires every cron. |
 | Tear down | `./scripts/aws/down.sh` (add `--yes` to skip the confirmation) |
 
-<Warning>`down.sh` deletes the Express service with its ALB wiring, the RDS instance including all data, the ECR repo, the `agentos/*` secrets, and the log group. It ends by printing verification commands so you can confirm nothing is left billing.</Warning>
+<Warning>`down.sh` deletes the Express service (its ALB wiring, security groups, and autoscaling with it), the RDS instance including all data, the ECR repo, the `agentos/*` secrets, and the log group. It ends by printing verification commands so you can confirm nothing is left billing.</Warning>
 
 ## Customize
 
@@ -142,7 +142,7 @@ source .venv/bin/activate
 | Variable | Required | Default | Description |
 |----------|----------|---------|-------------|
 | `OPENAI_API_KEY` | Yes | - | Models and embeddings. |
-| `RUNTIME_ENV` | No | `prd` | `dev` disables JWT. Compose sets it for local. Never put it in an env file that `env-sync.sh` pushes, or production serves unauthenticated. |
+| `RUNTIME_ENV` | No | `prd` | `dev` disables JWT. Compose sets it to `dev` for local. Never put `dev` in an env file that `env-sync.sh` pushes, or production serves unauthenticated. |
 | `JWT_VERIFICATION_KEY` | Production | - | Public key from os.agno.com. Quote the value so the multi-line PEM parses as one variable. |
 | `JWT_JWKS_FILE` | Production | - | Path to a JWKS file. Alternative to `JWT_VERIFICATION_KEY`. |
 | `AGENTOS_URL` | No | `http://127.0.0.1:8000` | Scheduler base URL. `up.sh` sets it to your Express service URL. Scheduled jobs never fire if it stays at the default in production. |
@@ -159,7 +159,7 @@ source .venv/bin/activate
 | `DB_PASS` | No | matches compose | Postgres password. Secret-shaped: `env-sync.sh` pushes it to Secrets Manager when present. `up.sh` generates the production value, so keep it out of `.env.production`. |
 | `DB_DRIVER` | No | `postgresql+psycopg` | SQLAlchemy driver. |
 | `AGNO_DEBUG` | No | `False` | Verbose Agno logs. Compose sets it for dev. |
-| `WAIT_FOR_DB` | No | `False` | The entrypoint blocks on the database before starting. Compose sets it. |
+| `WAIT_FOR_DB` | No | `False` | If `True`, the entrypoint blocks on the database before starting. Compose sets it. |
 
 ## Troubleshooting
 

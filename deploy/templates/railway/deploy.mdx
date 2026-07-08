@@ -83,9 +83,9 @@ Chat with **Agent Builder**: "Build an agent that tracks AI news and writes a da
 
 | Frontend | How |
 |----------|-----|
-| Coding agents (Claude Code, Codex, Cursor) | `uvx agno connect` registers `http://localhost:8000/mcp` with the MCP clients on your machine. |
+| MCP clients on your machine | `uvx agno connect` auto-detects Claude Code, Claude Desktop, Codex, and Cursor and registers `http://localhost:8000/mcp`. |
 | AgentOS UI | [os.agno.com](https://os.agno.com) → **Connect OS** → `http://localhost:8000`. |
-| Claude and ChatGPT apps | Hosted sessions can't reach localhost. Deploy to production first, then register `https://<your-domain>/mcp` as a remote MCP server; sign-in uses OAuth. |
+| claude.ai and ChatGPT (web) | Hosted sessions can't reach localhost. Deploy to production first, then register `https://<your-domain>/mcp` as a remote MCP server; sign-in uses OAuth. |
 | Slack | Set `SLACK_BOT_TOKEN` and `SLACK_SIGNING_SECRET`. See [Slack setup](/deploy/interfaces/slack/overview). |
 | Your product | REST API with 80+ endpoints. Browse them at `/docs`. |
 
@@ -111,7 +111,7 @@ Provisions PostgreSQL and the `agent-os` service on the same private network, cr
   </Step>
 
   <Step title="Mint your JWT key">
-The script pauses for a `JWT_VERIFICATION_KEY`. Token-Based Authorization is on by default; without a key, the platform refuses to serve production traffic.
+The script pauses for a `JWT_VERIFICATION_KEY`. Token-Based Authorization is on by default; without a verification key or a `JWT_JWKS_FILE`, the platform refuses to serve production traffic.
 
 1. Open [os.agno.com](https://os.agno.com), click **Connect OS** → **Live**, enter your Railway domain, and name it **Live AgentOS**.
 2. Go to **Settings** → **OS & Security** and turn on **Token-Based Authorization (JWT)**.
@@ -139,7 +139,7 @@ For claude.ai and ChatGPT on the web, register `https://<railway-domain>/mcp` as
 railway logs --service agent-os
 ```
 
-Open `https://<your-domain>/docs` to confirm the API is serving.
+Open `https://<railway-domain>/docs` to confirm the API is serving.
 
 <Frame>
   <img
@@ -183,7 +183,7 @@ The variables you touch during setup. Full table in the [reference](/deploy/temp
 | Variable | Required | Description |
 |----------|----------|-------------|
 | `OPENAI_API_KEY` | Yes | Models and embeddings. |
-| `JWT_VERIFICATION_KEY` | Production | Public key from os.agno.com. The platform refuses production traffic without it. |
+| `JWT_VERIFICATION_KEY` | Production | Public key from os.agno.com. The platform refuses production traffic unless this or `JWT_JWKS_FILE` is set. |
 | `AGENTOS_URL` | No | Scheduler base URL. `up.sh` sets it to your Railway domain. |
 | `SLACK_BOT_TOKEN` / `SLACK_SIGNING_SECRET` | No | Set both to enable the Slack interface. |
 | `PARALLEL_API_KEY` | No | WebSearch uses the Parallel SDK when set, keyless MCP otherwise. |

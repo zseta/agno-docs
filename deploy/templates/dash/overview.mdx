@@ -37,7 +37,7 @@ Dash runs as an Agno team in coordinate mode. A Leader routes each request to tw
 
 ### Self-Learning
 
-Two paths run in parallel. The **online path** answers questions using retrieved context; the **offline path** captures learnings for future queries. Dash stores knowledge and learnings in two systems:
+Every query retrieves knowledge and learnings before generating SQL. When a query fails, Dash diagnoses the error, fixes it, and saves the fix as a learning. Dash stores knowledge and learnings in two systems:
 
 | System | Stores | How It Evolves |
 |--------|--------|----------------|

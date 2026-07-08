@@ -83,9 +83,9 @@ Chat with **Agent Builder**: "Build an agent that tracks AI news and writes a da
 
 | Frontend | How |
 |----------|-----|
-| Coding agents (Claude Code, Codex, Cursor) | `uvx agno connect` registers `http://localhost:8000/mcp` with the MCP clients on your machine. |
+| MCP clients on your machine | `uvx agno connect` auto-detects Claude Code, Claude Desktop, Codex, and Cursor and registers `http://localhost:8000/mcp`. |
 | AgentOS UI | [os.agno.com](https://os.agno.com) → **Connect OS** → `http://localhost:8000`. |
-| Claude and ChatGPT apps | Hosted sessions can't reach localhost. Run in production first, then register `https://<your-public-url>/mcp` as a remote MCP server; sign-in uses OAuth. |
+| claude.ai and ChatGPT (web) | Hosted sessions can't reach localhost. Run in production first, then register `https://<your-public-url>/mcp` as a remote MCP server; sign-in uses OAuth. |
 | Slack | Set `SLACK_BOT_TOKEN` and `SLACK_SIGNING_SECRET`. See [Slack setup](/deploy/interfaces/slack/overview). |
 | Your product | REST API with 80+ endpoints. Browse them at `/docs`. |
 
@@ -126,7 +126,7 @@ If `AGENTOS_URL` stays unset, the daily deployment check flags the platform as m
   </Step>
 
   <Step title="Mint your JWT key">
-Token-Based Authorization is on by default; without a `JWT_VERIFICATION_KEY`, the platform refuses to serve production traffic.
+Token-Based Authorization is on by default; without a `JWT_VERIFICATION_KEY` or `JWT_JWKS_FILE`, the platform refuses to serve production traffic.
 
 1. Open [os.agno.com](https://os.agno.com), click **Connect OS** → **Live**, enter your public URL, and name it **Live AgentOS**.
 2. Go to **Settings** → **OS & Security** and turn on **Token-Based Authorization (JWT)**.
@@ -149,18 +149,6 @@ docker compose -f compose.yaml -f compose.prod.yaml up -d --build
 The override switches `RUNTIME_ENV` to `prd` (JWT auth on), drops the dev bind mount and hot reload so the container runs the code baked into the image, passes your `AGENTOS_URL` through, and rebinds Postgres to loopback so only this host can reach it. Both services carry `restart: unless-stopped`, so the platform survives reboots as long as Docker starts on boot.
   </Step>
 
-  <Step title="Connect your MCP clients">
-Re-run `uvx agno connect`, this time pointed at your deployed domain:
-
-```bash
-uvx agno connect --url https://<your-public-url>
-```
-
-Production is JWT-gated, so this connection needs a token; `uvx agno connect` mints a service-account token (`agno_pat_...`) for it. The bare `uvx agno connect` only re-registers `http://localhost:8000/mcp`.
-
-For claude.ai and ChatGPT on the web, register `https://<your-public-url>/mcp` as a remote MCP server and sign in with OAuth.
-  </Step>
-
   <Step title="Confirm it's live">
 ```bash
 curl https://<your-public-url>/health   # 200: /health and /docs stay public
@@ -172,6 +160,18 @@ Logs, when something looks off:
 ```bash
 docker compose -f compose.yaml -f compose.prod.yaml logs -f agentos-api
 ```
+  </Step>
+
+  <Step title="Connect your MCP clients">
+Re-run `uvx agno connect`, this time pointed at your deployed domain:
+
+```bash
+uvx agno connect --url https://<your-public-url>
+```
+
+Production is JWT-gated, so this connection needs a token; `uvx agno connect` mints a service-account token (`agno_pat_...`) for it. The bare `uvx agno connect` only re-registers `http://localhost:8000/mcp`.
+
+For claude.ai and ChatGPT on the web, register `https://<your-public-url>/mcp` as a remote MCP server and sign in with OAuth.
   </Step>
 </Steps>
 
@@ -203,7 +203,7 @@ The variables you touch during setup. Full table in the [reference](/deploy/temp
 | Variable | Required | Description |
 |----------|----------|-------------|
 | `OPENAI_API_KEY` | Yes | Models and embeddings. |
-| `JWT_VERIFICATION_KEY` | Production | Public key from os.agno.com. The platform refuses production traffic without it. |
+| `JWT_VERIFICATION_KEY` | Production | Public key from os.agno.com. The platform refuses production traffic unless this or `JWT_JWKS_FILE` is set. |
 | `AGENTOS_URL` | No | Scheduler base URL. Set it to your public URL in production. |
 | `DB_PASS` | No | Postgres password. Replace the dev default (`ai`) in production. |
 | `SLACK_BOT_TOKEN` / `SLACK_SIGNING_SECRET` | No | Set both to enable the Slack interface. |

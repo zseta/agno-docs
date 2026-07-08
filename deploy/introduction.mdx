@@ -21,7 +21,7 @@ AgentOS is a secure, scalable backend for building agents once and making them a
 2. **Chat interfaces.** Chat with your agents from Slack, WhatsApp, Telegram, and Discord.
 3. **Coding agents.** Let Claude Code and Codex run your platform using the skills in `.agents/skills/`.
 4. **Your product.** Embed agents directly into your product with the AgentOS REST API: 80+ endpoints for runs, sessions, memory, knowledge, evals, and more.
-5. **AgentOS UI.** Chat with agents, inspect sessions, traces, memory, and evals at [os.agno.com](https://os.agno.com).
+5. **AgentOS UI.** Chat with agents, inspect sessions, traces, memory, and evals from the control plane at [os.agno.com](https://os.agno.com).
 
 ## What's inside every Starter
 
@@ -34,7 +34,7 @@ Every Starter ships the same platform core. Only the deploy layer differs.
 | **WebSearch** | Reference agent. The simplest pattern to copy when building your own. |
 | **MCP server** | `/mcp` endpoint. Any MCP client can run your agents, teams, and workflows. |
 | **Coding-agent skills** | `/create-new-agent`, `/improve-agent`, `/eval-and-improve`, and more in `.agents/skills/`. |
-| **Eval suite** | Judge and reliability cases. Results log to Postgres, visible at os.agno.com. |
+| **Eval suite** | Judge and reliability cases. Results are logged to Postgres and show up at os.agno.com. |
 | **PostgreSQL + pgvector** | Sessions, memory, knowledge, and traces stay in your database. |
 
 ## Get started
@@ -85,6 +85,6 @@ Every Starter ships the same platform core. Only the deploy layer differs.
     Every Starter leads with a copy-paste prompt. Paste it into Claude Code, Cursor, or Codex; the agent handles the clone, credentials, Docker, and verification. Each Starter page also lists the manual steps; App pages walk through setup directly.
   </Step>
   <Step title="Connect your frontends">
-    Run `uvx agno connect` to register the platform with the coding agents on your machine, or connect the [AgentOS UI](https://os.agno.com). Once deployed to production, register `https://<your-domain>/mcp` as a remote MCP server in Claude and ChatGPT; they sign in with OAuth.
+    Run `uvx agno connect` to register the platform with the coding agents on your machine, or connect the [AgentOS UI](https://os.agno.com). Once deployed to production, re-run `uvx agno connect --url https://<your-domain>` to point your coding agents at production, and register `https://<your-domain>/mcp` as a remote MCP server in Claude and ChatGPT; they sign in with OAuth.
   </Step>
 </Steps>

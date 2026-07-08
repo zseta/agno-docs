@@ -170,7 +170,7 @@ source .venv/bin/activate
 | `DB_HOST` / `DB_PORT` / `DB_USER` / `DB_PASS` / `DB_DATABASE` | No | matches compose | Postgres connection. `up.sh` sets these as Fly secrets pointing at `<app>-db.flycast`. |
 | `DB_DRIVER` | No | `postgresql+psycopg` | SQLAlchemy driver. |
 | `AGNO_DEBUG` | No | `False` | Verbose Agno logs. Compose sets it for dev. |
-| `WAIT_FOR_DB` | No | `False` | The entrypoint blocks on the database before starting. Compose sets it. |
+| `WAIT_FOR_DB` | No | `False` | If `True`, the entrypoint blocks on the database before starting. Compose sets it. |
 
 ### Deploy script variables
 
