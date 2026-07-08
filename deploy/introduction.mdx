@@ -12,16 +12,16 @@ The Agno team provides a number of starter templates for running AgentOS, and ag
 
 ## What's inside every Template
 
-Every starter template comes with a common platform core. Only the deploy layer differs.
+Every starter template comes with a common platform core.
 
 | Component | What it does |
 |-----------|--------------|
-| **Agent Builder** | Platform agent. Creates agents, teams, and workflows from chat using the [AgentOS Studio](/agent-os/studio/introduction). |
-| **Platform Manager** | Platform agent. Read-only ops: eval history, deployment checks, schedules, codebase questions. |
-| **MCP server** | `/mcp` endpoint. Any MCP client can run your agents, teams, and workflows. |
-| **Coding-agent skills** | `/create-new-agent`, `/improve-agent`, `/eval-and-improve`, and more in `.agents/skills/`. |
-| **Eval suite** | Judge and reliability cases. Results are logged to Postgres and show up at os.agno.com. |
-| **PostgreSQL + pgvector** | Sessions, memory, knowledge, and traces stay in your database. |
+| **Two platform agents** | Agent Builder creates agents, teams, and workflows. Platform Manager helps manage the platform. |
+| **Two workflows** | _Deployment Check_ checks platform health and _Run Evals_ runs the eval suite to catch regressions. |
+| **MCP server** | Makes your platform available to any AI app or MCP client. |
+| **Coding-agent skills** | Manage the full agent development lifecycle using skills like `/create-new-agent`, `/improve-agent`, `/eval-and-improve`, and more. |
+| **Eval suite** | Full AgentAsJudge and Reliability Evals. |
+| **PostgreSQL** | Sessions, memory, knowledge, and traces stored in your database. |
 
 ## Get started
 
@@ -31,7 +31,7 @@ Every starter template comes with a common platform core. Only the deploy layer 
       <Tab title="AgentOS Starters">
         <CardGroup cols={3}>
           <Card title="Railway" icon="train" href="/deploy/templates/railway/deploy">
-            The reference Starter. One script provisions AgentOS and PostgreSQL.
+            Run AgentOS and PostgreSQL on Railway.
           </Card>
           <Card title="Docker" icon="docker" href="/deploy/templates/docker/deploy">
             Run locally or self-host anywhere Docker runs.
@@ -50,7 +50,7 @@ Every starter template comes with a common platform core. Only the deploy layer 
       <Tab title="Application Blueprints">
         <CardGroup cols={3}>
           <Card title="Dash" icon="chart-mixed" href="/deploy/templates/dash/overview">
-            Self-learning data agent over your database.
+            Self-learning data agent with 6 layers of context.
           </Card>
           <Card title="Coda" icon="code-branch" href="/deploy/templates/coda/overview">
             Code companion that lives in Slack.
@@ -59,7 +59,7 @@ Every starter template comes with a common platform core. Only the deploy layer 
             Company brain across Slack, Drive, and wikis.
           </Card>
           <Card title="Context" icon="address-book" href="/deploy/templates/context/overview">
-            Private CRM and knowledge base your AI tools share over MCP.
+            Personal chief-of-staff.
           </Card>
         </CardGroup>
       </Tab>
