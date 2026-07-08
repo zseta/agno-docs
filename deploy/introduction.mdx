@@ -7,12 +7,12 @@ mode: "wide"
 
 The Agno team provides a number of starter templates for running AgentOS, and agentic applications built on top of it. Each template is a pre-configured git repo you clone. There are two kinds of templates:
 
-1. **AgentOS Starters:** clean AgentOS installations, one per cloud: Railway, AWS, GCP, Azure.
+1. **AgentOS Starters:** clean AgentOS installations, one per platform: Railway, Docker, AWS, Fly.io, and Google Cloud Run.
 2. **Application Blueprints:** complete agentic products that you can deploy for internal use.
 
 ## What's inside every Template
 
-Every starter template comes with a similar platform core. Only the deploy layer differs.
+Every starter template comes with a common platform core. Only the deploy layer differs.
 
 | Component | What it does |
 |-----------|--------------|
@@ -28,7 +28,7 @@ Every starter template comes with a similar platform core. Only the deploy layer
 <Steps>
   <Step title="Pick a template">
     <Tabs>
-      <Tab title="Starters">
+      <Tab title="AgentOS Starters">
         <CardGroup cols={3}>
           <Card title="Railway" icon="train" href="/deploy/templates/railway/deploy">
             The reference Starter. One script provisions AgentOS and PostgreSQL.
@@ -47,7 +47,7 @@ Every starter template comes with a similar platform core. Only the deploy layer
           </Card>
         </CardGroup>
       </Tab>
-      <Tab title="Apps">
+      <Tab title="Application Blueprints">
         <CardGroup cols={3}>
           <Card title="Dash" icon="chart-mixed" href="/deploy/templates/dash/overview">
             Self-learning data agent over your database.
@@ -68,9 +68,9 @@ Every starter template comes with a similar platform core. Only the deploy layer
     [Browse all templates →](/deploy/templates)
   </Step>
   <Step title="Set up with a coding agent">
-    Every Starter leads with a copy-paste prompt. Paste it into Claude Code, Cursor, or Codex; the agent handles the clone, credentials, Docker, and verification. Each Starter page also lists the manual steps; App pages walk through setup directly.
+    Each template comes with a setup prompt you can give to coding agents like Claude Code, Cursor, or Codex. The agent clones the repo and sets everything up. Templates also come with manual steps, but we recommend using coding agents for setup.
   </Step>
   <Step title="Connect your frontends">
-    Run `uvx agno connect` to register the platform with the coding agents on your machine, or connect the [AgentOS UI](https://os.agno.com). Once deployed to production, re-run `uvx agno connect --url https://<your-domain>` to point your coding agents at production, and register `https://<your-domain>/mcp` as a remote MCP server in Claude and ChatGPT; they sign in with OAuth.
+    Connect your AgentOS to the [AgentOS UI](https://os.agno.com) or run `uvx agno connect` to connect it with coding agents on your machine. You can also use the AgentOS MCP server (`https://<agentos-domain>/mcp`) to connect your AgentOS to the Claude and ChatGPT apps.
   </Step>
 </Steps>

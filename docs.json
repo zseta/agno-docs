@@ -4903,71 +4903,7 @@
                 "group": "AWS",
                 "pages": [
                   "deploy/templates/aws/deploy",
-                  "deploy/templates/aws/reference",
-                  {
-                    "group": "Configure",
-                    "pages": [
-                      "deploy/templates/aws/configure/overview",
-                      {
-                        "group": "Setup",
-                        "pages": [
-                          "deploy/templates/aws/configure/install",
-                          "deploy/templates/aws/configure/infra-settings",
-                          "deploy/templates/aws/configure/git-repo",
-                          "deploy/templates/aws/configure/new-users"
-                        ]
-                      },
-                      {
-                        "group": "Application",
-                        "pages": [
-                          "deploy/templates/aws/configure/development-app",
-                          "deploy/templates/aws/configure/production-app",
-                          "deploy/templates/aws/configure/local",
-                          "deploy/templates/aws/configure/python-packages"
-                        ]
-                      },
-                      {
-                        "group": "Database & Secrets",
-                        "pages": [
-                          "deploy/templates/aws/configure/database",
-                          "deploy/templates/aws/configure/database-tables",
-                          "deploy/templates/aws/configure/secrets",
-                          "deploy/templates/aws/configure/env-vars"
-                        ]
-                      },
-                      {
-                        "group": "Quality & CI",
-                        "pages": [
-                          "deploy/templates/aws/configure/code-quality",
-                          "deploy/templates/aws/configure/format-and-validate",
-                          "deploy/templates/aws/configure/ci-cd"
-                        ]
-                      },
-                      {
-                        "group": "Advanced",
-                        "pages": [
-                          "deploy/templates/aws/configure/efs",
-                          "deploy/templates/aws/configure/ssh-access"
-                        ]
-                      }
-                    ]
-                  },
-                  {
-                    "group": "Go Live",
-                    "pages": [
-                      "deploy/templates/aws/go-live/connect",
-                      "deploy/templates/aws/go-live/https",
-                      "deploy/templates/aws/go-live/updates",
-                      "deploy/templates/aws/go-live/verify"
-                    ]
-                  },
-                  {
-                    "group": "Manage",
-                    "pages": [
-                      "deploy/templates/aws/manage/monitoring",
-                      "deploy/templates/aws/manage/troubleshooting"
-                    ]
-                  }
+                  "deploy/templates/aws/reference"
                 ]
               },
               {
@@ -16274,6 +16210,102 @@
     {
       "source": "/examples/concepts/:slug*",
       "destination": "/examples/:slug*"
+    },
+    {
+      "source": "/deploy/templates/aws/configure/overview",
+      "destination": "/deploy/templates/aws/reference"
+    },
+    {
+      "source": "/deploy/templates/aws/configure/install",
+      "destination": "/deploy/templates/aws/deploy"
+    },
+    {
+      "source": "/deploy/templates/aws/configure/infra-settings",
+      "destination": "/deploy/templates/aws/reference"
+    },
+    {
+      "source": "/deploy/templates/aws/configure/git-repo",
+      "destination": "/deploy/templates/aws/deploy"
+    },
+    {
+      "source": "/deploy/templates/aws/configure/new-users",
+      "destination": "/deploy/templates/aws/deploy"
+    },
+    {
+      "source": "/deploy/templates/aws/configure/development-app",
+      "destination": "/deploy/templates/aws/deploy"
+    },
+    {
+      "source": "/deploy/templates/aws/configure/production-app",
+      "destination": "/deploy/templates/aws/deploy"
+    },
+    {
+      "source": "/deploy/templates/aws/configure/local",
+      "destination": "/deploy/templates/aws/deploy"
+    },
+    {
+      "source": "/deploy/templates/aws/configure/python-packages",
+      "destination": "/deploy/templates/aws/reference"
+    },
+    {
+      "source": "/deploy/templates/aws/configure/database",
+      "destination": "/deploy/templates/aws/deploy"
+    },
+    {
+      "source": "/deploy/templates/aws/configure/database-tables",
+      "destination": "/deploy/templates/aws/reference"
+    },
+    {
+      "source": "/deploy/templates/aws/configure/secrets",
+      "destination": "/deploy/templates/aws/reference"
+    },
+    {
+      "source": "/deploy/templates/aws/configure/env-vars",
+      "destination": "/deploy/templates/aws/reference"
+    },
+    {
+      "source": "/deploy/templates/aws/configure/code-quality",
+      "destination": "/deploy/templates/aws/reference"
+    },
+    {
+      "source": "/deploy/templates/aws/configure/format-and-validate",
+      "destination": "/deploy/templates/aws/reference"
+    },
+    {
+      "source": "/deploy/templates/aws/configure/ci-cd",
+      "destination": "/deploy/templates/aws/reference"
+    },
+    {
+      "source": "/deploy/templates/aws/configure/efs",
+      "destination": "/deploy/templates/aws/reference"
+    },
+    {
+      "source": "/deploy/templates/aws/configure/ssh-access",
+      "destination": "/deploy/templates/aws/reference"
+    },
+    {
+      "source": "/deploy/templates/aws/go-live/connect",
+      "destination": "/deploy/templates/aws/deploy"
+    },
+    {
+      "source": "/deploy/templates/aws/go-live/https",
+      "destination": "/deploy/templates/aws/deploy"
+    },
+    {
+      "source": "/deploy/templates/aws/go-live/updates",
+      "destination": "/deploy/templates/aws/deploy"
+    },
+    {
+      "source": "/deploy/templates/aws/go-live/verify",
+      "destination": "/deploy/templates/aws/deploy"
+    },
+    {
+      "source": "/deploy/templates/aws/manage/monitoring",
+      "destination": "/deploy/templates/aws/reference"
+    },
+    {
+      "source": "/deploy/templates/aws/manage/troubleshooting",
+      "destination": "/deploy/templates/aws/reference"
     }
   ]
 }
