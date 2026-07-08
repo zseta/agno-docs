@@ -1,27 +1,27 @@
 ---
 title: "AgentOS Templates"
 sidebarTitle: "Introduction"
-description: "Agno provides pre-built starter templates you can fork, clone and own."
+description: "Agno provides pre-built starter templates for running AgentOS in your cloud."
 mode: "wide"
 ---
 
-The Agno team provides a number of starter templates for running AgentOS, and agentic applications built on top of it. Each template is a pre-configured git repo you clone. There are two kinds of templates:
+The Agno team provides a number of starter templates for running AgentOS, and agentic applications built on top of it, in your cloud of choice. We provide two kinds of templates:
 
-1. **AgentOS Starters:** clean AgentOS installations, one per platform: Railway, Docker, AWS, Fly.io, and Google Cloud Run.
-2. **Application Blueprints:** complete agentic products that you can deploy for internal use.
+1. **AgentOS Starters:** clean AgentOS installations, one per platform: Railway, AWS, Fly, GCP and more.
+2. **Application Blueprints:** ready to use agentic solutions that you can deploy today.
 
 ## What's inside every Template
 
-Every starter template comes with a common platform core.
+Every starter template comes with a common platform core, along with cloud specific deploy instructions.
 
 | Component | What it does |
 |-----------|--------------|
-| **Two platform agents** | Agent Builder creates agents, teams, and workflows. Platform Manager helps manage the platform. |
-| **Two workflows** | _Deployment Check_ checks platform health and _Run Evals_ runs the eval suite to catch regressions. |
+| **Two platform agents** | _**Agent Builder**_ creates agents, teams, and workflows. _**Platform Manager**_ helps manage the platform. |
+| **Two workflows** | _**Deployment Check**_ checks platform health and _**Run Evals**_ runs the eval suite to catch regressions. |
 | **MCP server** | Makes your platform available to any AI app or MCP client. |
-| **Coding-agent skills** | Manage the full agent development lifecycle using skills like `/create-new-agent`, `/improve-agent`, `/eval-and-improve`, and more. |
-| **Eval suite** | Full AgentAsJudge and Reliability Evals. |
-| **PostgreSQL** | Sessions, memory, knowledge, and traces stored in your database. |
+| **Coding-agent skills** | Manage your platform using skills like `/create-new-agent`, `/improve-agent` and more. |
+| **Eval suite** | Full AgentAsJudge and Reliability eval suite, ready to catch regressions. |
+| **PostgreSQL** | Sessions, memory, knowledge, and traces all stored in your database. |
 
 ## Get started
 
@@ -69,6 +69,6 @@ Every starter template comes with a common platform core.
     Each template comes with a setup prompt you can give to coding agents like Claude Code, Cursor, or Codex. The agent clones the repo and sets everything up. Templates also come with manual steps, but we recommend using coding agents for setup.
   </Step>
   <Step title="Connect your frontends">
-    Connect your AgentOS to the [AgentOS UI](https://os.agno.com) or run `uvx agno connect` to connect it with coding agents on your machine. You can also use the AgentOS MCP server (`https://<agentos-domain>/mcp`) to connect your AgentOS to the Claude and ChatGPT apps.
+    Connect your AgentOS to the [AgentOS UI](https://os.agno.com) and to coding agents on your machine by running `uvx agno connect`. You can also use the AgentOS MCP server (`https://<agentos-domain>/mcp`) to connect your AgentOS to the Claude and ChatGPT apps.
   </Step>
 </Steps>
