@@ -1,18 +1,32 @@
 ---
 title: "AgentOS on Railway"
 sidebarTitle: "Deploy"
-description: "Set up the reference Starter with a coding-agent prompt, run it on Docker, and deploy to Railway with one script."
+description: "Run AgentOS locally using Docker and deploy to production on Railway."
 ---
 
-[`agno-agi/agentos-railway`](https://github.com/agno-agi/agentos-railway) is the reference [Starter](/deploy/introduction): it runs locally on Docker and deploys AgentOS with PostgreSQL (pgvector) to [Railway](https://railway.com) with one script.
+AgentOS is a secure, scalable backend for running agents. Build agents once and making them available everywhere:
 
-It ships with three agents:
+1. **AI apps.** Claude and ChatGPT can use your agents through the MCP server at `/mcp`.
+2. **Chat interfaces.** Chat with your agents from Slack, WhatsApp, Telegram, and Discord.
+3. **Coding agents.** Let Claude Code and Codex run your platform using skills.
+4. **Your product.** Embed agents directly into your product with the AgentOS REST API: 80+ endpoints for runs, sessions, memory, knowledge, evals, and more.
+5. **AgentOS UI.** Chat with agents, inspect sessions, traces, memory, and evals from the control plane at [os.agno.com](https://os.agno.com).
+
+<Frame>
+  <img
+    src="/images/local-agentos.png"
+    alt="AgentOS Control Plane"
+    style={{ borderRadius: "0.5rem" }}
+  />
+</Frame>
+
+
+The [agentos-railway](https://github.com/agno-agi/agentos-railway) template let's you run AgentOS + Postgres locally using Docker and deploy to production on Railway. It comes with two platform agents and 5 coding agent skills.
 
 | Agent | Role |
 |-------|------|
-| **Agent Builder** | Creates agents, teams, and workflows through the [AgentOS Studio](/agent-os/studio/introduction). |
-| **Platform Manager** | Read-only ops: eval history, deployment checks, schedules, codebase questions. |
-| **WebSearch** | Searches the web with Parallel. The simplest agent to copy. |
+| **Agent Builder** | Creates agents, teams, and workflows for you. |
+| **Platform Manager** | Manages your agent platform for you. |
 
 ## Set up with a coding agent
 
