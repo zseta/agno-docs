@@ -8147,6 +8147,14 @@
       "destination": "/deploy/introduction"
     },
     {
+      "source": "/deploy/templates/pal/overview",
+      "destination": "/deploy/introduction"
+    },
+    {
+      "source": "/deploy/templates/gcode/overview",
+      "destination": "/deploy/introduction"
+    },
+    {
       "source": "/deploy/interfaces",
       "destination": "/deploy/interfaces/overview"
     },
