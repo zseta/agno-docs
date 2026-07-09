@@ -28,7 +28,7 @@ Help me set up an AgentOS on this machine. Work step by step and verify each ste
 6. Ask me which frontends I want connected, then set up the ones I pick:
    - Coding agents (including you): run `uvx agno connect` — it registers http://localhost:8000/mcp in Claude Code, Claude Desktop, Codex, and Cursor, and verifies with a real handshake. Use the default user scope, not --project (that would write a token into the repo).
    - The AgentOS web UI: walk me through os.agno.com → Connect OS → http://localhost:8000, named "Local AgentOS".
-   - Claude and ChatGPT apps (web or desktop): their sessions run in the cloud and can't reach localhost, so work with me on deploying to production first using ./scripts/gcp/up.sh (needs the gcloud CLI authenticated with a project selected and billing enabled, plus Docker running; the script pauses while I mint a JWT key at os.agno.com). Then I add https://<cloud-run-url>/mcp as a custom connector in the chat app's connector settings.
+   - Claude and ChatGPT apps (web or desktop): their sessions run in the cloud and can't reach localhost, so work with me on deploying to production first using ./scripts/gcp/up.sh (needs the gcloud CLI authenticated with a project selected and billing enabled, plus Docker running; the script pauses while I mint a JWT key at os.agno.com, and generates MCP_CONNECT_SECRET — the OAuth consent secret — into .env.production). Then I add https://<cloud-run-url>/mcp as a custom connector in the chat app's connector settings and approve the consent page with that secret.
 7. Finish with a short summary of what's running and where, plus a few first prompts to try — start with asking Agent Builder to "Build an agent that tracks AI news and writes a daily brief".
 ```
 
@@ -55,7 +55,7 @@ Edit `.env` and set `OPENAI_API_KEY`.
 docker compose up -d --build
 ```
 
-The first build takes a minute. Confirm the API is available at [localhost:8000/docs](http://localhost:8000/docs).
+The first build takes a few minutes. Confirm the API is available at [localhost:8000/docs](http://localhost:8000/docs).
   </Step>
 
   <Step title="Verify end to end">
@@ -86,7 +86,7 @@ Prints `MCP OK` with the tool count and a real agent answer through the MCP endp
 |----------|-----|
 | MCP clients on your machine | `uvx agno connect` auto-detects Claude Code, Claude Desktop, Codex, and Cursor and registers `http://localhost:8000/mcp`. Verify from the app: "can you access my agentos mcp?" |
 | AgentOS UI | [os.agno.com](https://os.agno.com) → **Connect OS** → `http://localhost:8000`. |
-| claude.ai and ChatGPT | Hosted sessions can't reach localhost. Deploy to production first, then register `https://<cloud-run-url>/mcp` as a remote MCP server; sign-in uses OAuth. |
+| claude.ai and ChatGPT | Hosted sessions can't reach localhost. Deploy to production first, then add `https://<cloud-run-url>/mcp` as a remote connector; the platform serves its own OAuth and you approve the consent page with your `MCP_CONNECT_SECRET`. |
 | Slack | Set `SLACK_BOT_TOKEN` and `SLACK_SIGNING_SECRET`. See [Slack setup](/deploy/interfaces/slack/overview). |
 | Your product | Call the AgentOS REST API with 80+ endpoints. Browse them at `/docs`. |
 
@@ -108,7 +108,7 @@ Edit `.env.production` with production values: a different OpenAI key, productio
 ./scripts/gcp/up.sh
 ```
 
-Enables the required APIs, creates an Artifact Registry repo and pushes a locally-built image to it, provisions Cloud SQL Postgres on a private IP, stores your keys in Secret Manager, and deploys the `agent-os` Cloud Run service. The first run takes 15-20 minutes: the one-time VPC peering is about 5 minutes and the Cloud SQL instance another 5-10. Once the service URL exists, the script sets `AGENTOS_URL` to it in a second revision so scheduled jobs reach the platform.
+Enables the required APIs, creates an Artifact Registry repo and pushes a locally-built image to it, provisions Cloud SQL Postgres on a private IP, stores your keys in Secret Manager, and deploys the `agent-os` Cloud Run service. The first run takes 15-20 minutes: the one-time VPC peering is about 5 minutes and the Cloud SQL instance another 5-10. Once the service URL exists, the script sets `AGENTOS_URL` to it in a second revision so scheduled jobs reach the platform, and generates `MCP_CONNECT_SECRET`, the OAuth consent secret for chat apps, into `.env.production`.
 
 <Note>Always-on Cloud Run at this template's sizing (2 vCPU / 4 GiB, min 1 instance, no CPU throttling) is ≈$110/mo list price. The budget knob is 1 vCPU / 2 GiB at ≈$58/mo: edit the `--cpu`/`--memory` flags in `scripts/gcp/up.sh`. Cloud SQL `db-g1-small` adds ≈$25-35/mo.</Note>
   </Step>
@@ -132,9 +132,9 @@ Re-run `uvx agno connect`, this time pointed at your deployed domain:
 uvx agno connect --url https://<cloud-run-url>
 ```
 
-Production is JWT-gated, so this connection needs a token; `uvx agno connect` mints a service-account token (`agno_pat_...`) for it. The bare `uvx agno connect` only re-registers `http://localhost:8000/mcp`.
+Production is JWT-gated, so this connection needs a token; `uvx agno connect` mints a service-account token (`agno_pat_...`) for it. `--url` pins the target; a bare `uvx agno connect` resolves it from where you run it. In this repo it discovers the deployed URL that `up.sh` saved to `.env.production`; elsewhere it falls back to `http://localhost:8000/mcp`.
 
-For claude.ai and ChatGPT on the web, add `https://<cloud-run-url>/mcp` as a custom connector in the chat app's connector settings and sign in with OAuth.
+For claude.ai and ChatGPT on the web, the platform serves its own OAuth authorization server on `/mcp`; `up.sh` generated the login secret for it (`MCP_CONNECT_SECRET` in `.env.production`) during deploy. Add `https://<cloud-run-url>/mcp` as a custom connector in the chat app's connector settings and approve the consent page with that secret. Leave the form's optional OAuth fields (client ID / client secret) empty; the platform registers the app automatically.
   </Step>
 
   <Step title="Confirm it's live">
@@ -167,7 +167,7 @@ Open `https://<cloud-run-url>/docs` to confirm the API is serving.
 ```
 
 <Warning>
-Deletes the Cloud Run service, the Cloud SQL instance including all data, the Artifact Registry repo, and the Secret Manager secrets created by `up.sh`. The one-time VPC peering stays: it is shared per-VPC infrastructure and costs nothing while unused.
+Deletes the Cloud Run service, the Cloud SQL instance including all data, the Artifact Registry repo, and the Secret Manager secrets created by `up.sh` and `env-sync.sh`. The one-time VPC peering stays: it is shared per-VPC infrastructure and costs nothing while unused.
 </Warning>
 
 ## Next steps

@@ -26,7 +26,7 @@ Help me set up an AgentOS on this machine. Work step by step and verify each ste
 6. Ask me which frontends I want connected, then set up the ones I pick:
    - Coding agents (including you): run `uvx agno connect` — it registers http://localhost:8000/mcp in Claude Code, Claude Desktop, Codex, and Cursor, and verifies with a real handshake. Use the default user scope, not --project (that would write a token into the repo).
    - The AgentOS web UI: walk me through os.agno.com → Connect OS → http://localhost:8000, named "Local AgentOS".
-   - Claude and ChatGPT apps (web or desktop): their sessions run in the cloud and can't reach localhost, so work with me on deploying to production first using ./scripts/fly/up.sh (needs flyctl installed and `fly auth login` done; the script pauses while I mint a JWT key at os.agno.com). Then I add https://<app>.fly.dev/mcp as a custom connector in the chat app's connector settings.
+   - Claude and ChatGPT apps (web or desktop): their sessions run in the cloud and can't reach localhost, so work with me on deploying to production first using ./scripts/fly/up.sh (needs flyctl installed and `fly auth login` done; the script pauses while I mint a JWT key at os.agno.com, and generates MCP_CONNECT_SECRET — the OAuth consent secret — into .env.production). Then I add https://<app>.fly.dev/mcp as a custom connector in the chat app's connector settings and approve the consent page with that secret.
 7. Finish with a short summary of what's running and where, plus a few first prompts to try — start with asking Agent Builder to "Build an agent that tracks AI news and writes a daily brief".
 ```
 
@@ -106,7 +106,7 @@ Edit `.env.production` with production values: a different OpenAI key, productio
 ./scripts/fly/up.sh
 ```
 
-Provisions the app and an unmanaged Fly Postgres on the same private network, pushes your credentials as Fly secrets, and deploys a single always-on machine. Fly app names are global, so the script generates `agentos-<suffix>` and records it in `fly.toml`. It also sets `AGENTOS_URL` to `https://<app>.fly.dev` before the first deploy so scheduled jobs reach the platform.
+Provisions the app and an unmanaged Fly Postgres on the same private network, pushes your credentials as Fly secrets, and deploys a single always-on machine. Fly app names are global, so the script generates `agentos-<suffix>` and records it in `fly.toml`. It also sets `AGENTOS_URL` to `https://<app>.fly.dev` before the first deploy so scheduled jobs reach the platform, and generates `MCP_CONNECT_SECRET`, the OAuth consent secret for chat apps, into `.env.production` when it's missing.
 
 Deploys use `fly deploy --ha=false` on purpose: the Fly default creates two machines, which doubles cost and runs two in-process schedulers double-firing every cron. Default sizing is `shared-cpu-2x` with 4 GB (~$21/mo) plus a small Postgres machine (~$4/mo). For dedicated cores, switch the size to `performance-2x` (~$62/mo) in `fly.toml`.
 
@@ -132,9 +132,9 @@ Re-run `uvx agno connect`, this time pointed at your deployed domain:
 uvx agno connect --url https://<app>.fly.dev
 ```
 
-Production is JWT-gated, so this connection needs a token; `uvx agno connect` mints a service-account token (`agno_pat_...`) for it. The bare `uvx agno connect` only re-registers `http://localhost:8000/mcp`.
+Production is JWT-gated, so this connection needs a token; `uvx agno connect` mints a service-account token (`agno_pat_...`) for it. `--url` pins the target; a bare `uvx agno connect` resolves it from where you run it. In this repo it discovers the deployed URL that `up.sh` saved to `.env.production`; elsewhere it falls back to `http://localhost:8000/mcp`.
 
-For claude.ai and ChatGPT on the web, add `https://<app>.fly.dev/mcp` as a custom connector in the chat app's connector settings and sign in with OAuth.
+For claude.ai and ChatGPT on the web, the platform serves its own OAuth authorization server on `/mcp`; `up.sh` generated the login secret for it (`MCP_CONNECT_SECRET` in `.env.production`) during deploy. Add `https://<app>.fly.dev/mcp` as a custom connector in the chat app's connector settings and approve the consent page with that secret. Leave the form's optional OAuth fields (client ID / client secret) empty; the platform registers the app automatically.
   </Step>
 
   <Step title="Confirm it's live">

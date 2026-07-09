@@ -28,7 +28,7 @@ Help me set up an AgentOS on this machine. Work step by step and verify each ste
 6. Ask me which frontends I want connected, then set up the ones I pick:
    - Coding agents (including you): run `uvx agno connect` — it registers http://localhost:8000/mcp in Claude Code, Claude Desktop, Codex, and Cursor, and verifies with a real handshake. Use the default user scope, not --project (that would write a token into the repo).
    - The AgentOS web UI: walk me through os.agno.com → Connect OS → http://localhost:8000, named "Local AgentOS".
-   - Claude and ChatGPT apps (web or desktop): their sessions run in the cloud and can't reach localhost, so work with me on deploying to production first using ./scripts/aws/up.sh (needs a recent AWS CLI v2 with credentials configured and Docker running; the script pauses while I mint a JWT key at os.agno.com). Then I add https://<service-url>/mcp as a custom connector in the chat app's connector settings.
+   - Claude and ChatGPT apps (web or desktop): their sessions run in the cloud and can't reach localhost, so work with me on deploying to production first using ./scripts/aws/up.sh (needs a recent AWS CLI v2 with credentials configured and Docker running; the script pauses while I mint a JWT key at os.agno.com, and generates MCP_CONNECT_SECRET — the OAuth consent secret — into .env.production). Then I add https://<service-url>/mcp as a custom connector in the chat app's connector settings and approve the consent page with that secret.
 7. Finish with a short summary of what's running and where, plus a few first prompts to try — start with asking Agent Builder to "Build an agent that tracks AI news and writes a daily brief".
 ```
 
@@ -55,7 +55,7 @@ Edit `.env` and set `OPENAI_API_KEY`.
 docker compose up -d --build
 ```
 
-The first build takes a minute. Confirm the API is available at [localhost:8000/docs](http://localhost:8000/docs).
+The first build takes a few minutes. Confirm the API is available at [localhost:8000/docs](http://localhost:8000/docs).
   </Step>
 
   <Step title="Verify end to end">
@@ -108,7 +108,7 @@ Edit `.env.production` with production values: a different OpenAI key, productio
 ./scripts/aws/up.sh
 ```
 
-Provisions an ECR repo, a private RDS PostgreSQL 17 instance, and Secrets Manager secrets, then makes one `aws ecs create-express-gateway-service` call. That call brings the Fargate service, an ALB with HTTPS, security groups, autoscaling, CloudWatch logs and alarms, and a public URL (`https://ag-<id>.ecs.<region>.on.aws`, generated per service). The script pins scaling to a single always-on task so the in-process scheduler never double-fires, and sets `AGENTOS_URL` to the generated URL so scheduled jobs reach the platform.
+Provisions an ECR repo, a private RDS PostgreSQL 17 instance, and Secrets Manager secrets, then makes one `aws ecs create-express-gateway-service` call. That call brings the Fargate service, an ALB with HTTPS, security groups, autoscaling, CloudWatch logs and alarms, and a public URL (`https://ag-<id>.ecs.<region>.on.aws`, generated per service). The script pins scaling to a single always-on task so the in-process scheduler never double-fires, and sets `AGENTOS_URL` to the generated URL so scheduled jobs reach the platform. It also generates `MCP_CONNECT_SECRET` into `.env.production` when it's missing, so chat apps can connect over OAuth from the first deploy.
 
 The first run takes 30-45 minutes end to end. Certificate and DNS provisioning is the long pole, and the script waits until the gateway actually answers before declaring success. Redeploys take minutes. Region comes from `AWS_REGION` (default `us-east-1`).
 
@@ -122,7 +122,7 @@ The script pauses for a `JWT_VERIFICATION_KEY`. Token-Based Authorization is on 
 2. Go to **Settings** → **OS & Security** and turn on **Token-Based Authorization (JWT)**.
 3. Copy the public key and paste the full PEM into the `up.sh` prompt. The script saves it to your env file, pushes it to Secrets Manager, and rolls a fresh task-definition revision.
 
-If you skip the prompt, add the key to `.env.production` later and run `./scripts/aws/env-sync.sh`.
+If you skip the prompt, add the key to `.env.production` later and run `./scripts/aws/env-sync.sh`. If `.env.production` sets `JWT_JWKS_FILE` instead, the script skips the prompt and delivers the path through the task-definition env.
 
 <Note>Live AgentOS connections are a paid feature. Use code `PLATFORM30` for one month off.</Note>
   </Step>
@@ -134,9 +134,9 @@ Re-run `uvx agno connect`, this time pointed at your deployed domain:
 uvx agno connect --url https://<service-url>
 ```
 
-Production is JWT-gated, so this connection needs a token; `uvx agno connect` mints a service-account token (`agno_pat_...`) for it. The bare `uvx agno connect` only re-registers `http://localhost:8000/mcp`.
+Production is JWT-gated, so this connection needs a token; `uvx agno connect` mints a service-account token (`agno_pat_...`) for it. `--url` pins the target; a bare `uvx agno connect` resolves it from where you run it. In this repo it discovers the deployed URL that `up.sh` saved to `.env.production`; elsewhere it falls back to `http://localhost:8000/mcp`.
 
-For claude.ai and ChatGPT on the web, add `https://<service-url>/mcp` as a custom connector in the chat app's connector settings and sign in with OAuth.
+For claude.ai and ChatGPT on the web, the platform serves its own OAuth authorization server on `/mcp`; `up.sh` generated the login secret for it (`MCP_CONNECT_SECRET` in `.env.production`) during deploy. Add `https://<service-url>/mcp` as a custom connector in the chat app's connector settings and approve the consent page with that secret. Leave the form's optional OAuth fields (client ID / client secret) empty; the platform registers the app automatically.
   </Step>
 
   <Step title="Confirm it's live">

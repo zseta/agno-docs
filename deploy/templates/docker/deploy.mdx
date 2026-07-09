@@ -28,7 +28,7 @@ Help me set up an AgentOS on this machine. Work step by step and verify each ste
 6. Ask me which frontends I want connected, then set up the ones I pick:
    - Coding agents (including you): run `uvx agno connect` — it registers http://localhost:8000/mcp in Claude Code, Claude Desktop, Codex, and Cursor, and verifies with a real handshake. Use the default user scope, not --project (that would write a token into the repo).
    - The AgentOS web UI: walk me through os.agno.com → Connect OS → http://localhost:8000, named "Local AgentOS".
-   - Claude and ChatGPT apps (web or desktop): their sessions run in the cloud and can't reach localhost, so work with me on getting a public URL first, following the "Run in production" section of README.md — a tunnel (cloudflared, ngrok, or `tailscale funnel`) in front of this machine, then production mode with a JWT key I mint at os.agno.com. Then I add https://<public-url>/mcp as a custom connector in the chat app's connector settings.
+   - Claude and ChatGPT apps (web or desktop): their sessions run in the cloud and can't reach localhost, so work with me on getting a public URL first, following the "Run in production" section of README.md — a tunnel (cloudflared, ngrok, or `tailscale funnel`) in front of this machine, then production mode with a JWT key I mint at os.agno.com and an MCP_CONNECT_SECRET (the OAuth consent secret, openssl rand -base64 32) in .env. Then I add https://<public-url>/mcp as a custom connector in the chat app's connector settings and approve the consent page with that secret.
 7. Finish with a short summary of what's running and where, plus a few first prompts to try — start with asking Agent Builder to "Build an agent that tracks AI news and writes a daily brief".
 ```
 
@@ -55,7 +55,7 @@ Edit `.env` and set `OPENAI_API_KEY`.
 docker compose up -d --build
 ```
 
-The first build takes a minute. Confirm the API is available at [localhost:8000/docs](http://localhost:8000/docs).
+The first build takes a few minutes. Confirm the API is available at [localhost:8000/docs](http://localhost:8000/docs).
   </Step>
 
   <Step title="Verify end to end">
@@ -118,10 +118,11 @@ Production values live in `.env` on the host, the same file Compose already read
 ```bash
 OPENAI_API_KEY=sk-...
 AGENTOS_URL=https://<your-public-url>
+MCP_CONNECT_SECRET=<generate with: openssl rand -base64 32>
 DB_PASS=<generate a strong one>
 ```
 
-`AGENTOS_URL` is the address the platform advertises as its own. Left unset, the daily deployment check flags the platform as misconfigured, and chat-app connectors have nothing to point at. `DB_PASS` replaces the dev default (`ai`).
+`AGENTOS_URL` is the address the platform advertises as its own. Left unset, the daily deployment check flags the platform as misconfigured, and chat-app connectors have nothing to point at. `MCP_CONNECT_SECRET` turns `/mcp` into its own OAuth 2.1 authorization server so claude.ai and ChatGPT on the web can connect; connecting asks for this secret once, on a consent page. It needs `AGENTOS_URL` for a stable public origin, and because dev reads the same `.env`, it gates the local `/mcp` too. PAT and JWT bearers keep working alongside. `DB_PASS` replaces the dev default (`ai`).
 
 <Note>On a host that already ran the dev Compose, changing `DB_PASS` in `.env` does not change the database password. See [troubleshooting](/deploy/templates/docker/reference#troubleshooting).</Note>
   </Step>
@@ -147,7 +148,7 @@ MIIBIjANBgkq...
 docker compose -f compose.yaml -f compose.prod.yaml up -d --build
 ```
 
-The override switches `RUNTIME_ENV` to `prd` (JWT auth on), drops the dev bind mount and hot reload so the container runs the code baked into the image, passes your `AGENTOS_URL` through, and rebinds Postgres to loopback so only this host can reach it. Both services carry `restart: unless-stopped`, so the platform survives reboots as long as Docker starts on boot.
+The override switches `RUNTIME_ENV` to `prd` (JWT auth on), drops the dev bind mount and hot reload so the container runs the code baked into the image, passes your `AGENTOS_URL` (and `MCP_CONNECT_SECRET`, if set) through, and rebinds Postgres to loopback so only this host can reach it. Both services carry `restart: unless-stopped`, so the platform survives reboots as long as Docker starts on boot.
   </Step>
 
   <Step title="Connect your MCP clients">
@@ -157,9 +158,9 @@ Re-run `uvx agno connect`, this time pointed at your public URL:
 uvx agno connect --url https://<your-public-url>
 ```
 
-Production is JWT-gated, so this connection needs a token; `uvx agno connect` mints a service-account token (`agno_pat_...`) for it. The bare `uvx agno connect` only re-registers `http://localhost:8000/mcp`.
+Production is JWT-gated, so this connection needs a token; `uvx agno connect` mints a service-account token (`agno_pat_...`) for it. `--url` pins the target; a bare `uvx agno connect` resolves it from where you run it. In this repo it discovers the public URL you set as `AGENTOS_URL` in `.env`; elsewhere it falls back to `http://localhost:8000/mcp`.
 
-For claude.ai and ChatGPT on the web, add `https://<your-public-url>/mcp` as a custom connector in the chat app's connector settings and sign in with OAuth.
+For claude.ai and ChatGPT on the web, the platform serves its own OAuth authorization server on `/mcp`; the login secret is the `MCP_CONNECT_SECRET` you set in `.env`. Add `https://<your-public-url>/mcp` as a custom connector in the chat app's connector settings and approve the consent page with that secret. Leave the form's optional OAuth fields (client ID / client secret) empty; the platform registers the app automatically.
   </Step>
 
   <Step title="Confirm it's live">

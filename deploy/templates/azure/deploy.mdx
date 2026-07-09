@@ -28,7 +28,7 @@ Help me set up an AgentOS on this machine. Work step by step and verify each ste
 6. Ask me which frontends I want connected, then set up the ones I pick:
    - Coding agents (including you): run `uvx agno connect` — it registers http://localhost:8000/mcp in Claude Code, Claude Desktop, Codex, and Cursor, and verifies with a real handshake. Use the default user scope, not --project (that would write a token into the repo).
    - The AgentOS web UI: walk me through os.agno.com → Connect OS → http://localhost:8000, named "Local AgentOS".
-   - Claude and ChatGPT apps (web or desktop): their sessions run in the cloud and can't reach localhost, so work with me on deploying to production first using ./scripts/azure/up.sh (needs the Azure CLI, logged in, and Docker; the script pauses while I mint a JWT key at os.agno.com). Then I add https://<container-app-domain>/mcp as a custom connector in the chat app's connector settings.
+   - Claude and ChatGPT apps (web or desktop): their sessions run in the cloud and can't reach localhost, so work with me on deploying to production first using ./scripts/azure/up.sh (needs the Azure CLI, logged in, and Docker; the script pauses while I mint a JWT key at os.agno.com, and generates MCP_CONNECT_SECRET — the OAuth consent secret — into .env.production). Then I add https://<container-app-domain>/mcp as a custom connector in the chat app's connector settings and approve the consent page with that secret.
 7. Finish with a short summary of what's running and where, plus a few first prompts to try — start with asking Agent Builder to "Build an agent that tracks AI news and writes a daily brief".
 ```
 
@@ -55,7 +55,7 @@ Edit `.env` and set `OPENAI_API_KEY`.
 docker compose up -d --build
 ```
 
-The first build takes a minute. Confirm the API is available at [localhost:8000/docs](http://localhost:8000/docs).
+The first build takes a few minutes. Confirm the API is available at [localhost:8000/docs](http://localhost:8000/docs).
   </Step>
 
   <Step title="Verify end to end">
@@ -86,7 +86,7 @@ Prints `MCP OK` with the tool count and a real agent answer through the MCP endp
 |----------|-----|
 | MCP clients on your machine | `uvx agno connect` auto-detects Claude Code, Claude Desktop, Codex, and Cursor and registers `http://localhost:8000/mcp`. Verify from the app: "can you access my agentos mcp?" |
 | AgentOS UI | [os.agno.com](https://os.agno.com) → **Connect OS** → `http://localhost:8000`. |
-| claude.ai and ChatGPT | Hosted sessions can't reach localhost. Deploy to production first, then register `https://<your-domain>/mcp` as a remote MCP server; sign-in uses OAuth. |
+| claude.ai and ChatGPT | Hosted sessions can't reach localhost. Deploy to production first, then add `https://<your-domain>/mcp` as a custom connector and approve the consent page with the `MCP_CONNECT_SECRET` that `up.sh` generates. |
 | Slack | Set `SLACK_BOT_TOKEN` and `SLACK_SIGNING_SECRET`. See [Slack setup](/deploy/interfaces/slack/overview). |
 | Your product | Call the AgentOS REST API with 80+ endpoints. Browse them at `/docs`. |
 
@@ -108,7 +108,7 @@ Edit `.env.production` with production values: a different OpenAI key, productio
 ./scripts/azure/up.sh
 ```
 
-The first run takes 15-20 minutes (Postgres Flexible Server is the long pole) and creates everything inside one dedicated resource group, `agentos` by default: a VNet with private DNS, a container registry with the locally built image, PostgreSQL 17 Flexible Server with private access and pgvector allowlisted, the Container Apps environment, and the `agent-os` app pinned to exactly one replica so the in-process scheduler never runs twice. The app URL is only known after create. Once the app is up, the script writes `AGENTOS_URL` back to your env file so scheduled jobs reach the platform.
+The first run takes 15-20 minutes (Postgres Flexible Server is the long pole) and creates everything inside one dedicated resource group, `agentos` by default: a VNet with private DNS, a container registry with the locally built image, PostgreSQL 17 Flexible Server with private access and pgvector allowlisted, the Container Apps environment, and the `agent-os` app pinned to exactly one replica so the in-process scheduler never runs twice. The app URL is only known after create. Once the app is up, the script writes `AGENTOS_URL` back to your env file so scheduled jobs reach the platform. It also generates `MCP_CONNECT_SECRET`, the OAuth consent secret for connecting chat apps, into the same file.
   </Step>
 
   <Step title="Mint your JWT key">
@@ -118,7 +118,7 @@ The script pauses for a `JWT_VERIFICATION_KEY`. Token-Based Authorization is on 
 2. Go to **Settings** → **OS & Security** and turn on **Token-Based Authorization (JWT)**.
 3. Copy the public key and paste the full PEM into the `up.sh` prompt. The script saves it to your env file, stores it as a Container Apps secret, and applies it together with `AGENTOS_URL` in a single second revision.
 
-If you skip the prompt, add the key to `.env.production` later and run `./scripts/azure/env-sync.sh`.
+If your env file already sets `JWT_JWKS_FILE`, the script skips the pause and applies it in the same revision. If you skip the prompt, add `JWT_VERIFICATION_KEY` or `JWT_JWKS_FILE` to `.env.production` later and run `./scripts/azure/env-sync.sh`.
 
 <Note>Live AgentOS connections are a paid feature. Use code `PLATFORM30` for one month off.</Note>
   </Step>
@@ -130,9 +130,9 @@ Re-run `uvx agno connect`, this time pointed at your deployed domain:
 uvx agno connect --url https://<container-app-domain>
 ```
 
-Production is JWT-gated, so this connection needs a token; `uvx agno connect` mints a service-account token (`agno_pat_...`) for it. The bare `uvx agno connect` only re-registers `http://localhost:8000/mcp`.
+Production is JWT-gated, so this connection needs a token; `uvx agno connect` mints a service-account token (`agno_pat_...`) for it. `--url` pins the target; a bare `uvx agno connect` resolves it from where you run it. In this repo it discovers the deployed URL that `up.sh` saved to `.env.production`; elsewhere it falls back to `http://localhost:8000/mcp`.
 
-For claude.ai and ChatGPT on the web, add `https://<container-app-domain>/mcp` as a custom connector in the chat app's connector settings and sign in with OAuth.
+For claude.ai and ChatGPT on the web, the platform serves its own OAuth authorization server on `/mcp`; `up.sh` generated the login secret for it (`MCP_CONNECT_SECRET` in `.env.production`) during deploy. Add `https://<container-app-domain>/mcp` as a custom connector in the chat app's connector settings and approve the consent page with that secret. Leave the form's optional OAuth fields (client ID / client secret) empty; the platform registers the app automatically.
   </Step>
 
   <Step title="Confirm it's live">
@@ -165,7 +165,7 @@ The script prints your app URL. Give the revision a couple of minutes to converg
 ```
 
 <Warning>
-Deletes the entire resource group, `agentos` by default: the `agent-os` app, the Container Apps environment, the Postgres server and all its data, the container registry, the VNet, and the private DNS zone. The script lists the group's resources and asks you to type the group name before deleting.
+Deletes the entire resource group, `agentos` by default: the `agent-os` app, the Container Apps environment, the Postgres server and all its data, the container registry, the VNet, and the private DNS zone. The script lists the group's resources and asks you to type the group name before deleting. It also comments out the stale `AGENTOS_URL` in your env files so a future `up.sh` derives a fresh domain; custom domains are left alone.
 </Warning>
 
 ## Next steps

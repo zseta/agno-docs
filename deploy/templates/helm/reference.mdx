@@ -130,6 +130,8 @@ Sync with `./scripts/k8s/env-sync.sh`. The interface activates automatically and
 
   <Accordion title="Toggle scheduled workflows">
 The deployment check runs daily by default (`ENABLE_DEPLOY_CHECK=True`); it is deterministic and free. Scheduled evals are off by default (`ENABLE_SCHEDULED_EVALS=False`) because they use model calls. Both workflows stay runnable on demand regardless.
+
+In the cluster these are chart values. Set them via `extraEnv` and `helm upgrade`; `./scripts/k8s/env-sync.sh` syncs only the connection and secret keys.
   </Accordion>
 </AccordionGroup>
 
@@ -157,8 +159,10 @@ source .venv/bin/activate
 | `OPENAI_API_KEY` | Yes | - | Models and embeddings. |
 | `RUNTIME_ENV` | No | `prd` | `dev` disables JWT. Compose sets it for local. Never put it in an env file that syncs to a real cluster, or production deploys unauthenticated. |
 | `JWT_VERIFICATION_KEY` | Production | - | Public key from os.agno.com. Quote the value so the multi-line PEM parses as one variable. |
-| `JWT_JWKS_FILE` | Production | - | Path to a JWKS file. Alternative to `JWT_VERIFICATION_KEY`. |
-| `AGENTOS_URL` | No | `http://127.0.0.1:8000` | Scheduler base URL. The chart resolves it automatically: explicit value, then ingress URL, then in-cluster service DNS. Set it by hand only for a custom domain or tunnel. |
+| `JWT_JWKS_FILE` | Production | - | Path to a JWKS file inside the container. Alternative to `JWT_VERIFICATION_KEY`. `up.sh` and `env-sync.sh` deliver it as the chart value `jwtJwksFile`. |
+| `MCP_CONNECT_SECRET` | No | - | OAuth consent secret for connecting claude.ai and ChatGPT to `/mcp`. `up.sh` generates it into `.env.production` when the deploy has a public URL (`INGRESS_HOST` or `AGENTOS_URL`); set it by hand otherwise. |
+| `AGENTOS_MCP_SIGNING_KEY` | No | generated | Optional high-entropy signing-key material (32+ chars) for OAuth tokens. Unset, a strong key is generated and persisted in the database. Rotating it invalidates outstanding tokens. |
+| `AGENTOS_URL` | No | `http://127.0.0.1:8000` | Scheduler base URL. The chart resolves it automatically: explicit value, then ingress URL, then in-cluster service DNS. Set it by hand only for a custom domain or tunnel. Also the public origin OAuth metadata derives from when `MCP_CONNECT_SECRET` is set. |
 | `ENABLE_DEPLOY_CHECK` | No | `True` | Daily deployment-check cron. |
 | `ENABLE_SCHEDULED_EVALS` | No | `False` | Daily run-evals cron. Uses model calls. |
 | `EVALS_TAG` | No | `smoke` | Eval tag the run-evals workflow runs. |
@@ -202,5 +206,8 @@ The Postgres volume reads its password only on first initialization, so a lost o
   </Accordion>
   <Accordion title="Scheduled jobs never fire">
 `AGENTOS_URL` resolves automatically: explicit value, then ingress URL, then in-cluster service DNS. If you set it by hand, make sure the pod can reach that URL, then run `./scripts/k8s/env-sync.sh`.
+  </Accordion>
+  <Accordion title="claude.ai or ChatGPT can't connect to /mcp">
+`up.sh` generates `MCP_CONNECT_SECRET` only when the deploy has a public URL (`INGRESS_HOST` or an explicit `AGENTOS_URL`). Deployed without one? Set `MCP_CONNECT_SECRET` and a public `AGENTOS_URL` in `.env.production` and run `./scripts/k8s/env-sync.sh`.
   </Accordion>
 </AccordionGroup>

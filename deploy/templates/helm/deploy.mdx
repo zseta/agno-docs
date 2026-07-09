@@ -28,7 +28,7 @@ Help me set up an AgentOS on this machine. Work step by step and verify each ste
 6. Ask me which frontends I want connected, then set up the ones I pick:
    - Coding agents (including you): run `uvx agno connect` — it registers http://localhost:8000/mcp in Claude Code, Claude Desktop, Codex, and Cursor, and verifies with a real handshake. Use the default user scope, not --project (that would write a token into the repo).
    - The AgentOS web UI: walk me through os.agno.com → Connect OS → http://localhost:8000, named "Local AgentOS".
-   - Claude and ChatGPT apps (web or desktop): their sessions run in the cloud and can't reach localhost, so work with me on deploying to production first using ./scripts/k8s/up.sh (needs kubectl pointed at a cluster, helm, and an image the cluster can pull; the script pauses while I mint a JWT key at os.agno.com). Then I add https://<my-agentos-domain>/mcp as a custom connector in the chat app's connector settings.
+   - Claude and ChatGPT apps (web or desktop): their sessions run in the cloud and can't reach localhost, so work with me on deploying to production first using ./scripts/k8s/up.sh with INGRESS_HOST set (needs kubectl pointed at a cluster, helm, and an image the cluster can pull; the script pauses while I mint a JWT key at os.agno.com, and generates MCP_CONNECT_SECRET — the OAuth consent secret — into .env.production). Then I add https://<my-agentos-domain>/mcp as a custom connector in the chat app's connector settings and approve the consent page with that secret.
 7. Finish with a short summary of what's running and where, plus a few first prompts to try — start with asking Agent Builder to "Build an agent that tracks AI news and writes a daily brief".
 ```
 
@@ -55,7 +55,7 @@ Edit `.env` and set `OPENAI_API_KEY`.
 docker compose up -d --build
 ```
 
-The first build takes a minute. Confirm the API is available at [localhost:8000/docs](http://localhost:8000/docs).
+The first build takes a few minutes. Confirm the API is available at [localhost:8000/docs](http://localhost:8000/docs).
   </Step>
 
   <Step title="Verify end to end">
@@ -86,7 +86,7 @@ Prints `MCP OK` with the tool count and a real agent answer through the MCP endp
 |----------|-----|
 | MCP clients on your machine | `uvx agno connect` auto-detects Claude Code, Claude Desktop, Codex, and Cursor and registers `http://localhost:8000/mcp`. Verify from the app: "can you access my agentos mcp?" |
 | AgentOS UI | [os.agno.com](https://os.agno.com) → **Connect OS** → `http://localhost:8000`. |
-| claude.ai and ChatGPT | Hosted sessions can't reach localhost. Deploy to production first, then register `https://<your-agentos-domain>/mcp` as a remote MCP server; sign-in uses OAuth. |
+| claude.ai and ChatGPT | Hosted sessions can't reach localhost. Deploy to production first, then add `https://<your-agentos-domain>/mcp` as a remote connector. The platform serves its own OAuth, and the consent page asks for your `MCP_CONNECT_SECRET`. |
 | Slack | Set `SLACK_BOT_TOKEN` and `SLACK_SIGNING_SECRET`. See [Slack setup](/deploy/interfaces/slack/overview). |
 | Your product | Call the AgentOS REST API with 80+ endpoints. Browse them at `/docs`. |
 
@@ -122,7 +122,7 @@ IMAGE_REPOSITORY=<registry>/agentos IMAGE_TAG=v1 ./scripts/k8s/up.sh   # your ow
 
 Helm-installs the chart into the `agentos` namespace of your current kubectl context (the script shows the context and asks first): the API deployment at one replica by design, since the in-process scheduler must not run twice, plus in-cluster Postgres with pgvector and its volume. The script also generates a `DB_PASS` and saves it to your env file. Keep it; the Postgres volume reads the password only on first initialization.
 
-To publish behind your ingress controller, add `INGRESS_HOST=os.example.com` (and optionally `INGRESS_CLASS=nginx`). `AGENTOS_URL` then points at that host; otherwise the scheduler uses the in-cluster service DNS, which works out of the box.
+To publish behind your ingress controller, add `INGRESS_HOST=os.example.com` (and optionally `INGRESS_CLASS=nginx`). `AGENTOS_URL` then points at that host; otherwise the scheduler uses the in-cluster service DNS, which works out of the box. When the deploy has a public URL (`INGRESS_HOST` or an explicit `AGENTOS_URL`), the script also generates `MCP_CONNECT_SECRET`, the OAuth consent secret for connecting chat apps, and saves it to your env file.
 
 Bringing your own Postgres instead? It must have the [pgvector](https://github.com/pgvector/pgvector) extension available. Install with `postgres.enabled=false` and the `externalDatabase.*` values in `charts/agentos/values.yaml`.
   </Step>
@@ -146,9 +146,9 @@ Re-run `uvx agno connect`, this time pointed at your deployed domain:
 uvx agno connect --url https://<your-agentos-domain>
 ```
 
-Production is JWT-gated, so this connection needs a token; `uvx agno connect` mints a service-account token (`agno_pat_...`) for it. The bare `uvx agno connect` only re-registers `http://localhost:8000/mcp`.
+Production is JWT-gated, so this connection needs a token; `uvx agno connect` mints a service-account token (`agno_pat_...`) for it. `--url` pins the target; a bare `uvx agno connect` resolves it from where you run it. It reads `AGENTOS_URL` from `.env.production` or `.env` in the cwd and falls back to `http://localhost:8000/mcp`.
 
-For claude.ai and ChatGPT on the web, add `https://<your-agentos-domain>/mcp` as a custom connector in the chat app's connector settings and sign in with OAuth.
+For claude.ai and ChatGPT on the web, the platform serves its own OAuth authorization server on `/mcp`; `up.sh` generated the login secret for it (`MCP_CONNECT_SECRET` in `.env.production`) during deploy. Add `https://<your-agentos-domain>/mcp` as a custom connector in the chat app's connector settings and approve the consent page with that secret. Leave the form's optional OAuth fields (client ID / client secret) empty; the platform registers the app automatically.
   </Step>
 
   <Step title="Confirm it's live">
@@ -184,7 +184,7 @@ Immutable tags keep rollbacks one `helm rollback` away. Running `./scripts/k8s/r
 ./scripts/k8s/env-sync.sh
 ```
 
-Changed secrets roll the pod automatically.
+Changed secrets roll the pod automatically. The script syncs the connection and secret keys (including `JWT_JWKS_FILE`); other knobs (`ENABLE_DEPLOY_CHECK`, `ENABLE_SCHEDULED_EVALS`, `EVALS_*`) are chart values. Set them via `extraEnv` and `helm upgrade`.
 
 ### Tear down
 

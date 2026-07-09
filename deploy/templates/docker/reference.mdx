@@ -154,7 +154,9 @@ source .venv/bin/activate
 | `RUNTIME_ENV` | No | `prd` | `dev` disables JWT. `compose.yaml` sets `dev` for local; `compose.prod.yaml` sets `prd`. Never hand-set `dev` on a production host, or the platform serves unauthenticated. |
 | `JWT_VERIFICATION_KEY` | Production | - | Public key from os.agno.com. Quote the value so the multi-line PEM parses as one variable. |
 | `JWT_JWKS_FILE` | Production | - | Path to a JWKS file. Alternative to `JWT_VERIFICATION_KEY`. |
-| `AGENTOS_URL` | No | `http://127.0.0.1:8000` | Scheduler base URL. Set it in `.env` to your public URL; `compose.prod.yaml` passes it through. Left at the default in production, the daily deployment check flags the platform as misconfigured. |
+| `MCP_CONNECT_SECRET` | No | - | OAuth consent secret (16+ chars) for connecting claude.ai and ChatGPT to `/mcp`. Set it yourself in `.env`, e.g. `openssl rand -base64 32`. Dev reads the same file, so it gates the local `/mcp` too. |
+| `AGENTOS_MCP_SIGNING_KEY` | No | generated | Optional high-entropy signing-key material (32+ chars) for OAuth tokens. Unset, a strong key is generated and persisted in the database. Rotating it invalidates outstanding tokens. |
+| `AGENTOS_URL` | No | `http://127.0.0.1:8000` | Scheduler base URL. Set it in `.env` to your public URL; `compose.prod.yaml` passes it through. Left at the default in production, the daily deployment check flags the platform as misconfigured. Also the public origin OAuth metadata derives from when `MCP_CONNECT_SECRET` is set. |
 | `ENABLE_DEPLOY_CHECK` | No | `True` | Daily deployment-check cron. |
 | `ENABLE_SCHEDULED_EVALS` | No | `False` | Daily run-evals cron. Uses model calls. |
 | `EVALS_TAG` | No | `smoke` | Eval tag the run-evals workflow runs. |
