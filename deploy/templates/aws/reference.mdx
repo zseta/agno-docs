@@ -1,23 +1,34 @@
 ---
 title: "AWS Reference"
 sidebarTitle: "Reference"
-description: "Commands, customization, environment variables, and troubleshooting for the AWS Starter."
+description: "Commands, customization, environment variables, and troubleshooting for the AWS template."
 ---
 
-The [AWS Starter](/deploy/templates/aws/deploy) names the Express service `agent-os`, the ECR repo `agentos`, and the RDS instance `agentos-db`. Secrets live under `agentos/*` in Secrets Manager; the scripts record the service ARN and region in `tmp/agentos-aws.state`, plus the ARN in your env file.
+The template names the Express service `agent-os`, the ECR repo `agentos`, and the RDS instance `agentos-db`. Secrets live under `agentos/*` in Secrets Manager, and the scripts record the service ARN and region in `tmp/agentos-aws.state`.
 
 ## Manage
 
 | Task | Command |
 |------|---------|
 | Deploy code changes | `./scripts/aws/redeploy.sh` |
-| Sync env variables | `./scripts/aws/env-sync.sh` (syncs `.env.production`; pass `.env` to sync that instead) |
+| Sync env variables | `./scripts/aws/env-sync.sh` (defaults to `.env.production`; pass `.env` to sync that instead) |
 | Tail logs | `aws logs tail /ecs/agent-os --follow` |
 | Watch a rollout | `aws ecs monitor-express-gateway-service --region <region> --service-arn <arn>` |
-| Scale out | Keep the scaling target at one task. Each replica runs the in-process scheduler, so scale-out double-fires every cron. |
 | Tear down | `./scripts/aws/down.sh` (add `--yes` to skip the confirmation) |
 
-<Warning>`down.sh` deletes the Express service (its ALB wiring, security groups, and autoscaling with it), the RDS instance including all data, the ECR repo, the `agentos/*` secrets, and the log group. It ends by printing verification commands so you can confirm nothing is left billing.</Warning>
+## Production auth
+
+Token-Based Authorization is on by default. Without a `JWT_VERIFICATION_KEY` or `JWT_JWKS_FILE`, the app refuses to serve traffic in production. The platform's job is to keep your data private, so the safe default is refuse to start.
+
+Token-Based Auth gives you three things:
+
+1. **No public access.** The server rejects requests without a valid token.
+2. **Per-request identity.** Middleware parses the token and extracts the `user_id`, `session_id`, and custom claims. Each request is tied to a user and session, giving you auditability and traceability.
+3. **Granular permissions.** User tokens can run an agent and view their own sessions. Admin tokens read everyone's sessions and test any agent.
+
+Only `/health` stays open. AgentOS serves it unauthenticated even in production, so the ALB health checks pass.
+
+To opt out (not recommended), set `authorization=False` in `app/main.py` and redeploy. Use this only inside a private VPC behind another auth layer. Without it, anyone who guesses your service URL can access your platform.
 
 ## Customize
 
@@ -72,13 +83,19 @@ def default_model():
     return Claude(id="claude-sonnet-5")
 ```
 
-Add `anthropic` to `pyproject.toml`, set the provider key in your env files, and regenerate pins:
+Add `anthropic` to `pyproject.toml`, set the provider key in your env, and regenerate pins:
 
 ```bash
 ./scripts/generate_requirements.sh
 ```
 
-Rebuild locally with `docker compose up -d --build`. For production, run `./scripts/aws/redeploy.sh`; it rebuilds the image and syncs `.env.production` in one pass.
+Rebuild locally with `docker compose up -d --build`. For production:
+
+```bash
+./scripts/aws/redeploy.sh
+```
+
+It rebuilds the image and syncs `.env.production` in one pass.
   </Accordion>
 
   <Accordion title="Add tools">
@@ -116,7 +133,7 @@ The deployment check runs daily by default (`ENABLE_DEPLOY_CHECK=True`); it is d
   </Accordion>
 
   <Accordion title="Switch Fargate to ARM">
-ARM cuts the Fargate line item from about $70 to about $57 per month. Edit `runtimePlatform` in `scripts/aws/task-def.json`, change `docker build --platform linux/amd64` to `linux/arm64` in `up.sh` and `redeploy.sh`, then run `./scripts/aws/redeploy.sh`.
+ARM cuts the Fargate line item from about $70 to about $57 per month. Edit `runtimePlatform` in `scripts/aws/task-def.json`, change `docker build --platform linux/amd64` to `linux/arm64` in both `up.sh` and `redeploy.sh`, then run `./scripts/aws/redeploy.sh`.
   </Accordion>
 </AccordionGroup>
 
@@ -142,11 +159,11 @@ source .venv/bin/activate
 | Variable | Required | Default | Description |
 |----------|----------|---------|-------------|
 | `OPENAI_API_KEY` | Yes | - | Models and embeddings. |
-| `RUNTIME_ENV` | No | `prd` | `dev` disables JWT. Compose sets it to `dev` for local. Never put `dev` in an env file that `env-sync.sh` pushes, or production serves unauthenticated. |
+| `RUNTIME_ENV` | No | `prd` | `dev` disables JWT. Compose sets it for local. Never put it in an env file that syncs to AWS, or production deploys unauthenticated. |
 | `JWT_VERIFICATION_KEY` | Production | - | Public key from os.agno.com. Quote the value so the multi-line PEM parses as one variable. |
 | `JWT_JWKS_FILE` | Production | - | Path to a JWKS file. Alternative to `JWT_VERIFICATION_KEY`. |
 | `AGENTOS_URL` | No | `http://127.0.0.1:8000` | Scheduler base URL. `up.sh` sets it to your Express service URL. Scheduled jobs never fire if it stays at the default in production. |
-| `SERVICE_ARN` | No | - | Written by `up.sh`. Deploy metadata the scripts use to find the service; `env-sync.sh` never sends it to the container. |
+| `SERVICE_ARN` | No | written by `up.sh` | Deploy metadata the scripts use to find the Express service. `env-sync.sh` never sends it to the container. |
 | `ENABLE_DEPLOY_CHECK` | No | `True` | Daily deployment-check cron. |
 | `ENABLE_SCHEDULED_EVALS` | No | `False` | Daily run-evals cron. Uses model calls. |
 | `EVALS_TAG` | No | `smoke` | Eval tag the run-evals workflow runs. |
@@ -156,8 +173,8 @@ source .venv/bin/activate
 | `SLACK_BOT_TOKEN` | No | - | Set with the signing secret to enable Slack. |
 | `SLACK_SIGNING_SECRET` | No | - | Set with the bot token to enable Slack. |
 | `DB_HOST` / `DB_PORT` / `DB_USER` / `DB_DATABASE` | No | matches compose | Postgres connection. `env-sync.sh` skips these; production values come from the provisioned RDS instance. |
-| `DB_PASS` | No | matches compose | Postgres password. Secret-shaped: `env-sync.sh` pushes it to Secrets Manager when present. `up.sh` generates the production value, so keep it out of `.env.production`. |
-| `DB_DRIVER` | No | `postgresql+psycopg` | SQLAlchemy driver. |
+| `DB_PASS` | No | matches compose | Postgres password. `up.sh` generates the production value and stores it in Secrets Manager. |
+| `DB_DRIVER` | No | `postgresql+psycopg` | SQLAlchemy driver. `env-sync.sh` skips it too; production uses the task-definition value. |
 | `AGNO_DEBUG` | No | `False` | Verbose Agno logs. Compose sets it for dev. |
 | `WAIT_FOR_DB` | No | `False` | If `True`, the entrypoint blocks on the database before starting. Compose sets it. |
 
@@ -165,24 +182,30 @@ source .venv/bin/activate
 
 <AccordionGroup>
   <Accordion title="up.sh exits: the CLI predates ECS Express Mode">
-Upgrade the AWS CLI (for example `brew upgrade awscli`) until `aws ecs create-express-gateway-service help` works. If credentials are missing, run `aws configure` and confirm `aws sts get-caller-identity` succeeds.
+Upgrade the AWS CLI (for example `brew upgrade awscli`) until `aws ecs create-express-gateway-service help` works. If credentials are the problem instead, run `aws configure` and confirm `aws sts get-caller-identity` succeeds.
+  </Accordion>
+  <Accordion title="up.sh exits: no default VPC">
+The RDS instance deploys into the region's default VPC. Create one with `aws ec2 create-default-vpc`, or adapt `scripts/aws/up.sh` to your own VPC.
   </Accordion>
   <Accordion title="up.sh pauses asking for a JWT key">
 Expected. Mint the key at [os.agno.com](https://os.agno.com): connect your OS (**Connect OS** → **Live**, enter your service URL), then turn on **Token-Based Authorization (JWT)** under **Settings** → **OS & Security** and paste the full PEM. To do it later, skip the prompt, add `JWT_VERIFICATION_KEY` to `.env.production`, and run `./scripts/aws/env-sync.sh`.
   </Accordion>
   <Accordion title="App refuses to serve in production">
-JWT auth is on whenever `RUNTIME_ENV` is not `dev`. Set `JWT_VERIFICATION_KEY` or `JWT_JWKS_FILE` and sync. `/health` answers regardless, so a passing health check with 401s everywhere else means missing auth config, not a crash. To opt out inside a private VPC behind another auth layer, set `authorization=False` in `app/main.py`.
+JWT auth is on whenever `RUNTIME_ENV` is not `dev`. Set `JWT_VERIFICATION_KEY` or `JWT_JWKS_FILE` and sync. To opt out inside a private VPC behind another auth layer, set `authorization=False` in `app/main.py`.
   </Accordion>
   <Accordion title="The service URL never answers">
-The first time you create the service, provisioning the ALB, certificate, and DNS takes 10-25 minutes; `up.sh` waits through it. Past that window, the known first-run cause is freshly created IAM roles: Express's async infrastructure calls get denied before the role policies propagate, and ECS never retries. `up.sh` detects the wedge and recreates the service once. If it still stalls, inspect with `aws ecs monitor-express-gateway-service --region <region> --service-arn <arn>`, look for an AccessDenied `CreateLoadBalancer` event in CloudTrail, then delete the service and re-run `./scripts/aws/up.sh`.
+First-time provisioning of the ALB, certificate, and DNS takes 10-25 minutes; `up.sh` waits through it. Past that window, the known first-run cause is freshly created IAM roles: Express's async infrastructure calls get denied before the role policies propagate, and ECS never retries. `up.sh` detects this and recreates the service once; the second attempt provisions reliably. If it still stalls, inspect with `aws ecs monitor-express-gateway-service --region <region> --service-arn <arn>`, look for an AccessDenied `CreateLoadBalancer` event in CloudTrail, then delete the service and re-run `./scripts/aws/up.sh`.
   </Accordion>
   <Accordion title="5xx right after deploy">
-The gateway is up; the app is still starting. First boot pulls the image and blocks on the database. Wait a few minutes and check `aws logs tail /ecs/agent-os --follow`.
+The gateway is up; the app is still starting. First boot pulls the image and waits for the database. Wait a few minutes and check `aws logs tail /ecs/agent-os --follow`.
   </Accordion>
   <Accordion title="Scheduled jobs never fire">
-`AGENTOS_URL` is still the localhost default. `up.sh` sets it to your service URL automatically; for a custom domain, set it by hand and run `./scripts/aws/env-sync.sh`.
+`AGENTOS_URL` is still the localhost default. `up.sh` sets it to your service URL automatically; for a custom domain or tunnel, set it by hand and run `./scripts/aws/env-sync.sh`.
   </Accordion>
   <Accordion title="env-sync.sh or redeploy.sh can't find the service">
-The scripts resolve the service ARN from `tmp/agentos-aws.state` first, then from a `SERVICE_ARN=` line in `.env.production` or `.env`. On a fresh clone or new machine, write the ARN of your Express service into the state file: `printf 'SERVICE_ARN=arn:aws:ecs:...' > tmp/agentos-aws.state`.
+The scripts resolve the service ARN from `tmp/agentos-aws.state` first, then from a `SERVICE_ARN=` line in `.env.production` or `.env`. On a fresh clone or a new machine, write the ARN of your Express service into the state file: `printf 'SERVICE_ARN=arn:aws:ecs:...' > tmp/agentos-aws.state`.
+  </Accordion>
+  <Accordion title="down.sh says everything is already gone, but the bill continues">
+The commands are hitting the wrong region. The scripts use `AWS_REGION` if set, then the region recorded in `tmp/agentos-aws.state`, then `us-east-1`. Set `AWS_REGION` to the region you deployed to and re-run `./scripts/aws/down.sh`.
   </Accordion>
 </AccordionGroup>

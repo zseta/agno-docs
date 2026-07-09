@@ -1,24 +1,34 @@
 ---
-title: "Fly Reference"
+title: "Fly.io Reference"
 sidebarTitle: "Reference"
-description: "Commands, customization, environment variables, and troubleshooting for the Fly.io Starter."
+description: "Commands, customization, environment variables, and troubleshooting for the Fly.io template."
 ---
 
-[`up.sh`](/deploy/templates/fly/deploy#deploy-to-production) names the Fly app `agentos-<suffix>`, records it in `fly.toml`, and pairs it with a Postgres app named `<app>-db`. Later `fly` commands read the app name from `fly.toml` and need no `--app` flag.
+Fly app names are global, so `up.sh` generates a unique name (`agentos-<suffix>`), records it in `fly.toml`, and pairs it with a Postgres app named `<app>-db`. Later `fly` commands read the app name from `fly.toml`, so no `--app` flag is needed.
 
 ## Manage
 
 | Task | Command |
 |------|---------|
 | Deploy code changes | `./scripts/fly/redeploy.sh` |
-| Sync env variables | `./scripts/fly/env-sync.sh` (syncs `.env.production`; pass `.env` to sync that instead) |
+| Sync env variables | `./scripts/fly/env-sync.sh` (defaults to `.env.production`; pass `.env` to sync that instead) |
 | Tail logs | `fly logs` |
-| Resize the machine | Edit `fly.toml`: `[[vm]]` `size` and `memory`, then `./scripts/fly/redeploy.sh` |
+| Resize the machine | Edit `[[vm]]` in `fly.toml`, then `./scripts/fly/redeploy.sh` |
 | Tear down | `./scripts/fly/down.sh` (add `--yes` to skip the confirmation) |
 
-<Warning>`down.sh` destroys the Fly app and its Postgres, including all data in the database. It asks you to type the app name to confirm, then resets `fly.toml` so a future `up.sh` provisions fresh.</Warning>
+The platform runs one machine by design. Both deploy scripts pass `fly deploy --ha=false` because the Fly default creates two machines, which doubles cost and runs two in-process schedulers double-firing every cron. `fly.toml` keeps the machine warm with `auto_stop_machines = "off"` and `min_machines_running = 1`; with scale-to-zero, scheduled jobs silently stop firing.
 
-The platform runs one machine by design. Both deploy scripts pass `fly deploy --ha=false` because the Fly default creates two machines: double the cost, and two in-process schedulers double-firing every cron. `fly.toml` keeps the machine warm with `auto_stop_machines = "off"` and `min_machines_running = 1`; with scale-to-zero, scheduled jobs stop firing.
+## Production auth
+
+Token-Based Authorization is on by default. Without a `JWT_VERIFICATION_KEY` or `JWT_JWKS_FILE`, the app refuses to serve traffic in production. The platform's job is to keep your data private, so the safe default is refuse to start.
+
+Token-Based Auth gives you three things:
+
+1. **No public access.** The server rejects requests without a valid token.
+2. **Per-request identity.** Middleware parses the token and extracts the `user_id`, `session_id`, and custom claims. Each request is tied to a user and session, giving you auditability and traceability.
+3. **Granular permissions.** User tokens can run an agent and view their own sessions. Admin tokens read everyone's sessions and test any agent.
+
+To opt out (not recommended), set `authorization=False` in `app/main.py` and redeploy. Use this only inside a private network behind another auth layer. Without it, anyone who guesses your Fly URL can access your platform.
 
 ## Customize
 
@@ -122,14 +132,14 @@ The deployment check runs daily by default (`ENABLE_DEPLOY_CHECK=True`); it is d
   </Accordion>
 
   <Accordion title="Enable pgvector for knowledge bases">
-Fly's stock `postgres-flex` image does not ship pgvector. Sessions and memory work; knowledge bases (RAG) fail at `CREATE EXTENSION` time. Build a derivative image:
+Fly's stock `postgres-flex` image does not ship pgvector, so sessions and memory work but knowledge bases (RAG) fail at `CREATE EXTENSION` time. The fix is a two-line Dockerfile:
 
 ```dockerfile
 FROM flyio/postgres-flex:17
 RUN apt-get install -y postgresql-17-pgvector
 ```
 
-Set `FLY_PG_IMAGE` to the image reference before running `./scripts/fly/up.sh`. The image applies when the cluster is created; `up.sh` reuses an existing cluster, so switching later means tearing down with `./scripts/fly/down.sh` and provisioning fresh.
+Set `FLY_PG_IMAGE` to that image before running `./scripts/fly/up.sh`. The image applies when the Postgres cluster is created; `up.sh` reuses an existing cluster, so switching later means tearing down with `./scripts/fly/down.sh` and provisioning fresh.
   </Accordion>
 </AccordionGroup>
 
@@ -155,10 +165,10 @@ source .venv/bin/activate
 | Variable | Required | Default | Description |
 |----------|----------|---------|-------------|
 | `OPENAI_API_KEY` | Yes | - | Models and embeddings. |
-| `RUNTIME_ENV` | No | `prd` | `dev` disables JWT. Compose sets it for local. Never put `dev` in an env file that `env-sync.sh` pushes to Fly, or production serves unauthenticated. |
+| `RUNTIME_ENV` | No | `prd` | `dev` disables JWT. Compose sets it for local. Never put it in an env file that syncs to Fly, or production deploys unauthenticated. |
 | `JWT_VERIFICATION_KEY` | Production | - | Public key from os.agno.com. Quote the value so the multi-line PEM parses as one variable. |
 | `JWT_JWKS_FILE` | Production | - | Path to a JWKS file. Alternative to `JWT_VERIFICATION_KEY`. |
-| `AGENTOS_URL` | No | `http://127.0.0.1:8000` | Scheduler base URL. `up.sh` sets it to `https://<app>.fly.dev` before the first deploy. Scheduled jobs never fire if it stays at the default in production. |
+| `AGENTOS_URL` | No | `http://127.0.0.1:8000` | Scheduler base URL. `up.sh` sets it to `https://<app>.fly.dev`. Scheduled jobs never fire if it stays at the default in production. |
 | `ENABLE_DEPLOY_CHECK` | No | `True` | Daily deployment-check cron. |
 | `ENABLE_SCHEDULED_EVALS` | No | `False` | Daily run-evals cron. Uses model calls. |
 | `EVALS_TAG` | No | `smoke` | Eval tag the run-evals workflow runs. |
@@ -172,15 +182,13 @@ source .venv/bin/activate
 | `AGNO_DEBUG` | No | `False` | Verbose Agno logs. Compose sets it for dev. |
 | `WAIT_FOR_DB` | No | `False` | If `True`, the entrypoint blocks on the database before starting. Compose sets it. |
 
-### Deploy script variables
-
-`up.sh` reads these from your shell when provisioning:
+`up.sh` also reads three variables from your shell when provisioning:
 
 | Variable | Default | Description |
 |----------|---------|-------------|
 | `FLY_REGION` | `iad` | Region for the app and its Postgres. Re-runs keep the region already in `fly.toml` unless you set this explicitly. |
 | `FLY_ORG` | `personal` | Fly org for both apps. They must share an org or the private network between them does not exist. |
-| `FLY_PG_IMAGE` | stock `postgres-flex` | Image for the Postgres cluster. Point it at a pgvector-enabled derivative to support knowledge bases. |
+| `FLY_PG_IMAGE` | stock `postgres-flex` | Postgres image. Point it at a pgvector-enabled derivative to support knowledge bases. |
 
 ## Troubleshooting
 
@@ -189,22 +197,21 @@ source .venv/bin/activate
 Install [flyctl](https://fly.io/docs/flyctl/install/), then run `fly auth login`. The scripts accept either binary name, `flyctl` or `fly`.
   </Accordion>
   <Accordion title="up.sh pauses asking for a JWT key">
-Expected. Mint the key at [os.agno.com](https://os.agno.com): connect your OS (**Connect OS** → **Live**, enter `https://<app>.fly.dev`), then turn on **Token-Based Authorization (JWT)** under **Settings** → **OS & Security** and paste the full PEM. To do it later, press Enter to skip, add `JWT_VERIFICATION_KEY` to `.env.production`, and run `./scripts/fly/env-sync.sh`.
+Expected. Mint the key at [os.agno.com](https://os.agno.com): connect your OS (**Connect OS** → **Live**, enter your Fly URL), then turn on **Token-Based Authorization (JWT)** under **Settings** → **OS & Security** and paste the full PEM. To do it later, skip the prompt, add `JWT_VERIFICATION_KEY` to `.env.production`, and run `./scripts/fly/env-sync.sh`.
   </Accordion>
-  <Accordion title="up.sh refuses to run: fly.toml carries an unmanaged app name">
-The script generates and manages `agentos-*` names. A different name means it would overwrite `fly.toml` and abandon that app. Restore the `agentos` placeholder (or an `agentos-*` name from a previous run), or tear down first with `./scripts/fly/down.sh`.
+  <Accordion title="up.sh exits: fly.toml carries an app name this script doesn't manage">
+The script only manages names it generated. A different name means continuing would overwrite `fly.toml` and abandon that app. Restore the `agentos` placeholder (or an `agentos-*` name from a previous run), or tear down first with `./scripts/fly/down.sh`.
   </Accordion>
   <Accordion title="App refuses to serve in production">
 JWT auth is on whenever `RUNTIME_ENV` is not `dev`. Set `JWT_VERIFICATION_KEY` or `JWT_JWKS_FILE` and sync. To opt out inside a private network behind another auth layer, set `authorization=False` in `app/main.py`.
   </Accordion>
   <Accordion title="Knowledge bases fail at CREATE EXTENSION">
-The stock `postgres-flex` image has no pgvector. Sessions and memory are unaffected. Set `FLY_PG_IMAGE` to a pgvector-enabled image and recreate the cluster; `up.sh` reuses an existing one, so tear down first with `./scripts/fly/down.sh`. See [Enable pgvector for knowledge bases](#customize).
+The stock `postgres-flex` image has no pgvector; sessions and memory are unaffected. Set `FLY_PG_IMAGE` to a pgvector-enabled image and recreate the cluster. `up.sh` reuses an existing cluster, so tear down first with `./scripts/fly/down.sh`. See [Enable pgvector for knowledge bases](#customize).
   </Accordion>
-  <Accordion title="Scheduled jobs never fire, or fire twice">
-Check three things:
-
-1. `AGENTOS_URL` is still the localhost default. `up.sh` sets it to `https://<app>.fly.dev`; for a custom domain, set it by hand and run `./scripts/fly/env-sync.sh`.
-2. The machine scaled to zero. Keep `auto_stop_machines = "off"` and `min_machines_running = 1` in `fly.toml`.
-3. Crons fire twice: a plain `fly deploy` created a second machine, and each runs its own scheduler. Deploy with the scripts; they pass `--ha=false`.
+  <Accordion title="Scheduled jobs never fire">
+`AGENTOS_URL` may still be the localhost default. `up.sh` sets it to `https://<app>.fly.dev` automatically; for a custom domain or tunnel, set it by hand and run `./scripts/fly/env-sync.sh`. The other cause is the machine scaling to zero: keep `auto_stop_machines = "off"` and `min_machines_running = 1` in `fly.toml`.
+  </Accordion>
+  <Accordion title="Every cron fires twice">
+A plain `fly deploy` created a second machine, and each runs its own scheduler. Deploy with the scripts; they pass `--ha=false`.
   </Accordion>
 </AccordionGroup>

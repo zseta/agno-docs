@@ -1,23 +1,32 @@
 ---
-title: "GCP Reference"
+title: "Google Cloud Run Reference"
 sidebarTitle: "Reference"
-description: "Commands, customization, environment variables, and troubleshooting for the GCP Starter."
+description: "Commands, customization, environment variables, and troubleshooting for the Google Cloud Run template."
 ---
 
-The Cloud Run service is `agent-os`, the Cloud SQL instance is `agentos-db`, and the Artifact Registry repo is `agentos`. The scripts target the current gcloud project and `us-central1`; override them with `GCP_PROJECT_ID` and `GCP_REGION`. For setup and the first deploy, see [Deploy](/deploy/templates/gcp/deploy).
+The Cloud Run service is `agent-os`, the Cloud SQL instance is `agentos-db`, and the Artifact Registry repo is `agentos`. The scripts target the current gcloud project and `us-central1`; override them with `GCP_PROJECT_ID` and `GCP_REGION`.
 
 ## Manage
 
 | Task | Command |
 |------|---------|
 | Deploy code changes | `./scripts/gcp/redeploy.sh` |
-| Sync env variables | `./scripts/gcp/env-sync.sh` (syncs `.env.production`; pass `.env` to sync that instead) |
+| Sync env variables | `./scripts/gcp/env-sync.sh` (defaults to `.env.production`; pass `.env` to sync that instead) |
 | Tail logs | `gcloud run services logs read agent-os --region us-central1 --limit 100` |
-| Inspect the service | `gcloud run services describe agent-os --region us-central1` |
-| Resize CPU and memory | Edit the `--cpu`/`--memory` flags in `scripts/gcp/up.sh` and rerun it |
+| Resize the service | Edit the `--cpu`/`--memory` flags in `scripts/gcp/up.sh` and rerun it |
 | Tear down | `./scripts/gcp/down.sh` (add `--yes` to skip the confirmation) |
 
-<Warning>`down.sh` deletes the Cloud Run service, the Cloud SQL instance including all data, the Artifact Registry repo, and the Secret Manager secrets created by `up.sh`. The one-time VPC peering stays: it is shared per-VPC infrastructure and costs nothing while unused.</Warning>
+## Production auth
+
+Token-Based Authorization is on by default. Without a `JWT_VERIFICATION_KEY` or `JWT_JWKS_FILE`, the app refuses to serve traffic in production. The platform's job is to keep your data private, so the safe default is refuse to start.
+
+Token-Based Auth gives you three things:
+
+1. **No public access.** The server rejects requests without a valid token.
+2. **Per-request identity.** Middleware parses the token and extracts the `user_id`, `session_id`, and custom claims. Each request is tied to a user and session, giving you auditability and traceability.
+3. **Granular permissions.** User tokens can run an agent and view their own sessions. Admin tokens read everyone's sessions and test any agent.
+
+To opt out (not recommended), set `authorization=False` in `app/main.py` and redeploy. Use this only inside a private VPC behind another auth layer. Without it, anyone who guesses your Cloud Run URL can access your platform.
 
 ## Customize
 
@@ -155,7 +164,7 @@ source .venv/bin/activate
 | `PARALLEL_API_KEY` | No | - | WebSearch uses the Parallel SDK when set, keyless MCP otherwise. |
 | `SLACK_BOT_TOKEN` | No | - | Set with the signing secret to enable Slack. |
 | `SLACK_SIGNING_SECRET` | No | - | Set with the bot token to enable Slack. |
-| `GCP_PROJECT_ID` / `GCP_REGION` | No | current project, `us-central1` | Project and region the `scripts/gcp/` scripts target. `up.sh` records `GCP_REGION` in your env file. |
+| `GCP_PROJECT_ID` / `GCP_REGION` | No | current project, `us-central1` | Project and region the `scripts/gcp/` scripts target. `up.sh` records `GCP_REGION` in your env file so `down.sh` finds the right region. |
 | `DB_HOST` / `DB_PORT` / `DB_USER` / `DB_PASS` / `DB_DATABASE` | No | matches compose | Postgres connection. |
 | `DB_DRIVER` | No | `postgresql+psycopg` | SQLAlchemy driver. |
 | `AGNO_DEBUG` | No | `False` | Verbose Agno logs. Compose sets it for dev. |
@@ -168,18 +177,21 @@ source .venv/bin/activate
 Install the [Google Cloud SDK](https://cloud.google.com/sdk/docs/install), then run `gcloud auth login` and `gcloud config set project <id>`.
   </Accordion>
   <Accordion title="up.sh pauses asking for a JWT key">
-Expected. The script deploys first (Cloud Run only reveals the URL once the service exists), then pauses so you can mint the key against it. At [os.agno.com](https://os.agno.com): connect your OS (**Connect OS** → **Live**, enter your Cloud Run URL), then turn on **Token-Based Authorization (JWT)** under **Settings** → **OS & Security** and paste the full PEM. To do it later, skip the prompt, add `JWT_VERIFICATION_KEY` to `.env.production`, and run `./scripts/gcp/env-sync.sh`.
+Expected. The script deploys first because Cloud Run only reveals the URL once the service exists, then pauses so you can mint the key against it. Mint the key at [os.agno.com](https://os.agno.com): connect your OS (**Connect OS** → **Live**, enter your Cloud Run URL), then turn on **Token-Based Authorization (JWT)** under **Settings** → **OS & Security** and paste the full PEM. To do it later, skip the prompt, add `JWT_VERIFICATION_KEY` to `.env.production`, and run `./scripts/gcp/env-sync.sh`.
   </Accordion>
   <Accordion title="App refuses to serve in production">
 JWT auth is on whenever `RUNTIME_ENV` is not `dev`. Set `JWT_VERIFICATION_KEY` or `JWT_JWKS_FILE` and sync. To opt out inside a private VPC behind another auth layer, set `authorization=False` in `app/main.py`.
   </Accordion>
   <Accordion title="Every request returns 403">
-Your organization likely enforces Domain Restricted Sharing (`constraints/iam.allowedPolicyMemberDomains`), which silently rejects the `allUsers` binding that `--allow-unauthenticated` needs. The deploy still succeeds; the service ships private, and `up.sh` prints a warning when it detects this. Grant `roles/run.invoker` to specific principals, or ask an org admin for an `allUsers` exception.
+Your organization likely enforces Domain Restricted Sharing (`constraints/iam.allowedPolicyMemberDomains`), which silently rejects the `allUsers` binding that `--allow-unauthenticated` needs. The deploy still succeeds; the service just ships private. `up.sh` prints a warning when it detects this. Grant `roles/run.invoker` to specific principals, or ask an org admin for an `allUsers` exception.
+  </Accordion>
+  <Accordion title="Cloud SQL or Cloud Run creation fails">
+Check that billing is enabled on the project. `up.sh` warns when it can't confirm billing; Cloud SQL and Cloud Run creation both fail without it.
   </Accordion>
   <Accordion title="Scheduled jobs never fire">
-`AGENTOS_URL` is still the localhost default. `up.sh` sets it to your Cloud Run URL automatically; for a custom domain, set it by hand and run `./scripts/gcp/env-sync.sh`.
+`AGENTOS_URL` is still the localhost default. `up.sh` sets it to your Cloud Run URL automatically; for a custom domain or tunnel, set it by hand and run `./scripts/gcp/env-sync.sh`.
   </Accordion>
   <Accordion title="down.sh says the service is not found">
-It's a region mismatch. `down.sh` is targeting a different region than the one you deployed to. `up.sh` records `GCP_REGION` in your env file and `down.sh` reads it from there. If the file is gone, rerun with `GCP_REGION=<region> ./scripts/gcp/down.sh`; a wrong-region teardown looks clean while the real resources keep billing.
+`down.sh` is targeting a different region than the one you deployed to. `up.sh` records `GCP_REGION` in your env file and `down.sh` reads it from there; if the file is gone, rerun with `GCP_REGION=<region> ./scripts/gcp/down.sh`. A wrong-region teardown looks clean while the real resources keep billing.
   </Accordion>
 </AccordionGroup>
