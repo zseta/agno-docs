@@ -12,7 +12,7 @@ The scripts install the Helm release `agentos` into the `agentos` namespace. Ove
 |------|---------|
 | Roll to a new image tag | `IMAGE_TAG=v2 ./scripts/k8s/redeploy.sh` (build and push the tag first) |
 | Restart pods in place | `./scripts/k8s/redeploy.sh` |
-| Sync env variables | `./scripts/k8s/env-sync.sh` (defaults to `.env.production`; pass `.env` to sync that instead) |
+| Sync env variables | `./scripts/k8s/env-sync.sh` (connection and secret keys only; defaults to `.env.production`, pass `.env` to sync that instead) |
 | Tail logs | `kubectl logs deploy/agentos -n agentos -f` |
 | Port-forward the API | `kubectl port-forward svc/agentos 8000:8000 -n agentos` |
 | Roll back a release | `helm rollback agentos -n agentos` |
