@@ -4918,6 +4918,34 @@
                   "deploy/templates/gcp/deploy",
                   "deploy/templates/gcp/reference"
                 ]
+              },
+              {
+                "group": "Kubernetes",
+                "pages": [
+                  "deploy/templates/helm/deploy",
+                  "deploy/templates/helm/reference"
+                ]
+              },
+              {
+                "group": "Azure",
+                "pages": [
+                  "deploy/templates/azure/deploy",
+                  "deploy/templates/azure/reference"
+                ]
+              },
+              {
+                "group": "Render",
+                "pages": [
+                  "deploy/templates/render/deploy",
+                  "deploy/templates/render/reference"
+                ]
+              },
+              {
+                "group": "Modal",
+                "pages": [
+                  "deploy/templates/modal/deploy",
+                  "deploy/templates/modal/reference"
+                ]
               }
             ]
           },

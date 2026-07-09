@@ -1,25 +1,36 @@
 ---
 title: "Modal Reference"
 sidebarTitle: "Reference"
-description: "Commands, customization, environment variables, and troubleshooting for the Modal Starter."
+description: "Commands, customization, environment variables, and troubleshooting for the Modal template."
 ---
 
-The Modal app is `agentos`. Configuration lives in the `agentos-secrets` Modal secret, and the database is a Neon Postgres project named `agentos`. For setup and first deploy, see [Deploy](/deploy/templates/modal/deploy).
+The Modal app is `agentos`, served as one always-warm container. Configuration lives in the `agentos-secrets` Modal secret, and the database is a Neon Postgres project named `agentos`.
 
 ## Manage
 
 | Task | Command |
 |------|---------|
 | Deploy code changes | `./scripts/modal/redeploy.sh` |
-| Sync env variables | `./scripts/modal/env-sync.sh` (syncs `.env.production`; pass `.env` to sync that instead) |
+| Sync env variables | `./scripts/modal/env-sync.sh` (defaults to `.env.production`; pass `.env` to sync that instead) |
 | Tail logs | `modal app logs agentos` |
 | List apps and status | `modal app list` |
-| Adjust resources | Edit `modal_app.py`: `cpu=2.0`, `memory=4096`, then redeploy |
 | Tear down | `./scripts/modal/down.sh` (add `--yes` to skip the confirmation) |
 
-<Note>`modal_app.py` runs one always-warm container. `min_containers=1` keeps the in-process scheduler and MCP streams alive; `max_containers=1` stops two schedulers from double-firing every cron. Keep both.</Note>
+<Note>
+`modal_app.py` pins `min_containers=1` and `max_containers=1`. The always-warm container keeps the in-process scheduler and MCP streams alive, and the cap stops two schedulers from double-firing every cron. Keep both settings.
+</Note>
 
-<Warning>`down.sh` stops the Modal app, deletes the `agentos-secrets` secret, and deletes the Neon project, including all data.</Warning>
+## Production auth
+
+Token-Based Authorization is on by default. Without a `JWT_VERIFICATION_KEY` or `JWT_JWKS_FILE`, the app refuses to serve traffic in production. The platform's job is to keep your data private, so the safe default is refuse to start.
+
+Token-Based Auth gives you three things:
+
+1. **No public access.** The server rejects requests without a valid token.
+2. **Per-request identity.** Middleware parses the token and extracts the `user_id`, `session_id`, and custom claims. Each request is tied to a user and session, giving you auditability and traceability.
+3. **Granular permissions.** User tokens can run an agent and view their own sessions. Admin tokens read everyone's sessions and test any agent.
+
+To opt out (not recommended), set `authorization=False` in `app/main.py` and redeploy. Use this only inside a private VPC behind another auth layer. Without it, anyone who guesses your modal.run URL can access your platform.
 
 ## Customize
 
@@ -84,8 +95,9 @@ Rebuild locally with `docker compose up -d --build`. For production:
 
 ```bash
 ./scripts/modal/env-sync.sh
-./scripts/modal/redeploy.sh
 ```
+
+`env-sync.sh` rewrites the secret with the new provider key and redeploys. The redeploy rebuilds the image, so the new dependency ships with it.
   </Accordion>
 
   <Accordion title="Add tools">
@@ -145,10 +157,10 @@ source .venv/bin/activate
 | Variable | Required | Default | Description |
 |----------|----------|---------|-------------|
 | `OPENAI_API_KEY` | Yes | - | Models and embeddings. |
-| `RUNTIME_ENV` | No | `prd` | `dev` disables JWT. Compose sets it for local. Never put `dev` in an env file that `env-sync.sh` pushes to Modal, or production serves unauthenticated. |
+| `RUNTIME_ENV` | No | `prd` | `dev` disables JWT. Compose sets it for local. Never put it in an env file that syncs to Modal, or production deploys unauthenticated. |
 | `JWT_VERIFICATION_KEY` | Production | - | Public key from os.agno.com. Quote the value so the multi-line PEM parses as one variable. |
 | `JWT_JWKS_FILE` | Production | - | Path to a JWKS file. Alternative to `JWT_VERIFICATION_KEY`. |
-| `AGENTOS_URL` | No | `http://127.0.0.1:8000` | Scheduler base URL. `up.sh` pins it to your modal.run URL. Scheduled jobs never fire if it stays at the default in production. |
+| `AGENTOS_URL` | No | `http://127.0.0.1:8000` | Scheduler base URL. `up.sh` sets it to your modal.run URL. Scheduled jobs never fire if it stays at the default in production. |
 | `ENABLE_DEPLOY_CHECK` | No | `True` | Daily deployment-check cron. |
 | `ENABLE_SCHEDULED_EVALS` | No | `False` | Daily run-evals cron. Uses model calls. |
 | `EVALS_TAG` | No | `smoke` | Eval tag the run-evals workflow runs. |
@@ -159,8 +171,8 @@ source .venv/bin/activate
 | `SLACK_SIGNING_SECRET` | No | - | Set with the bot token to enable Slack. |
 | `DB_HOST` / `DB_PORT` / `DB_USER` / `DB_PASS` / `DB_DATABASE` | No | matches compose | Postgres connection. `up.sh` fills these from your Neon project. |
 | `DB_DRIVER` | No | `postgresql+psycopg` | SQLAlchemy driver. |
-| `NEON_PROJECT_ID` | No | - | Written by `up.sh`; identifies the Neon project for `down.sh`. `env-sync.sh` never pushes it to the app. |
-| `PGSSLMODE` | No | - | The deploy scripts set it to `require` in the Modal secret. Neon requires TLS. |
+| `NEON_PROJECT_ID` | No | written by `up.sh` | Identifies the Neon project so `down.sh` can delete it. `env-sync.sh` never pushes it to the app. |
+| `PGSSLMODE` | No | - | The deploy scripts set it to `require` in the Modal secret. Neon requires TLS, and libpq honors the variable, so the app needs no change. |
 | `AGNO_DEBUG` | No | `False` | Verbose Agno logs. Compose sets it for dev. |
 | `WAIT_FOR_DB` | No | `False` | If `True`, the entrypoint blocks on the database before starting. Compose sets it. |
 
@@ -180,9 +192,15 @@ Expected. Mint the key at [os.agno.com](https://os.agno.com): connect your OS (*
 JWT auth is on whenever `RUNTIME_ENV` is not `dev`. Set `JWT_VERIFICATION_KEY` or `JWT_JWKS_FILE` and sync. To opt out inside a private VPC behind another auth layer, set `authorization=False` in `app/main.py`.
   </Accordion>
   <Accordion title="Env changes don't take effect">
-Secrets are read at container start, so rewriting the secret alone changes nothing. `./scripts/modal/env-sync.sh` handles both steps: it rewrites `agentos-secrets` and redeploys to roll the container.
+Secrets are read at container start, so rewriting the secret alone changes nothing. `./scripts/modal/env-sync.sh` does both steps: it rewrites `agentos-secrets` and redeploys to roll the container.
   </Accordion>
   <Accordion title="Scheduled jobs never fire">
-`AGENTOS_URL` is still the localhost default. `up.sh` pins it to your modal.run URL automatically; for a custom domain, set it by hand and run `./scripts/modal/env-sync.sh`.
+`AGENTOS_URL` is still the localhost default. `up.sh` sets it to your modal.run URL automatically; for a custom domain or tunnel, set it by hand and run `./scripts/modal/env-sync.sh`.
+  </Accordion>
+  <Accordion title='up.sh says "Reusing database" after a teardown'>
+`down.sh` deletes the Neon project but leaves `NEON_PROJECT_ID` and the `DB_*` values in your env file, so `up.sh` thinks a database still exists. Delete those lines and re-run `./scripts/modal/up.sh` to provision a fresh one.
+  </Accordion>
+  <Accordion title='down.sh reports "Teardown incomplete"'>
+The script only declares success once the app no longer shows as running in `modal app list` and the project is gone from `neonctl projects list`. Check both, then re-run it or finish by hand: `modal app stop agentos` and `neonctl projects delete <project-id>`.
   </Accordion>
 </AccordionGroup>
