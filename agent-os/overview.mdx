@@ -41,7 +41,7 @@ if __name__ == "__main__":
 | `lifespan`                | `Any`                    | `None`  | Lifespan context manager ([docs](/agent-os/lifespan))          |
 | `authorization`           | `bool`                   | `False` | Enable authorization ([docs](/agent-os/security/authorization/overview))                  |
 | `authorization_config`    | `AuthorizationConfig`    | `None`  | JWT verification config                                        |
-| `enable_mcp_server`       | `bool`                   | `False` | Enable MCP server ([docs](/agent-os/mcp/mcp))                  |
+| `mcp_server`              | `bool` or `MCPServerConfig` | `False` | Enable MCP server ([docs](/agent-os/mcp/mcp))               |
 | `cors_allowed_origins`    | `List[str]`              | `None`  | Allowed CORS origins                                           |
 | `auto_provision_dbs`      | `bool`                   | `True`  | Auto-provision databases                                       |
 | `run_hooks_in_background` | `bool`                   | `False` | Run hooks in background                                        |

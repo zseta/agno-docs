@@ -1,91 +1,86 @@
 ---
 title: First Multi-Agent System
-description: "Build and run your first multi-agent system."
+description: "Run a three-agent AgentOS locally with Docker, then deploy it to Railway."
 keywords: [agno, agent, quickstart, tutorial]
 mode: "wide"
 ---
 
 ## What we're building today
 
-A multi-agent system with three agents:
+A multi-agent system built on [`agno-agi/agentos-railway`](https://github.com/agno-agi/agentos-railway), the reference AgentOS Starter. It ships with three agents:
 
 | Agent | What it does |
 |-------|--------------|
-| **Scout** | Your enterprise librarian. Navigates document stores, extracts answers, and learns from usage. |
-| **Knowledge Agent** | Answers questions from a knowledge base (Agentic RAG). |
-| **MCP Agent** | Connects to external services via Model Context Protocol. |
+| **Agent Builder** | Creates agents, teams, and workflows through the [AgentOS Studio](/agent-os/studio/introduction). |
+| **Platform Manager** | Read-only ops: eval history, deployment checks, schedules, codebase questions. |
+| **WebSearch** | Searches the web with Parallel. The simplest agent to copy. |
 
 You'll run it locally with Docker, then deploy to Railway. Prerequisites:
 
 - [Docker Desktop](https://www.docker.com/products/docker-desktop)
 - [OpenAI API key](https://platform.openai.com/api-keys)
 
-## Run Locally
+Prefer a coding agent to drive the setup? [AgentOS on Railway](/deploy/templates/railway/deploy) has a copy-paste prompt for Claude Code, Cursor, or Codex.
+
+## Run locally
 
 <Steps>
   <Step title="Clone the repository">
     ```bash
-    git clone \
-        https://github.com/agno-agi/agentos-railway-template.git \
-        agentos-railway
-    cd agentos-railway
+    git clone https://github.com/agno-agi/agentos-railway.git agentos
+    cd agentos
     ```
   </Step>
   <Step title="Configure environment">
     ```bash
     cp example.env .env
     ```
-    Add your `OPENAI_API_KEY` to `.env`
+    Add your `OPENAI_API_KEY` to `.env`.
   </Step>
   <Step title="Start the application">
     ```bash
     docker compose up -d --build
     ```
+    The first build takes a few minutes. Confirm the API at [localhost:8000/docs](http://localhost:8000/docs).
   </Step>
-  <Step title="Connect to the control plane">
+  <Step title="Verify end to end">
+    ```bash
+    ./scripts/mcp_check.sh
+    ```
+    Prints `MCP OK` with the tool count and a real agent answer through the MCP endpoint.
+  </Step>
+  <Step title="Connect the AgentOS UI">
     1. Open [os.agno.com](https://os.agno.com)
-    2. Click **Add OS** → **Local**
-    3. Enter `http://localhost:8000`
+    2. Click **Connect OS**, enter `http://localhost:8000`, and name it **Local AgentOS**
   </Step>
 </Steps>
 
 Your multi-agent system is now running at `localhost:8000`.
 
-## Try Your Agents
+## Try your agents
 
-### Scout
+### Agent Builder
 
-Scout navigates document stores, reads full documents, and extracts answers. It learns from usage, so repeated questions get faster, more accurate responses.
+Agent Builder creates agents, teams, and workflows from chat using the AgentOS Studio. Try:
 
-The template includes a public demo bucket with sample company documents. Try asking:
+- Build an agent that tracks AI news and writes a daily brief
 
-- What is our PTO policy?
-- Where is the deployment runbook
-- What is the incident response process?
+Once it's built, click **Refresh** in the top right, pick the new agent from the **Agents** dropdown, and ask: "What's new with Anthropic?"
 
-### Knowledge Agent
+### Platform Manager
 
-The Knowledge Agent answers questions using hybrid search over a vector database.
+Platform Manager answers from the codebase and runtime data. Try:
 
-Load the sample documents first:
+- How healthy is the platform?
+- What evals ran recently?
 
-```bash
-docker exec -it agentos-api python -m agents.knowledge_agent
-```
+### WebSearch
 
-Then try:
+WebSearch answers questions with live web results and is the simplest agent to copy when building your own. Try:
 
-- What is Agno?
-- How do I create my first agent?
+- What's the latest news on AI agents?
 
-### MCP Agent
-
-The MCP Agent connects to external tools via Model Context Protocol. Try:
-
-- What tools do you have access to?
-- Search the docs for how to use Learning Machines
-
-## Deploy to Production
+## Deploy to production
 
 <Steps>
   <Step title="Install Railway CLI">
@@ -97,44 +92,58 @@ The MCP Agent connects to external tools via Model Context Protocol. Try:
     npm install -g @railway/cli
     ```
     </CodeGroup>
+    Then run `railway login`.
   </Step>
-  <Step title="Login and deploy">
+  <Step title="Create a production env">
     ```bash
-    railway login
-    ./scripts/railway_up.sh
+    cp .env .env.production
     ```
-    The script provisions PostgreSQL, configures environment variables, and deploys your system.
+    Edit `.env.production` with production values: a different OpenAI key, production-only credentials.
   </Step>
-  <Step title="Connect to the control plane">
-    1. Open [os.agno.com](https://os.agno.com)
-    2. Click **Add OS** → **Live**
-    3. Enter your Railway domain
+  <Step title="Deploy">
+    ```bash
+    ./scripts/railway/up.sh
+    ```
+    The script provisions PostgreSQL and the `agent-os` service on the same private network, then pauses for a JWT verification key.
+  </Step>
+  <Step title="Mint your JWT key">
+    1. Open [os.agno.com](https://os.agno.com), click **Connect OS** → **Live**, enter your Railway domain, and name it **Live AgentOS**
+    2. Go to **Settings** → **OS & Security** and turn on **Token-Based Authorization (JWT)**
+    3. Copy the public key and paste the full PEM into the `up.sh` prompt
+
+    <Note>Live AgentOS connections are a paid feature. Use code `PLATFORM30` for one month off.</Note>
+  </Step>
+  <Step title="Confirm it's live">
+    ```bash
+    railway logs --service agent-os
+    ```
+    Open `https://<your-domain>/docs` to confirm the API is serving.
   </Step>
 </Steps>
 
-Your multi-agent system is now live. Connect to the UI via the railway deployment URL.
+Your multi-agent system is now live.
 
-## Manage Your Deployment
+## Manage your deployment
 
 ```bash
-railway logs --service agent_os      # View logs
-railway open                         # Open dashboard
-railway up --service agent_os -d     # Deploy updates
+railway logs --service agent-os     # Tail logs
+railway open                        # Open the dashboard
+./scripts/railway/redeploy.sh       # Deploy code changes
 ```
 
 ## Next
 
 <CardGroup cols={2}>
-  <Card title="Add Your Own Agent" icon="plus" href="/agents/overview">
-    Extend the system with custom agents
+  <Card title="Build with Coding Agents" icon="wand-magic-sparkles" href="/deploy/templates/improve-agents">
+    Skills for the create → improve → evaluate → maintain lifecycle
   </Card>
   <Card title="Add Tools" icon="wrench" href="/tools/toolkits/overview">
     Connect to Slack, Gmail, Calendar, and 100+ integrations
   </Card>
   <Card title="AgentOS Deep Dive" icon="server" href="/agent-os/introduction">
-    Learn more about the production runtime
+    The production runtime behind your system
   </Card>
-  <Card title="Learning System" icon="brain" href="/learning/overview">
-    Configure how agents learn and remember
+  <Card title="Browse Templates" icon="layer-group" href="/deploy/introduction">
+    Starters for other clouds, Apps with agents built in
   </Card>
 </CardGroup>

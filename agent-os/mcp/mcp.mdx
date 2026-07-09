@@ -6,10 +6,10 @@ keywords: [agentos, mcp, mcp server, expose as mcp]
 
 Your AgentOS will by default be exposed as an API. But you can also expose it as an **MCP server**.
 
-This is done by setting `enable_mcp_server=True` when creating your AgentOS instance:
+This is done by setting `mcp_server=True` when creating your AgentOS instance:
 
 ```python
-agent_os = AgentOS(enable_mcp_server=True)
+agent_os = AgentOS(mcp_server=True)
 ```
 
 ## Why use MCP?
@@ -44,7 +44,7 @@ web_research_agent = Agent(
 agent_os = AgentOS(
     description="Example app with MCP enabled",
     agents=[web_research_agent],
-    enable_mcp_server=True,  # This enables a LLM-friendly MCP server at /mcp
+    mcp_server=True,  # This enables a LLM-friendly MCP server at /mcp
 )
 
 app = agent_os.get_app()
