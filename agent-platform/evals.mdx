@@ -5,7 +5,7 @@ description: "Lock in agent behavior with regression tests."
 
 Next, let's lock in our agent behavior with evals.
 
-Evals are regression tests for your agents. It's the same prompts and the same agents, run on a schedule. You get notified when behavior drifts.
+Evals are regression tests for your agents. It's the same prompts and the same agents, run on a schedule, so you can see when behavior drifts.
 
 When we run `/improve-agent`, we're looking for out-of-distribution improvements. Evals make sure in-distribution cases continue to pass. The two work together.
 
@@ -23,10 +23,13 @@ CASES: tuple[Case, ...] = (
     Case(
         name="web_search_recent_anthropic_research",
         agent=web_search,
-        input="What did Anthropic publish about agents recently?",
+        input="What did Anthropic publish about agent research recently?",
+        tags=("live",),
+        timeout_seconds=120,
         criteria=(
             "Answers the question by citing at least one real Anthropic URL "
-            "(anthropic.com domain). The response is grounded in fetched content."
+            "(anthropic.com domain). The response is grounded in fetched content "
+            "rather than refusing to answer."
         ),
         expected_tool_calls=(_WEB_SEARCH_TOOL,),
     ),
@@ -35,6 +38,8 @@ CASES: tuple[Case, ...] = (
 ```
 
 A case can use either check or both. If both are set, the agent runs once and feeds the same response into both.
+
+Add Tags to group your Cases into Suites. The template comes with three suites: `smoke`, `release`, and `live`. This case is tagged `live` because its answer depends on the open web.
 
 ## Run the suite
 
@@ -58,6 +63,7 @@ A case can use either check or both. If both are set, the agent runs once and fe
   <Step title="Run the eval suite">
 
     ```bash
+    python -m evals --tag smoke    # fast suite
     python -m evals                # full suite
     ```
 
@@ -65,7 +71,7 @@ A case can use either check or both. If both are set, the agent runs once and fe
 
     ```bash
     python -m evals -v             # stream the agent run with full panels
-    python -m evals --case <name>  # single case while iterating
+    python -m evals --name <case>  # single case while iterating
     ```
 
   </Step>
@@ -84,7 +90,7 @@ Open Claude Code and run:
 /eval-and-improve
 ```
 
-Claude runs the full suite, triages every failure (bad criteria, real regression, flaky LLM judge), and proposes in-scope fixes. It edits the agent or the case, re-runs, and shows you the diff.
+Claude runs the suite, triages every failure (bad criteria, real regression, flaky LLM judge), and proposes in-scope fixes. It edits the agent or the case and re-runs until the suite is green.
 
 ## When to run evals
 
@@ -92,10 +98,10 @@ Claude runs the full suite, triages every failure (bad criteria, real regression
 | ------------------------------------- | --------------------- |
 | Before deploying a change to an agent | Every time            |
 | As part of CI                         | Every PR              |
-| Against production                    | On a weekly cron      |
+| Against production                    | On a daily cron       |
 | After bumping a model version         | Every time            |
 
-The weekly production cron is the most valuable one. Wire it into your platform's scheduler. See [scheduling](/features/scheduling) for the cron API.
+The production cron is the most valuable one, and the template ships it as the `run_evals` workflow. Set `ENABLE_SCHEDULED_EVALS=True` to run the `smoke`-tagged cases daily. See [scheduling](/features/scheduling) for the cron API.
 
 ## What good cases look like
 
