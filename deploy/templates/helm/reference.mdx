@@ -160,7 +160,7 @@ source .venv/bin/activate
 | `RUNTIME_ENV` | No | `prd` | `dev` disables JWT. Compose sets it for local. Never put it in an env file that syncs to a real cluster, or production deploys unauthenticated. |
 | `JWT_VERIFICATION_KEY` | Production | - | Public key from os.agno.com. Quote the value so the multi-line PEM parses as one variable. |
 | `JWT_JWKS_FILE` | Production | - | Path to a JWKS file inside the container. Alternative to `JWT_VERIFICATION_KEY`. `up.sh` and `env-sync.sh` deliver it as the chart value `jwtJwksFile`. |
-| `MCP_CONNECT_SECRET` | No | - | OAuth consent secret for connecting claude.ai and ChatGPT to `/mcp`. `up.sh` generates it into `.env.production` when the deploy has a public URL (`INGRESS_HOST` or `AGENTOS_URL`); set it by hand otherwise. |
+| `MCP_CONNECT_SECRET` | No | - | OAuth consent secret (16+ chars) for connecting claude.ai and ChatGPT to `/mcp`. `up.sh` generates it into `.env.production` when the deploy has a public URL (`INGRESS_HOST` or `AGENTOS_URL`); set it by hand otherwise. |
 | `AGENTOS_MCP_SIGNING_KEY` | No | generated | Optional high-entropy signing-key material (32+ chars) for OAuth tokens. Unset, a strong key is generated and persisted in the database. Rotating it invalidates outstanding tokens. |
 | `AGENTOS_URL` | No | `http://127.0.0.1:8000` | Scheduler base URL. The chart resolves it automatically: explicit value, then ingress URL, then in-cluster service DNS. Set it by hand only for a custom domain or tunnel. Also the public origin OAuth metadata derives from when `MCP_CONNECT_SECRET` is set. |
 | `ENABLE_DEPLOY_CHECK` | No | `True` | Daily deployment-check cron. |
@@ -193,7 +193,7 @@ Install [kubectl](https://kubernetes.io/docs/tasks/tools/) and [Helm](https://he
 `up.sh` deploys into your current kubectl context and verifies it can reach the cluster first. Point kubectl at the target cluster and confirm `kubectl get namespace` works, then rerun.
   </Accordion>
   <Accordion title="up.sh pauses asking for a JWT key">
-Expected. Mint the key at [os.agno.com](https://os.agno.com): connect your OS (**Connect OS** → **Live**, enter your AgentOS URL), then turn on **Token-Based Authorization (JWT)** under **Settings** → **OS & Security** and paste the full PEM. To do it later, skip the prompt, add `JWT_VERIFICATION_KEY` to `.env.production`, and run `./scripts/k8s/env-sync.sh`.
+Expected. Mint the key at [os.agno.com](https://os.agno.com): connect your OS (**Connect OS** → **Live**, enter your AgentOS URL), then turn on **Token-Based Authorization (JWT)** under **Settings** → **OS & Security** and paste the full PEM. To do it later, skip the prompt, add `JWT_VERIFICATION_KEY` or `JWT_JWKS_FILE` to `.env.production`, and run `./scripts/k8s/env-sync.sh`.
   </Accordion>
   <Accordion title="App refuses to serve in production">
 JWT auth is on whenever `RUNTIME_ENV` is not `dev`. Set `JWT_VERIFICATION_KEY` or `JWT_JWKS_FILE` and sync. To opt out inside a private VPC behind another auth layer, set `authorization=False` in `app/main.py` and roll out your own image build.
