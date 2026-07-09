@@ -25,7 +25,7 @@ sidebarTitle: AgentOS
 | `settings` | `Optional[AgnoAPISettings]` | `None` | Settings for the AgentOS API |
 | `base_app` | `Optional[FastAPI]` | `None` | Custom FastAPI APP to use for the AgentOS |
 | `lifespan` | `Optional[Any]` | `None` | Lifespan context manager for the FastAPI app |
-| `enable_mcp_server` | `bool` | `False` | Whether to enable MCP (Model Context Protocol) |
+| `mcp_server` | `Union[bool, MCPServerConfig]` | `False` | Whether to serve the OS over MCP (Model Context Protocol) at `/mcp` |
 | `on_route_conflict` | `Literal["preserve_agentos", "preserve_base_app", "error"]` | `"preserve_agentos"` | What to do when a route conflict is detected in case a custom base_app is provided. |
 | `tracing` | `bool` | `False` | Enable OpenTelemetry tracing for all agents and teams |
 | `db` | `Optional[Union[BaseDb, AsyncBaseDb]]` | `None` | Dedicated database for storing traces |
