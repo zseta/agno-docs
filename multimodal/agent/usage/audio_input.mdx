@@ -11,12 +11,10 @@ Agno supports audio as input to agents and teams.  Take a look at the [compatibi
 Let's create an agent that can understand audio input.
 
 ```python audio_agent.py
-import base64
-
 import requests
 from agno.agent import Agent, RunOutput  # noqa
 from agno.media import Audio
-from agno.models.openai import OpenAIResponses
+from agno.models.openai import OpenAIChat
 
 # Fetch the audio file and convert it to a base64 encoded string
 url = "https://openaiassets.blob.core.windows.net/$web/API/docs/audio/alloy.wav"
@@ -25,7 +23,7 @@ response.raise_for_status()
 wav_data = response.content
 
 agent = Agent(
-    model=OpenAIResponses(id="gpt-5.2-audio-preview", modalities=["text"]),
+    model=OpenAIChat(id="gpt-audio", modalities=["text"]),
     markdown=True,
 )
 agent.print_response(

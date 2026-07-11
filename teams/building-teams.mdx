@@ -58,6 +58,7 @@ team = Team(
 Tasks mode runs an iterative task loop. Use `max_iterations` to cap how many cycles the leader can run.
 
 ```python
+from agno.team.mode import TeamMode
 from agno.models.openai import OpenAIResponses
 
 team = Team(
@@ -143,7 +144,7 @@ agent_with_model = Agent(
     role="Research with Claude"
 )
 
-# This agent inherits gpt-4o from the team
+# This agent inherits gpt-5.4-mini from the team
 agent_without_model = Agent(
     name="Inherited Agent",
     role="Research with inherited model"

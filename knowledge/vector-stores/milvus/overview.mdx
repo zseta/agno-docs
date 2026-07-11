@@ -64,7 +64,7 @@ if __name__ == "__main__":
     # Initialize Milvus with local file
     vector_db = Milvus(
         collection="recipes",
-        uri="tmp/milvus.db",  # For local file-based storage
+        uri="/tmp/milvus.db",  # For local file-based storage
     )
 
     # Create knowledge base
@@ -87,7 +87,7 @@ if __name__ == "__main__":
     ```
 
     <Tip className="mt-4">
-      Use <code>aload()</code> and <code>aprint_response()</code> methods with <code>asyncio.run()</code> for non-blocking operations in high-throughput applications.
+      Use <code>ainsert()</code> and <code>aprint_response()</code> methods with <code>asyncio.run()</code> for non-blocking operations in high-throughput applications.
     </Tip>
   </div>
 </Card>
