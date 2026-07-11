@@ -4907,16 +4907,6 @@
             ]
           },
           {
-            "group": "Agno CLI",
-            "pages": [
-              "agent-os/cli/overview",
-              "agent-os/cli/create",
-              "agent-os/cli/connect",
-              "agent-os/cli/operate",
-              "agent-os/cli/tokens"
-            ]
-          },
-          {
             "group": "Starters",
             "pages": [
               {
@@ -4991,6 +4981,16 @@
               "deploy/templates/coda/overview",
               "deploy/templates/scout/overview",
               "deploy/templates/context/overview"
+            ]
+          },
+          {
+            "group": "Agno CLI",
+            "pages": [
+              "cli/overview",
+              "cli/create",
+              "cli/connect",
+              "cli/operate",
+              "cli/tokens"
             ]
           }
         ]
