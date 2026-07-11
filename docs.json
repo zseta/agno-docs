@@ -137,19 +137,7 @@
                   "use-cases/product-agents/serve-as-an-api",
                   "use-cases/product-agents/sessions-and-memory",
                   "use-cases/product-agents/connecting-your-data",
-                  "use-cases/product-agents/interfaces",
-                  {
-                    "group": "Tutorial: Scout",
-                    "pages": [
-                      "tutorials/scout/overview",
-                      "tutorials/scout/setup",
-                      "tutorials/scout/knowledge-and-crm",
-                      "tutorials/scout/connect-slack",
-                      "tutorials/scout/connect-google-drive",
-                      "tutorials/scout/connect-mcp-servers",
-                      "tutorials/scout/deploy-to-railway"
-                    ]
-                  }
+                  "use-cases/product-agents/interfaces"
                 ]
               },
               {
@@ -161,17 +149,7 @@
                   "use-cases/data-agents/self-correcting-agents",
                   "use-cases/data-agents/safe-data-access",
                   "use-cases/data-agents/materialization",
-                  "use-cases/data-agents/serve-and-embed",
-                  {
-                    "group": "Tutorial: Dash",
-                    "pages": [
-                      "tutorials/dash/overview",
-                      "tutorials/dash/setup",
-                      "tutorials/dash/connect-slack",
-                      "tutorials/dash/deploy-to-railway",
-                      "tutorials/dash/next-steps"
-                    ]
-                  }
+                  "use-cases/data-agents/serve-and-embed"
                 ]
               },
               {
@@ -714,6 +692,7 @@
                     "pages": [
                       "knowledge/concepts/vector-db",
                       "knowledge/concepts/contents-db",
+                      "knowledge/concepts/content-types",
                       {
                         "group": "Search & Retrieval",
                         "pages": [
@@ -729,6 +708,7 @@
                       "knowledge/concepts/chunking/overview",
                       "knowledge/concepts/embedder/overview",
                       "knowledge/concepts/filters/overview",
+                      "knowledge/concepts/filters/advanced-filtering",
                       "knowledge/concepts/isolate-vector-search",
                       "knowledge/concepts/cloud-storage"
                     ]
@@ -790,7 +770,18 @@
                           "knowledge/concepts/embedder/gemini/gemini-embedder",
                           "knowledge/concepts/embedder/ollama/ollama-embedder",
                           "knowledge/concepts/embedder/mistral/mistral-embedder",
-                          "knowledge/concepts/embedder/voyageai/voyageai-embedder"
+                          "knowledge/concepts/embedder/voyageai/voyageai-embedder",
+                          "knowledge/concepts/embedder/aws-bedrock/aws-bedrock-embedder",
+                          "knowledge/concepts/embedder/azure-openai/azure-embedder",
+                          "knowledge/concepts/embedder/fireworks/fireworks-embedder",
+                          "knowledge/concepts/embedder/huggingface/huggingface-embedder",
+                          "knowledge/concepts/embedder/jina/jina-embedder",
+                          "knowledge/concepts/embedder/langdb/langdb-embedder",
+                          "knowledge/concepts/embedder/nebius/nebius-embedder",
+                          "knowledge/concepts/embedder/qdrant-fastembed/qdrant-fastembed",
+                          "knowledge/concepts/embedder/sentencetransformers/sentence-transformer-embedder",
+                          "knowledge/concepts/embedder/together/together-embedder",
+                          "knowledge/concepts/embedder/vllm/vllm-embedder"
                         ]
                       }
                     ]
@@ -1601,6 +1592,7 @@
                                     "pages": [
                                       "models/providers/cloud/azure-ai-foundry/usage/basic",
                                       "models/providers/cloud/azure-ai-foundry/usage/basic-stream",
+                                      "models/providers/cloud/azure-ai-foundry/usage/image-agent",
                                       "models/providers/cloud/azure-ai-foundry/usage/knowledge",
                                       "models/providers/cloud/azure-ai-foundry/usage/storage",
                                       "models/providers/cloud/azure-ai-foundry/usage/structured-output",
@@ -1756,6 +1748,12 @@
                             "group": "CometAPI",
                             "pages": [
                               "models/providers/gateways/cometapi/overview",
+                              "models/providers/gateways/cometapi/usage/basic",
+                              "models/providers/gateways/cometapi/usage/basic-stream",
+                              "models/providers/gateways/cometapi/usage/tool-use",
+                              "models/providers/gateways/cometapi/usage/async-basic",
+                              "models/providers/gateways/cometapi/usage/async-basic-stream",
+                              "models/providers/gateways/cometapi/usage/async-tool-use",
                               {
                                 "group": "Usage",
                                 "pages": []
@@ -2483,7 +2481,8 @@
                     "group": "For Agents",
                     "pages": [
                       "history/agent/overview",
-                      "history/agent/chat-history"
+                      "history/agent/chat-history",
+                      "history/agent/persistent-session-history"
                     ]
                   },
                   {
@@ -2741,6 +2740,11 @@
                           "multimodal/agent/usage/audio_output",
                           "multimodal/agent/usage/audio-input-output",
                           "multimodal/agent/usage/audio-to-text",
+                          "multimodal/agent/usage/agent-same-run-image-analysis",
+                          "multimodal/agent/usage/blog-to-podcast",
+                          "multimodal/agent/usage/file_generation",
+                          "multimodal/agent/usage/file_input",
+                          "multimodal/agent/usage/speech-to-text",
                           "multimodal/agent/usage/audio_generation",
                           "multimodal/agent/usage/generate-music-agent",
                           "multimodal/agent/usage/audio-multi-turn",
@@ -2852,6 +2856,7 @@
                           "hitl/usage/confirmation-required-async",
                           "hitl/usage/confirmation-required-mixed-tools",
                           "hitl/usage/confirmation-required-multiple-tools",
+                          "hitl/usage/confirmation-required-stream",
                           "hitl/usage/confirmation-required-stream-async",
                           "hitl/usage/confirmation-required-toolkit",
                           "hitl/usage/confirmation-required-with-history",
@@ -3648,6 +3653,12 @@
                         "group": "CometAPI",
                         "pages": [
                           "models/providers/gateways/cometapi/overview",
+                          "models/providers/gateways/cometapi/usage/basic",
+                          "models/providers/gateways/cometapi/usage/basic-stream",
+                          "models/providers/gateways/cometapi/usage/tool-use",
+                          "models/providers/gateways/cometapi/usage/async-basic",
+                          "models/providers/gateways/cometapi/usage/async-basic-stream",
+                          "models/providers/gateways/cometapi/usage/async-tool-use",
                           {
                             "group": "Usage",
                             "pages": []
@@ -4492,6 +4503,7 @@
                   "observability/langtrace",
                   "observability/langwatch",
                   "observability/latitude",
+                  "observability/logfire",
                   "observability/maxim",
                   "observability/mlflow",
                   "observability/openlit",
@@ -4731,6 +4743,12 @@
                       "agent-os/interfaces/whatsapp/introduction",
                       "agent-os/interfaces/whatsapp/setup",
                       "agent-os/interfaces/whatsapp/reference"
+                    ]
+                  },
+                  {
+                    "group": "Discord",
+                    "pages": [
+                      "agent-os/interfaces/discord/introduction"
                     ]
                   },
                   "agent-os/interfaces/a2a/introduction",
@@ -4973,18 +4991,6 @@
               "deploy/templates/coda/overview",
               "deploy/templates/scout/overview",
               "deploy/templates/context/overview"
-            ]
-          },
-          {
-            "group": "Interfaces",
-            "pages": [
-              "deploy/interfaces/overview",
-              "deploy/interfaces/slack/overview",
-              "deploy/interfaces/telegram/overview",
-              "deploy/interfaces/whatsapp/overview",
-              "deploy/interfaces/discord/overview",
-              "deploy/interfaces/ag-ui/overview",
-              "deploy/interfaces/a2a/overview"
             ]
           }
         ]
@@ -8315,6 +8321,12 @@
                 ]
               },
               {
+                "group": "Reasoning",
+                "pages": [
+                  "reference/reasoning/reasoning"
+                ]
+              },
+              {
                 "group": "Sessions",
                 "pages": [
                   "reference/session/summary_manager",
@@ -8364,7 +8376,8 @@
                 "group": "Hooks",
                 "pages": [
                   "reference/hooks/pre-hooks",
-                  "reference/hooks/post-hooks"
+                  "reference/hooks/post-hooks",
+                  "reference/hooks/hook-decorator"
                 ]
               },
               {
@@ -8832,7 +8845,7 @@
     },
     {
       "source": "/deploy/interfaces",
-      "destination": "/deploy/interfaces/overview"
+      "destination": "/agent-os/interfaces/overview"
     },
     {
       "source": "/runtime/build-a-product",
@@ -8856,11 +8869,11 @@
     },
     {
       "source": "/runtime/context",
-      "destination": "/features/context"
+      "destination": "/context-providers/overview"
     },
     {
       "source": "/runtime/human-approval",
-      "destination": "/features/human-approval"
+      "destination": "/hitl/overview"
     },
     {
       "source": "/runtime/security-and-auth",
@@ -8884,7 +8897,7 @@
     },
     {
       "source": "/runtime/deploy",
-      "destination": "/features/deploy"
+      "destination": "/deploy/introduction"
     },
     {
       "source": "/tutorials/starter/overview",
@@ -9008,15 +9021,15 @@
     },
     {
       "source": "/embedder/fireworks",
-      "destination": "/knowledge/concepts/embedder/fireworks/overview"
+      "destination": "/knowledge/concepts/embedder/fireworks/fireworks-embedder"
     },
     {
       "source": "/embedder/gemini",
-      "destination": "/knowledge/concepts/embedder/gemini/overview"
+      "destination": "/knowledge/concepts/embedder/gemini/gemini-embedder"
     },
     {
       "source": "/embedder/mistral",
-      "destination": "/knowledge/concepts/embedder/mistral/overview"
+      "destination": "/knowledge/concepts/embedder/mistral/mistral-embedder"
     },
     {
       "source": "/embedder/nebius",
@@ -9024,7 +9037,7 @@
     },
     {
       "source": "/embedder/openai",
-      "destination": "/knowledge/concepts/embedder/openai/overview"
+      "destination": "/knowledge/concepts/embedder/openai/openai-embedder"
     },
     {
       "source": "/embedder/qdrant-fastembed",
@@ -9376,15 +9389,15 @@
     },
     {
       "source": "/basics/database/async-postgres",
-      "destination": "/database/async-postgres"
+      "destination": "/database/providers/async-postgres/overview"
     },
     {
       "source": "/basics/database/supabase",
-      "destination": "/database/supabase"
+      "destination": "/database/providers/supabase/overview"
     },
     {
       "source": "/basics/database/postgres",
-      "destination": "/database/postgres"
+      "destination": "/database/providers/postgres/overview"
     },
     {
       "source": "/basics/database/overview",
@@ -9392,67 +9405,67 @@
     },
     {
       "source": "/basics/database/surreabdb",
-      "destination": "/database/surreabdb"
+      "destination": "/database/providers/surrealdb/overview"
     },
     {
       "source": "/basics/database/gcs",
-      "destination": "/database/gcs"
+      "destination": "/database/providers/gcs/overview"
     },
     {
       "source": "/basics/database/firestore",
-      "destination": "/database/firestore"
+      "destination": "/database/providers/firestore/overview"
     },
     {
       "source": "/basics/database/json",
-      "destination": "/database/json"
+      "destination": "/database/providers/json/overview"
     },
     {
       "source": "/basics/database/dynamodb",
-      "destination": "/database/dynamodb"
+      "destination": "/database/providers/dynamodb/overview"
     },
     {
       "source": "/basics/database/in-memory",
-      "destination": "/database/in-memory"
+      "destination": "/database/providers/in-memory/overview"
     },
     {
       "source": "/basics/database/singlestore",
-      "destination": "/database/singlestore"
+      "destination": "/database/providers/singlestore/overview"
     },
     {
       "source": "/basics/database/async-sqlite",
-      "destination": "/database/async-sqlite"
+      "destination": "/database/providers/async-sqlite/overview"
     },
     {
       "source": "/basics/database/neon",
-      "destination": "/database/neon"
+      "destination": "/database/providers/neon/overview"
     },
     {
       "source": "/basics/database/mongodb",
-      "destination": "/database/mongodb"
+      "destination": "/database/providers/mongo/overview"
     },
     {
       "source": "/basics/database/sqlite",
-      "destination": "/database/sqlite"
+      "destination": "/database/providers/sqlite/overview"
     },
     {
       "source": "/basics/database/async-mongo",
-      "destination": "/database/async-mongo"
+      "destination": "/database/providers/async-mongo/overview"
     },
     {
       "source": "/basics/database/redis",
-      "destination": "/database/redis"
+      "destination": "/database/providers/redis/overview"
     },
     {
       "source": "/basics/database/mysql",
-      "destination": "/database/mysql"
+      "destination": "/database/providers/mysql/overview"
     },
     {
       "source": "/basics/knowledge/terminology",
-      "destination": "/knowledge/terminology"
+      "destination": "/knowledge/overview"
     },
     {
       "source": "/basics/knowledge/agents/rag-with-lance-db-and-sqlite",
-      "destination": "/knowledge/agents/rag-with-lance-db-and-sqlite"
+      "destination": "/knowledge/agents/traditional-rag-lancedb"
     },
     {
       "source": "/basics/knowledge/agents/overview",
@@ -9472,11 +9485,11 @@
     },
     {
       "source": "/basics/knowledge/agents/agentic-rag-with-reranking",
-      "destination": "/knowledge/agents/agentic-rag-with-reranking"
+      "destination": "/examples/agents/knowledge/agentic-rag-with-reranking"
     },
     {
       "source": "/basics/knowledge/agents/rag-sentence-transformer",
-      "destination": "/knowledge/agents/rag-sentence-transformer"
+      "destination": "/examples/knowledge/building-blocks/reranking"
     },
     {
       "source": "/basics/knowledge/agents/agentic-rag-pgvector",
@@ -9484,7 +9497,7 @@
     },
     {
       "source": "/basics/knowledge/knowledge-bases",
-      "destination": "/knowledge/knowledge-bases"
+      "destination": "/knowledge/overview"
     },
     {
       "source": "/basics/knowledge/getting-started",
@@ -9496,19 +9509,19 @@
     },
     {
       "source": "/basics/knowledge/concepts/filters/filtering-chroma-db",
-      "destination": "/knowledge/concepts/filters/filtering-chroma-db"
+      "destination": "/examples/knowledge/building-blocks/filtering"
     },
     {
       "source": "/basics/knowledge/concepts/filters/filter-expressions",
-      "destination": "/knowledge/concepts/filters/filter-expressions"
+      "destination": "/knowledge/concepts/filters/advanced-filtering"
     },
     {
       "source": "/basics/knowledge/concepts/filters/manual-filters",
-      "destination": "/knowledge/concepts/filters/manual-filters"
+      "destination": "/knowledge/concepts/filters/overview"
     },
     {
       "source": "/basics/knowledge/concepts/filters/agentic-filters",
-      "destination": "/knowledge/concepts/filters/agentic-filters"
+      "destination": "/knowledge/concepts/filters/overview"
     },
     {
       "source": "/basics/knowledge/concepts/filters/overview",
@@ -9516,35 +9529,35 @@
     },
     {
       "source": "/basics/knowledge/concepts/filters/filtering-qdrant-db",
-      "destination": "/knowledge/concepts/filters/filtering-qdrant-db"
+      "destination": "/examples/knowledge/building-blocks/filtering"
     },
     {
       "source": "/basics/knowledge/concepts/filters/agentic-filtering",
-      "destination": "/knowledge/concepts/filters/agentic-filtering"
+      "destination": "/examples/knowledge/building-blocks/agentic-filtering"
     },
     {
       "source": "/basics/knowledge/concepts/filters/filtering-with-invalid-keys",
-      "destination": "/knowledge/concepts/filters/filtering-with-invalid-keys"
+      "destination": "/examples/knowledge/building-blocks/filtering"
     },
     {
       "source": "/basics/knowledge/concepts/filters/filtering-pinecone",
-      "destination": "/knowledge/concepts/filters/filtering-pinecone"
+      "destination": "/examples/knowledge/building-blocks/filtering"
     },
     {
       "source": "/basics/knowledge/concepts/filters/filtering-lance-db",
-      "destination": "/knowledge/concepts/filters/filtering-lance-db"
+      "destination": "/examples/knowledge/building-blocks/filtering"
     },
     {
       "source": "/basics/knowledge/concepts/filters/filtering-weaviate",
-      "destination": "/knowledge/concepts/filters/filtering-weaviate"
+      "destination": "/examples/knowledge/building-blocks/filtering"
     },
     {
       "source": "/basics/knowledge/concepts/filters/filtering",
-      "destination": "/knowledge/concepts/filters/filtering"
+      "destination": "/examples/knowledge/building-blocks/filtering"
     },
     {
       "source": "/basics/knowledge/concepts/filters/filtering-mongo-db",
-      "destination": "/knowledge/concepts/filters/filtering-mongo-db"
+      "destination": "/examples/knowledge/building-blocks/filtering"
     },
     {
       "source": "/basics/knowledge/concepts/filters/advanced-filtering",
@@ -9552,27 +9565,27 @@
     },
     {
       "source": "/basics/knowledge/concepts/filters/filtering-on-load",
-      "destination": "/knowledge/concepts/filters/filtering-on-load"
+      "destination": "/examples/knowledge/building-blocks/filtering"
     },
     {
       "source": "/basics/knowledge/concepts/filters/filtering-milvus-db",
-      "destination": "/knowledge/concepts/filters/filtering-milvus-db"
+      "destination": "/examples/knowledge/building-blocks/filtering"
     },
     {
       "source": "/basics/knowledge/concepts/filters/async-filtering",
-      "destination": "/knowledge/concepts/filters/async-filtering"
+      "destination": "/examples/knowledge/building-blocks/filtering"
     },
     {
       "source": "/basics/knowledge/concepts/filters/filtering-pgvector",
-      "destination": "/knowledge/concepts/filters/filtering-pgvector"
+      "destination": "/examples/knowledge/building-blocks/filtering"
     },
     {
       "source": "/basics/knowledge/concepts/filters/filtering-surreal-db",
-      "destination": "/knowledge/concepts/filters/filtering-surreal-db"
+      "destination": "/examples/knowledge/building-blocks/filtering"
     },
     {
       "source": "/basics/knowledge/concepts/overview",
-      "destination": "/knowledge/concepts/overview"
+      "destination": "/knowledge/overview"
     },
     {
       "source": "/basics/knowledge/concepts/vector-db",
@@ -9580,7 +9593,7 @@
     },
     {
       "source": "/basics/knowledge/concepts/search-and-retrieval/rag-with-lance-db-and-sqlite",
-      "destination": "/knowledge/concepts/search-and-retrieval/rag-with-lance-db-and-sqlite"
+      "destination": "/knowledge/agents/traditional-rag-lancedb"
     },
     {
       "source": "/basics/knowledge/concepts/search-and-retrieval/vector-search",
@@ -9588,11 +9601,11 @@
     },
     {
       "source": "/basics/knowledge/concepts/search-and-retrieval/agentic-rag-with-reasoning",
-      "destination": "/knowledge/concepts/search-and-retrieval/agentic-rag-with-reasoning"
+      "destination": "/examples/agents/knowledge/agentic-rag-with-reasoning"
     },
     {
       "source": "/basics/knowledge/concepts/search-and-retrieval/async-custom-retriever",
-      "destination": "/knowledge/concepts/search-and-retrieval/async-custom-retriever"
+      "destination": "/knowledge/concepts/search-and-retrieval/custom-retriever"
     },
     {
       "source": "/basics/knowledge/concepts/search-and-retrieval/overview",
@@ -9600,11 +9613,11 @@
     },
     {
       "source": "/basics/knowledge/concepts/search-and-retrieval/agentic-rag-infinity-reranker",
-      "destination": "/knowledge/concepts/search-and-retrieval/agentic-rag-infinity-reranker"
+      "destination": "/examples/knowledge/integrations/rag/agentic-rag-infinity-reranker"
     },
     {
       "source": "/basics/knowledge/concepts/search-and-retrieval/traditional-rag-lancedb",
-      "destination": "/knowledge/concepts/search-and-retrieval/traditional-rag-lancedb"
+      "destination": "/knowledge/agents/traditional-rag-lancedb"
     },
     {
       "source": "/basics/knowledge/concepts/search-and-retrieval/custom-retriever",
@@ -9612,7 +9625,7 @@
     },
     {
       "source": "/basics/knowledge/concepts/search-and-retrieval/agentic-rag-with-lightrag",
-      "destination": "/knowledge/concepts/search-and-retrieval/agentic-rag-with-lightrag"
+      "destination": "/examples/knowledge/integrations/rag/agentic-rag-with-lightrag"
     },
     {
       "source": "/basics/knowledge/concepts/search-and-retrieval/keyword-search",
@@ -9620,15 +9633,15 @@
     },
     {
       "source": "/basics/knowledge/concepts/search-and-retrieval/traditional-rag-pgvector",
-      "destination": "/knowledge/concepts/search-and-retrieval/traditional-rag-pgvector"
+      "destination": "/knowledge/agents/traditional-rag-pgvector"
     },
     {
       "source": "/basics/knowledge/concepts/search-and-retrieval/agentic-rag-lancedb",
-      "destination": "/knowledge/concepts/search-and-retrieval/agentic-rag-lancedb"
+      "destination": "/knowledge/agents/agentic-rag-lancedb"
     },
     {
       "source": "/basics/knowledge/concepts/search-and-retrieval/agentic-rag-with-reranking",
-      "destination": "/knowledge/concepts/search-and-retrieval/agentic-rag-with-reranking"
+      "destination": "/examples/agents/knowledge/agentic-rag-with-reranking"
     },
     {
       "source": "/basics/knowledge/concepts/search-and-retrieval/agentic-rag",
@@ -9640,15 +9653,15 @@
     },
     {
       "source": "/basics/knowledge/concepts/search-and-retrieval/rag-sentence-transformer",
-      "destination": "/knowledge/concepts/search-and-retrieval/rag-sentence-transformer"
+      "destination": "/examples/knowledge/building-blocks/reranking"
     },
     {
       "source": "/basics/knowledge/concepts/search-and-retrieval/agentic-rag-pgvector",
-      "destination": "/knowledge/concepts/search-and-retrieval/agentic-rag-pgvector"
+      "destination": "/knowledge/agents/agentic-rag-pgvector"
     },
     {
       "source": "/basics/knowledge/concepts/embedder/langdb/overview",
-      "destination": "/knowledge/concepts/embedder/langdb/overview"
+      "destination": "/knowledge/concepts/embedder/langdb/langdb-embedder"
     },
     {
       "source": "/basics/knowledge/concepts/embedder/langdb/langdb-embedder",
@@ -9660,11 +9673,11 @@
     },
     {
       "source": "/basics/knowledge/concepts/embedder/voyageai/overview",
-      "destination": "/knowledge/concepts/embedder/voyageai/overview"
+      "destination": "/knowledge/concepts/embedder/voyageai/voyageai-embedder"
     },
     {
       "source": "/basics/knowledge/concepts/embedder/cohere/overview",
-      "destination": "/knowledge/concepts/embedder/cohere/overview"
+      "destination": "/knowledge/concepts/embedder/cohere/cohere-embedder"
     },
     {
       "source": "/basics/knowledge/concepts/embedder/cohere/cohere-embedder",
@@ -9672,7 +9685,7 @@
     },
     {
       "source": "/basics/knowledge/concepts/embedder/together/overview",
-      "destination": "/knowledge/concepts/embedder/together/overview"
+      "destination": "/knowledge/concepts/embedder/together/together-embedder"
     },
     {
       "source": "/basics/knowledge/concepts/embedder/together/together-embedder",
@@ -9684,7 +9697,7 @@
     },
     {
       "source": "/basics/knowledge/concepts/embedder/gemini/overview",
-      "destination": "/knowledge/concepts/embedder/gemini/overview"
+      "destination": "/knowledge/concepts/embedder/gemini/gemini-embedder"
     },
     {
       "source": "/basics/knowledge/concepts/embedder/gemini/gemini-embedder",
@@ -9692,7 +9705,7 @@
     },
     {
       "source": "/basics/knowledge/concepts/embedder/fireworks/overview",
-      "destination": "/knowledge/concepts/embedder/fireworks/overview"
+      "destination": "/knowledge/concepts/embedder/fireworks/fireworks-embedder"
     },
     {
       "source": "/basics/knowledge/concepts/embedder/fireworks/fireworks-embedder",
@@ -9700,7 +9713,7 @@
     },
     {
       "source": "/basics/knowledge/concepts/embedder/vllm/overview",
-      "destination": "/knowledge/concepts/embedder/vllm/overview"
+      "destination": "/knowledge/concepts/embedder/vllm/vllm-embedder"
     },
     {
       "source": "/basics/knowledge/concepts/embedder/vllm/vllm-embedder",
@@ -9712,11 +9725,11 @@
     },
     {
       "source": "/basics/knowledge/concepts/embedder/azure-openai/overview",
-      "destination": "/knowledge/concepts/embedder/azure-openai/overview"
+      "destination": "/knowledge/concepts/embedder/azure-openai/azure-embedder"
     },
     {
       "source": "/basics/knowledge/concepts/embedder/aws-bedrock/overview",
-      "destination": "/knowledge/concepts/embedder/aws-bedrock/overview"
+      "destination": "/knowledge/concepts/embedder/aws-bedrock/aws-bedrock-embedder"
     },
     {
       "source": "/basics/knowledge/concepts/embedder/aws-bedrock/aws-bedrock-embedder",
@@ -9724,7 +9737,7 @@
     },
     {
       "source": "/basics/knowledge/concepts/embedder/nebius/overview",
-      "destination": "/knowledge/concepts/embedder/nebius/overview"
+      "destination": "/knowledge/concepts/embedder/nebius/nebius-embedder"
     },
     {
       "source": "/basics/knowledge/concepts/embedder/nebius/nebius-embedder",
@@ -9732,7 +9745,7 @@
     },
     {
       "source": "/basics/knowledge/concepts/embedder/huggingface/overview",
-      "destination": "/knowledge/concepts/embedder/huggingface/overview"
+      "destination": "/knowledge/concepts/embedder/huggingface/huggingface-embedder"
     },
     {
       "source": "/basics/knowledge/concepts/embedder/huggingface/huggingface-embedder",
@@ -9744,7 +9757,7 @@
     },
     {
       "source": "/basics/knowledge/concepts/embedder/jina/overview",
-      "destination": "/knowledge/concepts/embedder/jina/overview"
+      "destination": "/knowledge/concepts/embedder/jina/jina-embedder"
     },
     {
       "source": "/basics/knowledge/concepts/embedder/ollama/ollama-embedder",
@@ -9752,11 +9765,11 @@
     },
     {
       "source": "/basics/knowledge/concepts/embedder/ollama/overview",
-      "destination": "/knowledge/concepts/embedder/ollama/overview"
+      "destination": "/knowledge/concepts/embedder/ollama/ollama-embedder"
     },
     {
       "source": "/basics/knowledge/concepts/embedder/sentencetransformers/overview",
-      "destination": "/knowledge/concepts/embedder/sentencetransformers/overview"
+      "destination": "/knowledge/concepts/embedder/sentencetransformers/sentence-transformer-embedder"
     },
     {
       "source": "/basics/knowledge/concepts/embedder/sentencetransformers/sentence-transformer-embedder",
@@ -9768,7 +9781,7 @@
     },
     {
       "source": "/basics/knowledge/concepts/embedder/mistral/overview",
-      "destination": "/knowledge/concepts/embedder/mistral/overview"
+      "destination": "/knowledge/concepts/embedder/mistral/mistral-embedder"
     },
     {
       "source": "/basics/knowledge/concepts/embedder/qdrant-fastembed/qdrant-fastembed",
@@ -9776,11 +9789,11 @@
     },
     {
       "source": "/basics/knowledge/concepts/embedder/qdrant-fastembed/overview",
-      "destination": "/knowledge/concepts/embedder/qdrant-fastembed/overview"
+      "destination": "/knowledge/concepts/embedder/qdrant-fastembed/qdrant-fastembed"
     },
     {
       "source": "/basics/knowledge/concepts/embedder/openai/overview",
-      "destination": "/knowledge/concepts/embedder/openai/overview"
+      "destination": "/knowledge/concepts/embedder/openai/openai-embedder"
     },
     {
       "source": "/basics/knowledge/concepts/embedder/openai/openai-embedder",
@@ -9788,7 +9801,7 @@
     },
     {
       "source": "/basics/knowledge/concepts/protocol/overview",
-      "destination": "/knowledge/concepts/protocol/overview"
+      "destination": "/examples/knowledge/advanced/knowledge-protocol"
     },
     {
       "source": "/basics/knowledge/concepts/performance-tips",
@@ -9840,15 +9853,15 @@
     },
     {
       "source": "/basics/knowledge/concepts/readers/pptx-reader",
-      "destination": "/knowledge/concepts/readers/pptx-reader"
+      "destination": "/examples/knowledge/integrations/readers/documents"
     },
     {
       "source": "/basics/knowledge/concepts/readers/web-search-reader-async",
-      "destination": "/knowledge/concepts/readers/web-search-reader-async"
+      "destination": "/reference/knowledge/reader/web-search"
     },
     {
       "source": "/basics/knowledge/concepts/readers/arxiv-reader",
-      "destination": "/knowledge/concepts/readers/arxiv-reader"
+      "destination": "/examples/knowledge/integrations/readers/web"
     },
     {
       "source": "/basics/knowledge/concepts/readers/pdf-reader",
@@ -9856,19 +9869,19 @@
     },
     {
       "source": "/basics/knowledge/concepts/readers/pdf-url-password-reader",
-      "destination": "/knowledge/concepts/readers/pdf-url-password-reader"
+      "destination": "/knowledge/concepts/readers/pdf-reader"
     },
     {
       "source": "/basics/knowledge/concepts/readers/youtube-reader-async",
-      "destination": "/knowledge/concepts/readers/youtube-reader-async"
+      "destination": "/knowledge/concepts/readers/youtube-reader"
     },
     {
       "source": "/basics/knowledge/concepts/readers/wikipedia-reader-async",
-      "destination": "/knowledge/concepts/readers/wikipedia-reader-async"
+      "destination": "/reference/knowledge/reader/wikipedia"
     },
     {
       "source": "/basics/knowledge/concepts/readers/field-labeled-csv-reader",
-      "destination": "/knowledge/concepts/readers/field-labeled-csv-reader"
+      "destination": "/reference/knowledge/reader/field-labeled-csv"
     },
     {
       "source": "/basics/knowledge/concepts/readers/overview",
@@ -9880,7 +9893,7 @@
     },
     {
       "source": "/basics/knowledge/concepts/readers/markdown-reader-async",
-      "destination": "/knowledge/concepts/readers/markdown-reader-async"
+      "destination": "/knowledge/concepts/readers/markdown-reader"
     },
     {
       "source": "/basics/knowledge/concepts/readers/markdown-reader",
@@ -9892,27 +9905,27 @@
     },
     {
       "source": "/basics/knowledge/concepts/readers/firecrawl-reader",
-      "destination": "/knowledge/concepts/readers/firecrawl-reader"
+      "destination": "/examples/knowledge/integrations/readers/web"
     },
     {
       "source": "/basics/knowledge/concepts/readers/json-reader-async",
-      "destination": "/knowledge/concepts/readers/json-reader-async"
+      "destination": "/knowledge/concepts/readers/json-reader"
     },
     {
       "source": "/basics/knowledge/concepts/readers/website-reader-async",
-      "destination": "/knowledge/concepts/readers/website-reader-async"
+      "destination": "/knowledge/concepts/readers/website-reader"
     },
     {
       "source": "/basics/knowledge/concepts/readers/wikipedia-reader",
-      "destination": "/knowledge/concepts/readers/wikipedia-reader"
+      "destination": "/reference/knowledge/reader/wikipedia"
     },
     {
       "source": "/basics/knowledge/concepts/readers/pdf-reader-async",
-      "destination": "/knowledge/concepts/readers/pdf-reader-async"
+      "destination": "/knowledge/concepts/readers/pdf-reader"
     },
     {
       "source": "/basics/knowledge/concepts/readers/pptx-reader-async",
-      "destination": "/knowledge/concepts/readers/pptx-reader-async"
+      "destination": "/examples/knowledge/integrations/readers/documents"
     },
     {
       "source": "/basics/knowledge/concepts/readers/youtube-reader",
@@ -9920,19 +9933,19 @@
     },
     {
       "source": "/basics/knowledge/concepts/readers/firecrawl-reader-async",
-      "destination": "/knowledge/concepts/readers/firecrawl-reader-async"
+      "destination": "/examples/knowledge/integrations/readers/web"
     },
     {
       "source": "/basics/knowledge/concepts/readers/pdf-password-reader",
-      "destination": "/knowledge/concepts/readers/pdf-password-reader"
+      "destination": "/knowledge/concepts/readers/pdf-reader"
     },
     {
       "source": "/basics/knowledge/concepts/readers/web-search-reader",
-      "destination": "/knowledge/concepts/readers/web-search-reader"
+      "destination": "/reference/knowledge/reader/web-search"
     },
     {
       "source": "/basics/knowledge/concepts/readers/csv-url-reader",
-      "destination": "/knowledge/concepts/readers/csv-url-reader"
+      "destination": "/knowledge/concepts/readers/csv-reader"
     },
     {
       "source": "/basics/knowledge/concepts/readers/json-reader",
@@ -9940,19 +9953,19 @@
     },
     {
       "source": "/basics/knowledge/concepts/readers/csv-reader-async",
-      "destination": "/knowledge/concepts/readers/csv-reader-async"
+      "destination": "/knowledge/concepts/readers/csv-reader"
     },
     {
       "source": "/basics/knowledge/concepts/readers/arxiv-reader-async",
-      "destination": "/knowledge/concepts/readers/arxiv-reader-async"
+      "destination": "/examples/knowledge/integrations/readers/web"
     },
     {
       "source": "/basics/knowledge/teams/team-with-knowledge-filters",
-      "destination": "/knowledge/teams/team-with-knowledge-filters"
+      "destination": "/examples/teams/knowledge/team-with-knowledge-filters"
     },
     {
       "source": "/basics/knowledge/teams/coordinated-reasoning-rag",
-      "destination": "/knowledge/teams/coordinated-reasoning-rag"
+      "destination": "/examples/teams/search-coordination/coordinated-reasoning-rag"
     },
     {
       "source": "/basics/knowledge/teams/distributed-rag-lancedb",
@@ -9960,7 +9973,7 @@
     },
     {
       "source": "/basics/knowledge/teams/team-with-agentic-knowledge-filters",
-      "destination": "/knowledge/teams/team-with-agentic-knowledge-filters"
+      "destination": "/examples/teams/knowledge/team-with-agentic-knowledge-filters"
     },
     {
       "source": "/basics/knowledge/teams/overview",
@@ -9968,7 +9981,7 @@
     },
     {
       "source": "/basics/knowledge/teams/coordinated-agentic-rag",
-      "destination": "/knowledge/teams/coordinated-agentic-rag"
+      "destination": "/examples/teams/search-coordination/coordinated-agentic-rag"
     },
     {
       "source": "/basics/knowledge/teams/team-with-knowledge",
@@ -9980,11 +9993,11 @@
     },
     {
       "source": "/basics/knowledge/teams/distributed-rag-with-reranking",
-      "destination": "/knowledge/teams/distributed-rag-with-reranking"
+      "destination": "/examples/teams/distributed-rag/distributed-rag-with-reranking"
     },
     {
       "source": "/basics/knowledge/teams/distributed-infinity-search",
-      "destination": "/knowledge/teams/distributed-infinity-search"
+      "destination": "/examples/teams/search-coordination/distributed-infinity-search"
     },
     {
       "source": "/basics/models/overview",
@@ -10128,7 +10141,7 @@
     },
     {
       "source": "/basics/tools/team",
-      "destination": "/tools/team"
+      "destination": "/tools/attaching-tools"
     },
     {
       "source": "/basics/tools/selecting-tools",
@@ -10156,7 +10169,7 @@
     },
     {
       "source": "/basics/tools/async-tools",
-      "destination": "/tools/async-tools"
+      "destination": "/tools/overview"
     },
     {
       "source": "/basics/sessions/session-summaries",
@@ -11504,7 +11517,7 @@
     },
     {
       "source": "/integrations/vectordb/mongodb/usage/cosmos-mongodb-vcore",
-      "destination": "/knowledge/vector-stores/mongodb/usage/cosmos-mongodb-vcore"
+      "destination": "/knowledge/vector-stores/azure_cosmos_mongodb/overview"
     },
     {
       "source": "/integrations/vectordb/mongodb/usage/mongo-db",
@@ -11900,7 +11913,7 @@
     },
     {
       "source": "/integrations/models/native/xai/usage/async-basic",
-      "destination": "/models/providers/native/xai/usage/async-basic"
+      "destination": "/models/providers/native/xai/usage/basic-async"
     },
     {
       "source": "/integrations/models/native/xai/usage/image-agent",
@@ -11924,7 +11937,7 @@
     },
     {
       "source": "/integrations/models/native/xai/usage/async-basic-stream",
-      "destination": "/models/providers/native/xai/usage/async-basic-stream"
+      "destination": "/models/providers/native/xai/usage/basic-async-stream"
     },
     {
       "source": "/integrations/models/native/xai/usage/live-search-agent-stream",
@@ -12260,7 +12273,7 @@
     },
     {
       "source": "/integrations/models/native/openai/responses/usage/storage",
-      "destination": "/models/providers/native/openai/responses/usage/storage"
+      "destination": "/models/providers/native/openai/responses/usage/db"
     },
     {
       "source": "/integrations/models/native/openai/responses/usage/image-agent-bytes",
@@ -13308,7 +13321,7 @@
     },
     {
       "source": "/integrations/toolkits/others/agentql",
-      "destination": "/tools/toolkits/others/agentql"
+      "destination": "/tools/toolkits/web-scrape/agentql"
     },
     {
       "source": "/integrations/toolkits/others/airflow",
@@ -14616,131 +14629,131 @@
     },
     {
       "source": "/basics/knowledge/filters/agentic-filtering",
-      "destination": "/knowledge/concepts/filters/agentic-filtering"
+      "destination": "/examples/knowledge/building-blocks/agentic-filtering"
     },
     {
       "source": "/basics/knowledge/filters/async-filtering",
-      "destination": "/knowledge/concepts/filters/async-filtering"
+      "destination": "/examples/knowledge/building-blocks/filtering"
     },
     {
       "source": "/basics/knowledge/filters/filter-expressions",
-      "destination": "/knowledge/concepts/filters/filter-expressions"
+      "destination": "/knowledge/concepts/filters/advanced-filtering"
     },
     {
       "source": "/basics/knowledge/filters/filtering",
-      "destination": "/knowledge/concepts/filters/filtering"
+      "destination": "/examples/knowledge/building-blocks/filtering"
     },
     {
       "source": "/basics/knowledge/filters/filtering-chroma-db",
-      "destination": "/knowledge/concepts/filters/filtering-chroma-db"
+      "destination": "/examples/knowledge/building-blocks/filtering"
     },
     {
       "source": "/basics/knowledge/filters/filtering-lance-db",
-      "destination": "/knowledge/concepts/filters/filtering-lance-db"
+      "destination": "/examples/knowledge/building-blocks/filtering"
     },
     {
       "source": "/basics/knowledge/filters/filtering-milvus-db",
-      "destination": "/knowledge/concepts/filters/filtering-milvus-db"
+      "destination": "/examples/knowledge/building-blocks/filtering"
     },
     {
       "source": "/basics/knowledge/filters/filtering-mongo-db",
-      "destination": "/knowledge/concepts/filters/filtering-mongo-db"
+      "destination": "/examples/knowledge/building-blocks/filtering"
     },
     {
       "source": "/basics/knowledge/filters/filtering-on-load",
-      "destination": "/knowledge/concepts/filters/filtering-on-load"
+      "destination": "/examples/knowledge/building-blocks/filtering"
     },
     {
       "source": "/basics/knowledge/filters/filtering-pgvector",
-      "destination": "/knowledge/concepts/filters/filtering-pgvector"
+      "destination": "/examples/knowledge/building-blocks/filtering"
     },
     {
       "source": "/basics/knowledge/filters/filtering-pinecone",
-      "destination": "/knowledge/concepts/filters/filtering-pinecone"
+      "destination": "/examples/knowledge/building-blocks/filtering"
     },
     {
       "source": "/basics/knowledge/filters/filtering-qdrant-db",
-      "destination": "/knowledge/concepts/filters/filtering-qdrant-db"
+      "destination": "/examples/knowledge/building-blocks/filtering"
     },
     {
       "source": "/basics/knowledge/filters/filtering-surreal-db",
-      "destination": "/knowledge/concepts/filters/filtering-surreal-db"
+      "destination": "/examples/knowledge/building-blocks/filtering"
     },
     {
       "source": "/basics/knowledge/filters/filtering-weaviate",
-      "destination": "/knowledge/concepts/filters/filtering-weaviate"
+      "destination": "/examples/knowledge/building-blocks/filtering"
     },
     {
       "source": "/basics/knowledge/filters/filtering-with-invalid-keys",
-      "destination": "/knowledge/concepts/filters/filtering-with-invalid-keys"
+      "destination": "/examples/knowledge/building-blocks/filtering"
     },
     {
       "source": "/basics/knowledge/filters/usage/agentic-filtering",
-      "destination": "/knowledge/concepts/filters/agentic-filtering"
+      "destination": "/examples/knowledge/building-blocks/agentic-filtering"
     },
     {
       "source": "/basics/knowledge/filters/usage/async-filtering",
-      "destination": "/knowledge/concepts/filters/async-filtering"
+      "destination": "/examples/knowledge/building-blocks/filtering"
     },
     {
       "source": "/basics/knowledge/filters/usage/filter-expressions",
-      "destination": "/knowledge/concepts/filters/filter-expressions"
+      "destination": "/knowledge/concepts/filters/advanced-filtering"
     },
     {
       "source": "/basics/knowledge/filters/usage/filtering",
-      "destination": "/knowledge/concepts/filters/filtering"
+      "destination": "/examples/knowledge/building-blocks/filtering"
     },
     {
       "source": "/basics/knowledge/filters/usage/filtering-on-load",
-      "destination": "/knowledge/concepts/filters/filtering-on-load"
+      "destination": "/examples/knowledge/building-blocks/filtering"
     },
     {
       "source": "/basics/knowledge/filters/usage/filtering-with-invalid-keys",
-      "destination": "/knowledge/concepts/filters/filtering-with-invalid-keys"
+      "destination": "/examples/knowledge/building-blocks/filtering"
     },
     {
       "source": "/basics/knowledge/filters/usage/vector-dbs/filtering-chroma-db",
-      "destination": "/knowledge/concepts/filters/filtering-chroma-db"
+      "destination": "/examples/knowledge/building-blocks/filtering"
     },
     {
       "source": "/basics/knowledge/filters/usage/vector-dbs/filtering-lance-db",
-      "destination": "/knowledge/concepts/filters/filtering-lance-db"
+      "destination": "/examples/knowledge/building-blocks/filtering"
     },
     {
       "source": "/basics/knowledge/filters/usage/vector-dbs/filtering-milvus-db",
-      "destination": "/knowledge/concepts/filters/filtering-milvus-db"
+      "destination": "/examples/knowledge/building-blocks/filtering"
     },
     {
       "source": "/basics/knowledge/filters/usage/vector-dbs/filtering-mongo-db",
-      "destination": "/knowledge/concepts/filters/filtering-mongo-db"
+      "destination": "/examples/knowledge/building-blocks/filtering"
     },
     {
       "source": "/basics/knowledge/filters/usage/vector-dbs/filtering-pgvector",
-      "destination": "/knowledge/concepts/filters/filtering-pgvector"
+      "destination": "/examples/knowledge/building-blocks/filtering"
     },
     {
       "source": "/basics/knowledge/filters/usage/vector-dbs/filtering-pinecone",
-      "destination": "/knowledge/concepts/filters/filtering-pinecone"
+      "destination": "/examples/knowledge/building-blocks/filtering"
     },
     {
       "source": "/basics/knowledge/filters/usage/vector-dbs/filtering-qdrant-db",
-      "destination": "/knowledge/concepts/filters/filtering-qdrant-db"
+      "destination": "/examples/knowledge/building-blocks/filtering"
     },
     {
       "source": "/basics/knowledge/filters/usage/vector-dbs/filtering-surreal-db",
-      "destination": "/knowledge/concepts/filters/filtering-surreal-db"
+      "destination": "/examples/knowledge/building-blocks/filtering"
     },
     {
       "source": "/basics/knowledge/filters/usage/vector-dbs/filtering-weaviate",
-      "destination": "/knowledge/concepts/filters/filtering-weaviate"
+      "destination": "/examples/knowledge/building-blocks/filtering"
     },
     {
       "source": "/basics/knowledge/readers/arxiv-reader",
-      "destination": "/knowledge/concepts/readers/arxiv-reader"
+      "destination": "/examples/knowledge/integrations/readers/web"
     },
     {
       "source": "/basics/knowledge/readers/arxiv-reader-async",
-      "destination": "/knowledge/concepts/readers/arxiv-reader-async"
+      "destination": "/examples/knowledge/integrations/readers/web"
     },
     {
       "source": "/basics/knowledge/readers/csv-reader",
@@ -14748,23 +14761,23 @@
     },
     {
       "source": "/basics/knowledge/readers/csv-reader-async",
-      "destination": "/knowledge/concepts/readers/csv-reader-async"
+      "destination": "/knowledge/concepts/readers/csv-reader"
     },
     {
       "source": "/basics/knowledge/readers/csv-url-reader",
-      "destination": "/knowledge/concepts/readers/csv-url-reader"
+      "destination": "/knowledge/concepts/readers/csv-reader"
     },
     {
       "source": "/basics/knowledge/readers/field-labeled-csv-reader",
-      "destination": "/knowledge/concepts/readers/field-labeled-csv-reader"
+      "destination": "/reference/knowledge/reader/field-labeled-csv"
     },
     {
       "source": "/basics/knowledge/readers/firecrawl-reader",
-      "destination": "/knowledge/concepts/readers/firecrawl-reader"
+      "destination": "/examples/knowledge/integrations/readers/web"
     },
     {
       "source": "/basics/knowledge/readers/firecrawl-reader-async",
-      "destination": "/knowledge/concepts/readers/firecrawl-reader-async"
+      "destination": "/examples/knowledge/integrations/readers/web"
     },
     {
       "source": "/basics/knowledge/readers/json-reader",
@@ -14772,7 +14785,7 @@
     },
     {
       "source": "/basics/knowledge/readers/json-reader-async",
-      "destination": "/knowledge/concepts/readers/json-reader-async"
+      "destination": "/knowledge/concepts/readers/json-reader"
     },
     {
       "source": "/basics/knowledge/readers/markdown-reader",
@@ -14780,11 +14793,11 @@
     },
     {
       "source": "/basics/knowledge/readers/markdown-reader-async",
-      "destination": "/knowledge/concepts/readers/markdown-reader-async"
+      "destination": "/knowledge/concepts/readers/markdown-reader"
     },
     {
       "source": "/basics/knowledge/readers/pdf-password-reader",
-      "destination": "/knowledge/concepts/readers/pdf-password-reader"
+      "destination": "/knowledge/concepts/readers/pdf-reader"
     },
     {
       "source": "/basics/knowledge/readers/pdf-reader",
@@ -14792,27 +14805,27 @@
     },
     {
       "source": "/basics/knowledge/readers/pdf-reader-async",
-      "destination": "/knowledge/concepts/readers/pdf-reader-async"
+      "destination": "/knowledge/concepts/readers/pdf-reader"
     },
     {
       "source": "/basics/knowledge/readers/pdf-url-password-reader",
-      "destination": "/knowledge/concepts/readers/pdf-url-password-reader"
+      "destination": "/knowledge/concepts/readers/pdf-reader"
     },
     {
       "source": "/basics/knowledge/readers/pptx-reader",
-      "destination": "/knowledge/concepts/readers/pptx-reader"
+      "destination": "/examples/knowledge/integrations/readers/documents"
     },
     {
       "source": "/basics/knowledge/readers/pptx-reader-async",
-      "destination": "/knowledge/concepts/readers/pptx-reader-async"
+      "destination": "/examples/knowledge/integrations/readers/documents"
     },
     {
       "source": "/basics/knowledge/readers/usage/arxiv-reader",
-      "destination": "/knowledge/concepts/readers/arxiv-reader"
+      "destination": "/examples/knowledge/integrations/readers/web"
     },
     {
       "source": "/basics/knowledge/readers/usage/arxiv-reader-async",
-      "destination": "/knowledge/concepts/readers/arxiv-reader-async"
+      "destination": "/examples/knowledge/integrations/readers/web"
     },
     {
       "source": "/basics/knowledge/readers/usage/csv-reader",
@@ -14820,23 +14833,23 @@
     },
     {
       "source": "/basics/knowledge/readers/usage/csv-reader-async",
-      "destination": "/knowledge/concepts/readers/csv-reader-async"
+      "destination": "/knowledge/concepts/readers/csv-reader"
     },
     {
       "source": "/basics/knowledge/readers/usage/csv-url-reader",
-      "destination": "/knowledge/concepts/readers/csv-url-reader"
+      "destination": "/knowledge/concepts/readers/csv-reader"
     },
     {
       "source": "/basics/knowledge/readers/usage/field-labeled-csv-reader",
-      "destination": "/knowledge/concepts/readers/field-labeled-csv-reader"
+      "destination": "/reference/knowledge/reader/field-labeled-csv"
     },
     {
       "source": "/basics/knowledge/readers/usage/firecrawl-reader",
-      "destination": "/knowledge/concepts/readers/firecrawl-reader"
+      "destination": "/examples/knowledge/integrations/readers/web"
     },
     {
       "source": "/basics/knowledge/readers/usage/firecrawl-reader-async",
-      "destination": "/knowledge/concepts/readers/firecrawl-reader-async"
+      "destination": "/examples/knowledge/integrations/readers/web"
     },
     {
       "source": "/basics/knowledge/readers/usage/json-reader",
@@ -14844,7 +14857,7 @@
     },
     {
       "source": "/basics/knowledge/readers/usage/json-reader-async",
-      "destination": "/knowledge/concepts/readers/json-reader-async"
+      "destination": "/knowledge/concepts/readers/json-reader"
     },
     {
       "source": "/basics/knowledge/readers/usage/markdown-reader",
@@ -14852,11 +14865,11 @@
     },
     {
       "source": "/basics/knowledge/readers/usage/markdown-reader-async",
-      "destination": "/knowledge/concepts/readers/markdown-reader-async"
+      "destination": "/knowledge/concepts/readers/markdown-reader"
     },
     {
       "source": "/basics/knowledge/readers/usage/pdf-password-reader",
-      "destination": "/knowledge/concepts/readers/pdf-password-reader"
+      "destination": "/knowledge/concepts/readers/pdf-reader"
     },
     {
       "source": "/basics/knowledge/readers/usage/pdf-reader",
@@ -14864,27 +14877,27 @@
     },
     {
       "source": "/basics/knowledge/readers/usage/pdf-reader-async",
-      "destination": "/knowledge/concepts/readers/pdf-reader-async"
+      "destination": "/knowledge/concepts/readers/pdf-reader"
     },
     {
       "source": "/basics/knowledge/readers/usage/pdf-url-password-reader",
-      "destination": "/knowledge/concepts/readers/pdf-url-password-reader"
+      "destination": "/knowledge/concepts/readers/pdf-reader"
     },
     {
       "source": "/basics/knowledge/readers/usage/pptx-reader",
-      "destination": "/knowledge/concepts/readers/pptx-reader"
+      "destination": "/examples/knowledge/integrations/readers/documents"
     },
     {
       "source": "/basics/knowledge/readers/usage/pptx-reader-async",
-      "destination": "/knowledge/concepts/readers/pptx-reader-async"
+      "destination": "/examples/knowledge/integrations/readers/documents"
     },
     {
       "source": "/basics/knowledge/readers/usage/web-search-reader",
-      "destination": "/knowledge/concepts/readers/web-search-reader"
+      "destination": "/reference/knowledge/reader/web-search"
     },
     {
       "source": "/basics/knowledge/readers/usage/web-search-reader-async",
-      "destination": "/knowledge/concepts/readers/web-search-reader-async"
+      "destination": "/reference/knowledge/reader/web-search"
     },
     {
       "source": "/basics/knowledge/readers/usage/website-reader",
@@ -14892,15 +14905,15 @@
     },
     {
       "source": "/basics/knowledge/readers/usage/website-reader-async",
-      "destination": "/knowledge/concepts/readers/website-reader-async"
+      "destination": "/knowledge/concepts/readers/website-reader"
     },
     {
       "source": "/basics/knowledge/readers/usage/wikipedia-reader",
-      "destination": "/knowledge/concepts/readers/wikipedia-reader"
+      "destination": "/reference/knowledge/reader/wikipedia"
     },
     {
       "source": "/basics/knowledge/readers/usage/wikipedia-reader-async",
-      "destination": "/knowledge/concepts/readers/wikipedia-reader-async"
+      "destination": "/reference/knowledge/reader/wikipedia"
     },
     {
       "source": "/basics/knowledge/readers/usage/youtube-reader",
@@ -14908,15 +14921,15 @@
     },
     {
       "source": "/basics/knowledge/readers/usage/youtube-reader-async",
-      "destination": "/knowledge/concepts/readers/youtube-reader-async"
+      "destination": "/knowledge/concepts/readers/youtube-reader"
     },
     {
       "source": "/basics/knowledge/readers/web-search-reader",
-      "destination": "/knowledge/concepts/readers/web-search-reader"
+      "destination": "/reference/knowledge/reader/web-search"
     },
     {
       "source": "/basics/knowledge/readers/web-search-reader-async",
-      "destination": "/knowledge/concepts/readers/web-search-reader-async"
+      "destination": "/reference/knowledge/reader/web-search"
     },
     {
       "source": "/basics/knowledge/readers/website-reader",
@@ -14924,15 +14937,15 @@
     },
     {
       "source": "/basics/knowledge/readers/website-reader-async",
-      "destination": "/knowledge/concepts/readers/website-reader-async"
+      "destination": "/knowledge/concepts/readers/website-reader"
     },
     {
       "source": "/basics/knowledge/readers/wikipedia-reader",
-      "destination": "/knowledge/concepts/readers/wikipedia-reader"
+      "destination": "/reference/knowledge/reader/wikipedia"
     },
     {
       "source": "/basics/knowledge/readers/wikipedia-reader-async",
-      "destination": "/knowledge/concepts/readers/wikipedia-reader-async"
+      "destination": "/reference/knowledge/reader/wikipedia"
     },
     {
       "source": "/basics/knowledge/readers/youtube-reader",
@@ -14940,7 +14953,7 @@
     },
     {
       "source": "/basics/knowledge/readers/youtube-reader-async",
-      "destination": "/knowledge/concepts/readers/youtube-reader-async"
+      "destination": "/knowledge/concepts/readers/youtube-reader"
     },
     {
       "source": "/basics/knowledge/search-and-retrieval/agentic-rag",
@@ -14948,31 +14961,31 @@
     },
     {
       "source": "/basics/knowledge/search-and-retrieval/agentic-rag-infinity-reranker",
-      "destination": "/knowledge/concepts/search-and-retrieval/agentic-rag-infinity-reranker"
+      "destination": "/examples/knowledge/integrations/rag/agentic-rag-infinity-reranker"
     },
     {
       "source": "/basics/knowledge/search-and-retrieval/agentic-rag-lancedb",
-      "destination": "/knowledge/concepts/search-and-retrieval/agentic-rag-lancedb"
+      "destination": "/knowledge/agents/agentic-rag-lancedb"
     },
     {
       "source": "/basics/knowledge/search-and-retrieval/agentic-rag-pgvector",
-      "destination": "/knowledge/concepts/search-and-retrieval/agentic-rag-pgvector"
+      "destination": "/knowledge/agents/agentic-rag-pgvector"
     },
     {
       "source": "/basics/knowledge/search-and-retrieval/agentic-rag-with-lightrag",
-      "destination": "/knowledge/concepts/search-and-retrieval/agentic-rag-with-lightrag"
+      "destination": "/examples/knowledge/integrations/rag/agentic-rag-with-lightrag"
     },
     {
       "source": "/basics/knowledge/search-and-retrieval/agentic-rag-with-reasoning",
-      "destination": "/knowledge/concepts/search-and-retrieval/agentic-rag-with-reasoning"
+      "destination": "/examples/agents/knowledge/agentic-rag-with-reasoning"
     },
     {
       "source": "/basics/knowledge/search-and-retrieval/agentic-rag-with-reranking",
-      "destination": "/knowledge/concepts/search-and-retrieval/agentic-rag-with-reranking"
+      "destination": "/examples/agents/knowledge/agentic-rag-with-reranking"
     },
     {
       "source": "/basics/knowledge/search-and-retrieval/async-custom-retriever",
-      "destination": "/knowledge/concepts/search-and-retrieval/async-custom-retriever"
+      "destination": "/knowledge/concepts/search-and-retrieval/custom-retriever"
     },
     {
       "source": "/basics/knowledge/search-and-retrieval/custom-retriever",
@@ -14988,19 +15001,19 @@
     },
     {
       "source": "/basics/knowledge/search-and-retrieval/rag-sentence-transformer",
-      "destination": "/knowledge/concepts/search-and-retrieval/rag-sentence-transformer"
+      "destination": "/examples/knowledge/building-blocks/reranking"
     },
     {
       "source": "/basics/knowledge/search-and-retrieval/rag-with-lance-db-and-sqlite",
-      "destination": "/knowledge/concepts/search-and-retrieval/rag-with-lance-db-and-sqlite"
+      "destination": "/knowledge/agents/traditional-rag-lancedb"
     },
     {
       "source": "/basics/knowledge/search-and-retrieval/traditional-rag-lancedb",
-      "destination": "/knowledge/concepts/search-and-retrieval/traditional-rag-lancedb"
+      "destination": "/knowledge/agents/traditional-rag-lancedb"
     },
     {
       "source": "/basics/knowledge/search-and-retrieval/traditional-rag-pgvector",
-      "destination": "/knowledge/concepts/search-and-retrieval/traditional-rag-pgvector"
+      "destination": "/knowledge/agents/traditional-rag-pgvector"
     },
     {
       "source": "/basics/knowledge/search-and-retrieval/usage/agentic-rag",
@@ -15008,31 +15021,31 @@
     },
     {
       "source": "/basics/knowledge/search-and-retrieval/usage/agentic-rag-infinity-reranker",
-      "destination": "/knowledge/concepts/search-and-retrieval/agentic-rag-infinity-reranker"
+      "destination": "/examples/knowledge/integrations/rag/agentic-rag-infinity-reranker"
     },
     {
       "source": "/basics/knowledge/search-and-retrieval/usage/agentic-rag-lancedb",
-      "destination": "/knowledge/concepts/search-and-retrieval/agentic-rag-lancedb"
+      "destination": "/knowledge/agents/agentic-rag-lancedb"
     },
     {
       "source": "/basics/knowledge/search-and-retrieval/usage/agentic-rag-pgvector",
-      "destination": "/knowledge/concepts/search-and-retrieval/agentic-rag-pgvector"
+      "destination": "/knowledge/agents/agentic-rag-pgvector"
     },
     {
       "source": "/basics/knowledge/search-and-retrieval/usage/agentic-rag-with-lightrag",
-      "destination": "/knowledge/concepts/search-and-retrieval/agentic-rag-with-lightrag"
+      "destination": "/examples/knowledge/integrations/rag/agentic-rag-with-lightrag"
     },
     {
       "source": "/basics/knowledge/search-and-retrieval/usage/agentic-rag-with-reasoning",
-      "destination": "/knowledge/concepts/search-and-retrieval/agentic-rag-with-reasoning"
+      "destination": "/examples/agents/knowledge/agentic-rag-with-reasoning"
     },
     {
       "source": "/basics/knowledge/search-and-retrieval/usage/agentic-rag-with-reranking",
-      "destination": "/knowledge/concepts/search-and-retrieval/agentic-rag-with-reranking"
+      "destination": "/examples/agents/knowledge/agentic-rag-with-reranking"
     },
     {
       "source": "/basics/knowledge/search-and-retrieval/usage/async-custom-retriever",
-      "destination": "/knowledge/concepts/search-and-retrieval/async-custom-retriever"
+      "destination": "/knowledge/concepts/search-and-retrieval/custom-retriever"
     },
     {
       "source": "/basics/knowledge/search-and-retrieval/usage/custom-retriever",
@@ -15048,19 +15061,19 @@
     },
     {
       "source": "/basics/knowledge/search-and-retrieval/usage/rag-sentence-transformer",
-      "destination": "/knowledge/concepts/search-and-retrieval/rag-sentence-transformer"
+      "destination": "/examples/knowledge/building-blocks/reranking"
     },
     {
       "source": "/basics/knowledge/search-and-retrieval/usage/rag-with-lance-db-and-sqlite",
-      "destination": "/knowledge/concepts/search-and-retrieval/rag-with-lance-db-and-sqlite"
+      "destination": "/knowledge/agents/traditional-rag-lancedb"
     },
     {
       "source": "/basics/knowledge/search-and-retrieval/usage/traditional-rag-lancedb",
-      "destination": "/knowledge/concepts/search-and-retrieval/traditional-rag-lancedb"
+      "destination": "/knowledge/agents/traditional-rag-lancedb"
     },
     {
       "source": "/basics/knowledge/search-and-retrieval/usage/traditional-rag-pgvector",
-      "destination": "/knowledge/concepts/search-and-retrieval/traditional-rag-pgvector"
+      "destination": "/knowledge/agents/traditional-rag-pgvector"
     },
     {
       "source": "/basics/knowledge/search-and-retrieval/usage/vector-search",
@@ -15720,71 +15733,71 @@
     },
     {
       "source": "/context/knowledge/filters/agentic-filtering",
-      "destination": "/knowledge/concepts/filters/agentic-filtering"
+      "destination": "/examples/knowledge/building-blocks/agentic-filtering"
     },
     {
       "source": "/context/knowledge/filters/async-filtering",
-      "destination": "/knowledge/concepts/filters/async-filtering"
+      "destination": "/examples/knowledge/building-blocks/filtering"
     },
     {
       "source": "/context/knowledge/filters/filter-expressions",
-      "destination": "/knowledge/concepts/filters/filter-expressions"
+      "destination": "/knowledge/concepts/filters/advanced-filtering"
     },
     {
       "source": "/context/knowledge/filters/filtering",
-      "destination": "/knowledge/concepts/filters/filtering"
+      "destination": "/examples/knowledge/building-blocks/filtering"
     },
     {
       "source": "/context/knowledge/filters/filtering-chroma-db",
-      "destination": "/knowledge/concepts/filters/filtering-chroma-db"
+      "destination": "/examples/knowledge/building-blocks/filtering"
     },
     {
       "source": "/context/knowledge/filters/filtering-lance-db",
-      "destination": "/knowledge/concepts/filters/filtering-lance-db"
+      "destination": "/examples/knowledge/building-blocks/filtering"
     },
     {
       "source": "/context/knowledge/filters/filtering-milvus-db",
-      "destination": "/knowledge/concepts/filters/filtering-milvus-db"
+      "destination": "/examples/knowledge/building-blocks/filtering"
     },
     {
       "source": "/context/knowledge/filters/filtering-mongo-db",
-      "destination": "/knowledge/concepts/filters/filtering-mongo-db"
+      "destination": "/examples/knowledge/building-blocks/filtering"
     },
     {
       "source": "/context/knowledge/filters/filtering-on-load",
-      "destination": "/knowledge/concepts/filters/filtering-on-load"
+      "destination": "/examples/knowledge/building-blocks/filtering"
     },
     {
       "source": "/context/knowledge/filters/filtering-pgvector",
-      "destination": "/knowledge/concepts/filters/filtering-pgvector"
+      "destination": "/examples/knowledge/building-blocks/filtering"
     },
     {
       "source": "/context/knowledge/filters/filtering-pinecone",
-      "destination": "/knowledge/concepts/filters/filtering-pinecone"
+      "destination": "/examples/knowledge/building-blocks/filtering"
     },
     {
       "source": "/context/knowledge/filters/filtering-qdrant-db",
-      "destination": "/knowledge/concepts/filters/filtering-qdrant-db"
+      "destination": "/examples/knowledge/building-blocks/filtering"
     },
     {
       "source": "/context/knowledge/filters/filtering-surreal-db",
-      "destination": "/knowledge/concepts/filters/filtering-surreal-db"
+      "destination": "/examples/knowledge/building-blocks/filtering"
     },
     {
       "source": "/context/knowledge/filters/filtering-weaviate",
-      "destination": "/knowledge/concepts/filters/filtering-weaviate"
+      "destination": "/examples/knowledge/building-blocks/filtering"
     },
     {
       "source": "/context/knowledge/filters/filtering-with-invalid-keys",
-      "destination": "/knowledge/concepts/filters/filtering-with-invalid-keys"
+      "destination": "/examples/knowledge/building-blocks/filtering"
     },
     {
       "source": "/context/knowledge/readers/arxiv-reader",
-      "destination": "/knowledge/concepts/readers/arxiv-reader"
+      "destination": "/examples/knowledge/integrations/readers/web"
     },
     {
       "source": "/context/knowledge/readers/arxiv-reader-async",
-      "destination": "/knowledge/concepts/readers/arxiv-reader-async"
+      "destination": "/examples/knowledge/integrations/readers/web"
     },
     {
       "source": "/context/knowledge/readers/csv-reader",
@@ -15792,23 +15805,23 @@
     },
     {
       "source": "/context/knowledge/readers/csv-reader-async",
-      "destination": "/knowledge/concepts/readers/csv-reader-async"
+      "destination": "/knowledge/concepts/readers/csv-reader"
     },
     {
       "source": "/context/knowledge/readers/csv-url-reader",
-      "destination": "/knowledge/concepts/readers/csv-url-reader"
+      "destination": "/knowledge/concepts/readers/csv-reader"
     },
     {
       "source": "/context/knowledge/readers/field-labeled-csv-reader",
-      "destination": "/knowledge/concepts/readers/field-labeled-csv-reader"
+      "destination": "/reference/knowledge/reader/field-labeled-csv"
     },
     {
       "source": "/context/knowledge/readers/firecrawl-reader",
-      "destination": "/knowledge/concepts/readers/firecrawl-reader"
+      "destination": "/examples/knowledge/integrations/readers/web"
     },
     {
       "source": "/context/knowledge/readers/firecrawl-reader-async",
-      "destination": "/knowledge/concepts/readers/firecrawl-reader-async"
+      "destination": "/examples/knowledge/integrations/readers/web"
     },
     {
       "source": "/context/knowledge/readers/json-reader",
@@ -15816,7 +15829,7 @@
     },
     {
       "source": "/context/knowledge/readers/json-reader-async",
-      "destination": "/knowledge/concepts/readers/json-reader-async"
+      "destination": "/knowledge/concepts/readers/json-reader"
     },
     {
       "source": "/context/knowledge/readers/markdown-reader",
@@ -15824,11 +15837,11 @@
     },
     {
       "source": "/context/knowledge/readers/markdown-reader-async",
-      "destination": "/knowledge/concepts/readers/markdown-reader-async"
+      "destination": "/knowledge/concepts/readers/markdown-reader"
     },
     {
       "source": "/context/knowledge/readers/pdf-password-reader",
-      "destination": "/knowledge/concepts/readers/pdf-password-reader"
+      "destination": "/knowledge/concepts/readers/pdf-reader"
     },
     {
       "source": "/context/knowledge/readers/pdf-reader",
@@ -15836,27 +15849,27 @@
     },
     {
       "source": "/context/knowledge/readers/pdf-reader-async",
-      "destination": "/knowledge/concepts/readers/pdf-reader-async"
+      "destination": "/knowledge/concepts/readers/pdf-reader"
     },
     {
       "source": "/context/knowledge/readers/pdf-url-password-reader",
-      "destination": "/knowledge/concepts/readers/pdf-url-password-reader"
+      "destination": "/knowledge/concepts/readers/pdf-reader"
     },
     {
       "source": "/context/knowledge/readers/pptx-reader",
-      "destination": "/knowledge/concepts/readers/pptx-reader"
+      "destination": "/examples/knowledge/integrations/readers/documents"
     },
     {
       "source": "/context/knowledge/readers/pptx-reader-async",
-      "destination": "/knowledge/concepts/readers/pptx-reader-async"
+      "destination": "/examples/knowledge/integrations/readers/documents"
     },
     {
       "source": "/context/knowledge/readers/web-search-reader",
-      "destination": "/knowledge/concepts/readers/web-search-reader"
+      "destination": "/reference/knowledge/reader/web-search"
     },
     {
       "source": "/context/knowledge/readers/web-search-reader-async",
-      "destination": "/knowledge/concepts/readers/web-search-reader-async"
+      "destination": "/reference/knowledge/reader/web-search"
     },
     {
       "source": "/context/knowledge/readers/website-reader",
@@ -15864,15 +15877,15 @@
     },
     {
       "source": "/context/knowledge/readers/website-reader-async",
-      "destination": "/knowledge/concepts/readers/website-reader-async"
+      "destination": "/knowledge/concepts/readers/website-reader"
     },
     {
       "source": "/context/knowledge/readers/wikipedia-reader",
-      "destination": "/knowledge/concepts/readers/wikipedia-reader"
+      "destination": "/reference/knowledge/reader/wikipedia"
     },
     {
       "source": "/context/knowledge/readers/wikipedia-reader-async",
-      "destination": "/knowledge/concepts/readers/wikipedia-reader-async"
+      "destination": "/reference/knowledge/reader/wikipedia"
     },
     {
       "source": "/context/knowledge/readers/youtube-reader",
@@ -15880,7 +15893,7 @@
     },
     {
       "source": "/context/knowledge/readers/youtube-reader-async",
-      "destination": "/knowledge/concepts/readers/youtube-reader-async"
+      "destination": "/knowledge/concepts/readers/youtube-reader"
     },
     {
       "source": "/context/knowledge/search-and-retrieval/agentic-rag",
@@ -15888,31 +15901,31 @@
     },
     {
       "source": "/context/knowledge/search-and-retrieval/agentic-rag-infinity-reranker",
-      "destination": "/knowledge/concepts/search-and-retrieval/agentic-rag-infinity-reranker"
+      "destination": "/examples/knowledge/integrations/rag/agentic-rag-infinity-reranker"
     },
     {
       "source": "/context/knowledge/search-and-retrieval/agentic-rag-lancedb",
-      "destination": "/knowledge/concepts/search-and-retrieval/agentic-rag-lancedb"
+      "destination": "/knowledge/agents/agentic-rag-lancedb"
     },
     {
       "source": "/context/knowledge/search-and-retrieval/agentic-rag-pgvector",
-      "destination": "/knowledge/concepts/search-and-retrieval/agentic-rag-pgvector"
+      "destination": "/knowledge/agents/agentic-rag-pgvector"
     },
     {
       "source": "/context/knowledge/search-and-retrieval/agentic-rag-with-lightrag",
-      "destination": "/knowledge/concepts/search-and-retrieval/agentic-rag-with-lightrag"
+      "destination": "/examples/knowledge/integrations/rag/agentic-rag-with-lightrag"
     },
     {
       "source": "/context/knowledge/search-and-retrieval/agentic-rag-with-reasoning",
-      "destination": "/knowledge/concepts/search-and-retrieval/agentic-rag-with-reasoning"
+      "destination": "/examples/agents/knowledge/agentic-rag-with-reasoning"
     },
     {
       "source": "/context/knowledge/search-and-retrieval/agentic-rag-with-reranking",
-      "destination": "/knowledge/concepts/search-and-retrieval/agentic-rag-with-reranking"
+      "destination": "/examples/agents/knowledge/agentic-rag-with-reranking"
     },
     {
       "source": "/context/knowledge/search-and-retrieval/async-custom-retriever",
-      "destination": "/knowledge/concepts/search-and-retrieval/async-custom-retriever"
+      "destination": "/knowledge/concepts/search-and-retrieval/custom-retriever"
     },
     {
       "source": "/context/knowledge/search-and-retrieval/custom-retriever",
@@ -15928,19 +15941,19 @@
     },
     {
       "source": "/context/knowledge/search-and-retrieval/rag-sentence-transformer",
-      "destination": "/knowledge/concepts/search-and-retrieval/rag-sentence-transformer"
+      "destination": "/examples/knowledge/building-blocks/reranking"
     },
     {
       "source": "/context/knowledge/search-and-retrieval/rag-with-lance-db-and-sqlite",
-      "destination": "/knowledge/concepts/search-and-retrieval/rag-with-lance-db-and-sqlite"
+      "destination": "/knowledge/agents/traditional-rag-lancedb"
     },
     {
       "source": "/context/knowledge/search-and-retrieval/traditional-rag-lancedb",
-      "destination": "/knowledge/concepts/search-and-retrieval/traditional-rag-lancedb"
+      "destination": "/knowledge/agents/traditional-rag-lancedb"
     },
     {
       "source": "/context/knowledge/search-and-retrieval/traditional-rag-pgvector",
-      "destination": "/knowledge/concepts/search-and-retrieval/traditional-rag-pgvector"
+      "destination": "/knowledge/agents/traditional-rag-pgvector"
     },
     {
       "source": "/context/knowledge/search-and-retrieval/vector-search",
@@ -15960,23 +15973,23 @@
     },
     {
       "source": "/deploy/templates/aws/customize/ci-cd",
-      "destination": "/deploy/templates/aws/configure/overview"
+      "destination": "/deploy/templates/aws/reference"
     },
     {
       "source": "/deploy/templates/aws/customize/domain-https",
-      "destination": "/deploy/templates/aws/configure/overview"
+      "destination": "/deploy/templates/aws/reference"
     },
     {
       "source": "/deploy/templates/aws/customize/env-vars",
-      "destination": "/deploy/templates/aws/configure/overview"
+      "destination": "/deploy/templates/aws/reference"
     },
     {
       "source": "/deploy/templates/aws/customize/secrets",
-      "destination": "/deploy/templates/aws/configure/overview"
+      "destination": "/deploy/templates/aws/reference"
     },
     {
       "source": "/deploy/templates/aws/overview",
-      "destination": "/deploy/templates/aws/configure/overview"
+      "destination": "/deploy/templates/aws/reference"
     },
     {
       "source": "/deploy/templates/docker/overview",
@@ -15996,19 +16009,19 @@
     },
     {
       "source": "/examples/agents/agno-assist",
-      "destination": "/cookbook/agents/agno-assist"
+      "destination": "/examples/agent-os/agno-assist"
     },
     {
       "source": "/examples/agents/airbnb_mcp",
-      "destination": "/cookbook/agents/airbnb_mcp"
+      "destination": "/examples/tools/mcp/airbnb"
     },
     {
       "source": "/examples/agents/competitor-analysis-agent",
-      "destination": "/cookbook/agents/competitor-analysis-agent"
+      "destination": "/examples/tools/parallel/competitor-tracker"
     },
     {
       "source": "/examples/agents/deep_knowledge",
-      "destination": "/cookbook/agents/deep_knowledge"
+      "destination": "/examples/models/groq/deep-knowledge"
     },
     {
       "source": "/examples/agents/quickstart/agent-with-instructions",
@@ -16028,59 +16041,59 @@
     },
     {
       "source": "/examples/agents/research-agent",
-      "destination": "/cookbook/agents/research-agent"
+      "destination": "/examples/agents/overview"
     },
     {
       "source": "/examples/agents/social_media_agent",
-      "destination": "/cookbook/agents/social_media_agent"
+      "destination": "/examples/tools/x-tools"
     },
     {
       "source": "/examples/agents/speech-to-text-agent",
-      "destination": "/cookbook/agents/speech-to-text-agent"
+      "destination": "/examples/agents/multimodal/audio-input-output"
     },
     {
       "source": "/examples/agents/startup-analyst-agent",
-      "destination": "/cookbook/agents/startup-analyst-agent"
+      "destination": "/examples/tools/scrapegraph-tools"
     },
     {
       "source": "/examples/agents/translation_agent",
-      "destination": "/cookbook/agents/translation_agent"
+      "destination": "/examples/models/groq/translation-agent"
     },
     {
       "source": "/examples/agents/web-extraction-agent",
-      "destination": "/cookbook/agents/web-extraction-agent"
+      "destination": "/examples/tools/firecrawl-tools"
     },
     {
       "source": "/examples/agents/youtube-agent",
-      "destination": "/cookbook/agents/youtube-agent"
+      "destination": "/examples/tools/youtube-tools"
     },
     {
       "source": "/examples/knowledge/chunking",
-      "destination": "/cookbook/knowledge/chunking"
+      "destination": "/examples/knowledge/building-blocks/chunking-strategies"
     },
     {
       "source": "/examples/knowledge/embedders",
-      "destination": "/cookbook/knowledge/embedders"
+      "destination": "/examples/knowledge/building-blocks/embedders"
     },
     {
       "source": "/examples/knowledge/readers",
-      "destination": "/cookbook/knowledge/readers"
+      "destination": "/knowledge/concepts/readers/overview"
     },
     {
       "source": "/examples/knowledge/vector-databases",
-      "destination": "/cookbook/knowledge/vector-databases"
+      "destination": "/knowledge/concepts/vector-db"
     },
     {
       "source": "/examples/learning/personal-assistant",
-      "destination": "/cookbook/learning/personal-assistant"
+      "destination": "/examples/learning/patterns/personal-assistant"
     },
     {
       "source": "/examples/learning/support-agent",
-      "destination": "/cookbook/learning/support-agent"
+      "destination": "/examples/learning/patterns/support-agent"
     },
     {
       "source": "/examples/overview",
-      "destination": "/cookbook/overview"
+      "destination": "/examples/introduction"
     },
     {
       "source": "/examples/quickstart/agent-search-over-knowledge",
@@ -16140,35 +16153,35 @@
     },
     {
       "source": "/examples/streamlit/agentic-rag",
-      "destination": "/cookbook/streamlit/agentic-rag"
+      "destination": "/examples/agents/knowledge/agentic-rag"
     },
     {
       "source": "/examples/streamlit/answer-engine",
-      "destination": "/cookbook/streamlit/answer-engine"
+      "destination": "/examples/agents/overview"
     },
     {
       "source": "/examples/streamlit/overview",
-      "destination": "/cookbook/streamlit/overview"
+      "destination": "/examples/introduction"
     },
     {
       "source": "/examples/streamlit/text-to-sql",
-      "destination": "/cookbook/streamlit/text-to-sql"
+      "destination": "/examples/tools/sql-tools"
     },
     {
       "source": "/examples/teams/ai_support_team",
-      "destination": "/cookbook/teams/ai_support_team"
+      "destination": "/examples/teams/overview"
     },
     {
       "source": "/examples/teams/content_team",
-      "destination": "/cookbook/teams/content_team"
+      "destination": "/examples/teams/overview"
     },
     {
       "source": "/examples/teams/hackernews_team",
-      "destination": "/cookbook/teams/hackernews_team"
+      "destination": "/examples/teams/overview"
     },
     {
       "source": "/examples/teams/news_agency_team",
-      "destination": "/cookbook/teams/news_agency_team"
+      "destination": "/examples/teams/overview"
     },
     {
       "source": "/examples/teams/quickstart/basic-coordination",
@@ -16236,147 +16249,143 @@
     },
     {
       "source": "/examples/teams/reasoning_team",
-      "destination": "/cookbook/teams/reasoning_team"
+      "destination": "/examples/reasoning/teams/overview"
     },
     {
       "source": "/examples/tools/built-in",
-      "destination": "/cookbook/tools/built-in"
+      "destination": "/examples/tools/overview"
     },
     {
       "source": "/examples/tools/mcp",
-      "destination": "/cookbook/tools/mcp"
-    },
-    {
-      "source": "/examples/tools/tool-calls-accesing-agent",
-      "destination": "/cookbook/tools/overview"
+      "destination": "/examples/tools/mcp/overview"
     },
     {
       "source": "/examples/tools/tool-hooks",
-      "destination": "/cookbook/tools/tool-hooks"
+      "destination": "/examples/tools/tool-hooks/overview"
     },
     {
       "source": "/examples/use-cases/agents/agno-assist",
-      "destination": "/cookbook/agents/agno-assist"
+      "destination": "/examples/agent-os/agno-assist"
     },
     {
       "source": "/examples/use-cases/agents/airbnb_mcp",
-      "destination": "/cookbook/agents/airbnb_mcp"
+      "destination": "/examples/tools/mcp/airbnb"
     },
     {
       "source": "/examples/use-cases/agents/competitor-analysis-agent",
-      "destination": "/cookbook/agents/competitor-analysis-agent"
+      "destination": "/examples/tools/parallel/competitor-tracker"
     },
     {
       "source": "/examples/use-cases/agents/deep_knowledge",
-      "destination": "/cookbook/agents/deep_knowledge"
+      "destination": "/examples/models/groq/deep-knowledge"
     },
     {
       "source": "/examples/use-cases/agents/overview",
-      "destination": "/cookbook/agents/overview"
+      "destination": "/examples/agents/overview"
     },
     {
       "source": "/examples/use-cases/agents/research-agent",
-      "destination": "/cookbook/agents/research-agent"
+      "destination": "/examples/agents/overview"
     },
     {
       "source": "/examples/use-cases/agents/social_media_agent",
-      "destination": "/cookbook/agents/social_media_agent"
+      "destination": "/examples/tools/x-tools"
     },
     {
       "source": "/examples/use-cases/agents/speech-to-text-agent",
-      "destination": "/cookbook/agents/speech-to-text-agent"
+      "destination": "/examples/agents/multimodal/audio-input-output"
     },
     {
       "source": "/examples/use-cases/agents/startup-analyst-agent",
-      "destination": "/cookbook/agents/startup-analyst-agent"
+      "destination": "/examples/tools/scrapegraph-tools"
     },
     {
       "source": "/examples/use-cases/agents/translation_agent",
-      "destination": "/cookbook/agents/translation_agent"
+      "destination": "/examples/models/groq/translation-agent"
     },
     {
       "source": "/examples/use-cases/agents/web-extraction-agent",
-      "destination": "/cookbook/agents/web-extraction-agent"
+      "destination": "/examples/tools/firecrawl-tools"
     },
     {
       "source": "/examples/use-cases/agents/youtube-agent",
-      "destination": "/cookbook/agents/youtube-agent"
+      "destination": "/examples/tools/youtube-tools"
     },
     {
       "source": "/examples/use-cases/overview",
-      "destination": "/cookbook/overview"
+      "destination": "/examples/introduction"
     },
     {
       "source": "/examples/use-cases/streamlit/agentic-rag",
-      "destination": "/cookbook/streamlit/agentic-rag"
+      "destination": "/examples/agents/knowledge/agentic-rag"
     },
     {
       "source": "/examples/use-cases/streamlit/answer-engine",
-      "destination": "/cookbook/streamlit/answer-engine"
+      "destination": "/examples/agents/overview"
     },
     {
       "source": "/examples/use-cases/streamlit/text-to-sql",
-      "destination": "/cookbook/streamlit/text-to-sql"
+      "destination": "/examples/tools/sql-tools"
     },
     {
       "source": "/examples/use-cases/teams/ai_support_team",
-      "destination": "/cookbook/teams/ai_support_team"
+      "destination": "/examples/teams/overview"
     },
     {
       "source": "/examples/use-cases/teams/content_team",
-      "destination": "/cookbook/teams/content_team"
+      "destination": "/examples/teams/overview"
     },
     {
       "source": "/examples/use-cases/teams/hackernews_team",
-      "destination": "/cookbook/teams/hackernews_team"
+      "destination": "/examples/teams/overview"
     },
     {
       "source": "/examples/use-cases/teams/news_agency_team",
-      "destination": "/cookbook/teams/news_agency_team"
+      "destination": "/examples/teams/overview"
     },
     {
       "source": "/examples/use-cases/teams/overview",
-      "destination": "/cookbook/teams/overview"
+      "destination": "/examples/teams/overview"
     },
     {
       "source": "/examples/use-cases/teams/reasoning_team",
-      "destination": "/cookbook/teams/reasoning_team"
+      "destination": "/examples/reasoning/teams/overview"
     },
     {
       "source": "/examples/use-cases/workflows/blog-post-generator",
-      "destination": "/cookbook/workflows/blog-post-generator"
+      "destination": "/examples/workflows/overview"
     },
     {
       "source": "/examples/use-cases/workflows/company-description",
-      "destination": "/cookbook/workflows/company-description"
+      "destination": "/examples/workflows/overview"
     },
     {
       "source": "/examples/use-cases/workflows/employee-recruiter",
-      "destination": "/cookbook/workflows/employee-recruiter"
+      "destination": "/examples/workflows/overview"
     },
     {
       "source": "/examples/use-cases/workflows/notion-knowledge-manager",
-      "destination": "/cookbook/workflows/notion-knowledge-manager"
+      "destination": "/examples/tools/notion-tools"
     },
     {
       "source": "/examples/use-cases/workflows/overview",
-      "destination": "/cookbook/workflows/overview"
+      "destination": "/examples/workflows/overview"
     },
     {
       "source": "/examples/workflows/blog-post-generator",
-      "destination": "/cookbook/workflows/blog-post-generator"
+      "destination": "/examples/workflows/overview"
     },
     {
       "source": "/examples/workflows/company-description",
-      "destination": "/cookbook/workflows/company-description"
+      "destination": "/examples/workflows/overview"
     },
     {
       "source": "/examples/workflows/employee-recruiter",
-      "destination": "/cookbook/workflows/employee-recruiter"
+      "destination": "/examples/workflows/overview"
     },
     {
       "source": "/examples/workflows/notion-knowledge-manager",
-      "destination": "/cookbook/workflows/notion-knowledge-manager"
+      "destination": "/examples/tools/notion-tools"
     },
     {
       "source": "/features/evals/telemetry",
@@ -16384,7 +16393,7 @@
     },
     {
       "source": "/get-started/performance",
-      "destination": "/performance"
+      "destination": "/evals/performance/overview"
     },
     {
       "source": "/how-to/contribute",
@@ -16416,7 +16425,7 @@
     },
     {
       "source": "/knowledge/concepts/content-db",
-      "destination": "/knowledge/concepts/overview"
+      "destination": "/knowledge/overview"
     },
     {
       "source": "/knowledge/getting-started",
@@ -16540,59 +16549,59 @@
     },
     {
       "source": "/production/aws/ci-cd",
-      "destination": "/production/templates/customize-aws/ci-cd"
+      "destination": "/deploy/templates/aws/reference"
     },
     {
       "source": "/production/aws/database-tables",
-      "destination": "/production/templates/customize-aws/database-tables"
+      "destination": "/deploy/templates/aws/reference"
     },
     {
       "source": "/production/aws/development-app",
-      "destination": "/production/templates/customize-aws/development-app"
+      "destination": "/deploy/templates/aws/deploy"
     },
     {
       "source": "/production/aws/domain-https",
-      "destination": "/production/templates/customize-aws/domain-https"
+      "destination": "/deploy/templates/aws/reference"
     },
     {
       "source": "/production/aws/env-vars",
-      "destination": "/production/templates/customize-aws/env-vars"
+      "destination": "/deploy/templates/aws/reference"
     },
     {
       "source": "/production/aws/format-and-validate",
-      "destination": "/production/templates/customize-aws/format-and-validate"
+      "destination": "/deploy/templates/aws/reference"
     },
     {
       "source": "/production/aws/git-repo",
-      "destination": "/production/templates/customize-aws/git-repo"
+      "destination": "/deploy/templates/aws/deploy"
     },
     {
       "source": "/production/aws/infra-settings",
-      "destination": "/production/templates/customize-aws/infra-settings"
+      "destination": "/deploy/templates/aws/reference"
     },
     {
       "source": "/production/aws/install",
-      "destination": "/production/templates/customize-aws/install"
+      "destination": "/deploy/templates/aws/deploy"
     },
     {
       "source": "/production/aws/new-users",
-      "destination": "/production/templates/customize-aws/new-users"
+      "destination": "/deploy/templates/aws/deploy"
     },
     {
       "source": "/production/aws/production-app",
-      "destination": "/production/templates/customize-aws/production-app"
+      "destination": "/deploy/templates/aws/deploy"
     },
     {
       "source": "/production/aws/python-packages",
-      "destination": "/production/templates/customize-aws/python-packages"
+      "destination": "/deploy/templates/aws/reference"
     },
     {
       "source": "/production/aws/secrets",
-      "destination": "/production/templates/customize-aws/secrets"
+      "destination": "/deploy/templates/aws/reference"
     },
     {
       "source": "/production/aws/ssh-access",
-      "destination": "/production/templates/customize-aws/ssh-access"
+      "destination": "/deploy/templates/aws/reference"
     },
     {
       "source": "/reference-api/schema/components/create-config",
@@ -16628,47 +16637,47 @@
     },
     {
       "source": "/deploy/templates/aws/customize/overview",
-      "destination": "/deploy/templates/aws/configure/overview"
+      "destination": "/deploy/templates/aws/reference"
     },
     {
       "source": "/deploy/templates/aws/customize/database-tables",
-      "destination": "/deploy/templates/aws/configure/database-tables"
+      "destination": "/deploy/templates/aws/reference"
     },
     {
       "source": "/deploy/templates/aws/customize/development-app",
-      "destination": "/deploy/templates/aws/configure/development-app"
+      "destination": "/deploy/templates/aws/deploy"
     },
     {
       "source": "/deploy/templates/aws/customize/format-and-validate",
-      "destination": "/deploy/templates/aws/configure/format-and-validate"
+      "destination": "/deploy/templates/aws/reference"
     },
     {
       "source": "/deploy/templates/aws/customize/git-repo",
-      "destination": "/deploy/templates/aws/configure/git-repo"
+      "destination": "/deploy/templates/aws/deploy"
     },
     {
       "source": "/deploy/templates/aws/customize/infra-settings",
-      "destination": "/deploy/templates/aws/configure/infra-settings"
+      "destination": "/deploy/templates/aws/reference"
     },
     {
       "source": "/deploy/templates/aws/customize/install",
-      "destination": "/deploy/templates/aws/configure/install"
+      "destination": "/deploy/templates/aws/deploy"
     },
     {
       "source": "/deploy/templates/aws/customize/new-users",
-      "destination": "/deploy/templates/aws/configure/new-users"
+      "destination": "/deploy/templates/aws/deploy"
     },
     {
       "source": "/deploy/templates/aws/customize/production-app",
-      "destination": "/deploy/templates/aws/configure/production-app"
+      "destination": "/deploy/templates/aws/deploy"
     },
     {
       "source": "/deploy/templates/aws/customize/python-packages",
-      "destination": "/deploy/templates/aws/configure/python-packages"
+      "destination": "/deploy/templates/aws/reference"
     },
     {
       "source": "/deploy/templates/aws/customize/ssh-access",
-      "destination": "/deploy/templates/aws/configure/ssh-access"
+      "destination": "/deploy/templates/aws/reference"
     },
     {
       "source": "/introduction/agents",
@@ -16848,11 +16857,11 @@
     },
     {
       "source": "/how-to/authentication",
-      "destination": "/agent-os/api/authentication"
+      "destination": "/agent-os/security/authorization/overview"
     },
     {
       "source": "/filters/manual-filters",
-      "destination": "/knowledge/concepts/filters/manual-filters"
+      "destination": "/knowledge/concepts/filters/overview"
     },
     {
       "source": "/concepts/vectordb/surrealdb",
@@ -16896,7 +16905,7 @@
     },
     {
       "source": "/examples/agents/finance-agent",
-      "destination": "/cookbook/agents/overview"
+      "destination": "/examples/agents/overview"
     },
     {
       "source": "/examples/getting-started/human-in-the-loop",
@@ -16916,7 +16925,7 @@
     },
     {
       "source": "/workspaces/workspace-management/development-app",
-      "destination": "/deploy/templates/aws/configure/development-app"
+      "destination": "/deploy/templates/aws/deploy"
     },
     {
       "source": "/basics/:slug*",
@@ -16928,7 +16937,7 @@
     },
     {
       "source": "/examples/use-cases/:slug*",
-      "destination": "/cookbook/:slug*"
+      "destination": "/examples/introduction"
     },
     {
       "source": "/examples/concepts/:slug*",
@@ -17740,31 +17749,31 @@
     },
     {
       "source": "/tutorials/agent-platform/setup",
-      "destination": "/agent-platform/overview"
+      "destination": "/agent-platform/run-local"
     },
     {
       "source": "/tutorials/agent-platform/create-an-agent",
-      "destination": "/agent-platform/overview"
+      "destination": "/agent-platform/create-agent"
     },
     {
       "source": "/tutorials/agent-platform/improve-an-agent",
-      "destination": "/agent-platform/overview"
+      "destination": "/agent-platform/improve-agent"
     },
     {
       "source": "/tutorials/agent-platform/evals",
-      "destination": "/agent-platform/overview"
+      "destination": "/agent-platform/evals"
     },
     {
       "source": "/tutorials/agent-platform/deploy-to-railway",
-      "destination": "/agent-platform/overview"
+      "destination": "/agent-platform/run-railway"
     },
     {
       "source": "/tutorials/agent-platform/next-steps",
-      "destination": "/agent-platform/overview"
+      "destination": "/agent-platform/next-steps"
     },
     {
       "source": "/tutorials/pick-a-template",
-      "destination": "/deploy/templates"
+      "destination": "/deploy/introduction"
     },
     {
       "source": "/first-multi-agent-system",
@@ -17789,6 +17798,1066 @@
     {
       "source": "/tutorials/coda/next-steps",
       "destination": "/deploy/templates/coda/overview"
+    },
+    {
+      "source": "/agent-os/features/chat-interface",
+      "destination": "/agent-os/control-plane"
+    },
+    {
+      "source": "/agent-os/features/memories",
+      "destination": "/agent-os/control-plane"
+    },
+    {
+      "source": "/agent-os/features/session-tracking",
+      "destination": "/agent-os/control-plane"
+    },
+    {
+      "source": "/agent-os/features/tracing",
+      "destination": "/agent-os/control-plane"
+    },
+    {
+      "source": "/cookbook/evals/overview",
+      "destination": "/examples/evals/overview"
+    },
+    {
+      "source": "/cookbook/observability/overview",
+      "destination": "/observability/overview"
+    },
+    {
+      "source": "/cookbook/reasoning/overview",
+      "destination": "/examples/reasoning/overview"
+    },
+    {
+      "source": "/deploy/overview",
+      "destination": "/deploy/introduction"
+    },
+    {
+      "source": "/get-started/agent-engineering",
+      "destination": "/first-agent"
+    },
+    {
+      "source": "/reference/models/langdb",
+      "destination": "/models/providers/gateways/langdb/overview"
+    },
+    {
+      "source": "/reference/vector-db/cassandra",
+      "destination": "/knowledge/vector-stores/cassandra/overview"
+    },
+    {
+      "source": "/reference/vector-db/chromadb",
+      "destination": "/knowledge/vector-stores/chroma/overview"
+    },
+    {
+      "source": "/reference/vector-db/clickhouse",
+      "destination": "/knowledge/vector-stores/clickhouse/overview"
+    },
+    {
+      "source": "/reference/vector-db/couchbase",
+      "destination": "/knowledge/vector-stores/couchbase/overview"
+    },
+    {
+      "source": "/reference/vector-db/lancedb",
+      "destination": "/knowledge/vector-stores/lancedb/overview"
+    },
+    {
+      "source": "/reference/vector-db/milvus",
+      "destination": "/knowledge/vector-stores/milvus/overview"
+    },
+    {
+      "source": "/reference/vector-db/mongodb",
+      "destination": "/knowledge/vector-stores/mongodb/overview"
+    },
+    {
+      "source": "/reference/vector-db/pgvector",
+      "destination": "/knowledge/vector-stores/pgvector/overview"
+    },
+    {
+      "source": "/reference/vector-db/pinecone",
+      "destination": "/knowledge/vector-stores/pinecone/overview"
+    },
+    {
+      "source": "/reference/vector-db/qdrant",
+      "destination": "/knowledge/vector-stores/qdrant/overview"
+    },
+    {
+      "source": "/reference/vector-db/singlestore",
+      "destination": "/knowledge/vector-stores/singlestore/overview"
+    },
+    {
+      "source": "/reference/vector-db/surrealdb",
+      "destination": "/knowledge/vector-stores/surrealdb/overview"
+    },
+    {
+      "source": "/reference/vector-db/weaviate",
+      "destination": "/knowledge/vector-stores/weaviate/overview"
+    },
+    {
+      "source": "/templates/agent-infra-aws/introduction",
+      "destination": "/deploy/templates/aws/deploy"
+    },
+    {
+      "source": "/templates/agent-infra-aws/run-aws",
+      "destination": "/deploy/templates/aws/deploy"
+    },
+    {
+      "source": "/templates/agent-infra-aws/run-local",
+      "destination": "/deploy/templates/aws/deploy"
+    },
+    {
+      "source": "/templates/agent-infra-docker/introduction",
+      "destination": "/deploy/templates/docker/deploy"
+    },
+    {
+      "source": "/templates/agent-infra-docker/run-local",
+      "destination": "/deploy/templates/docker/deploy"
+    },
+    {
+      "source": "/templates/agent-infra-docker/run-prd",
+      "destination": "/deploy/templates/docker/deploy"
+    },
+    {
+      "source": "/templates/agent-infra-railway/introduction",
+      "destination": "/deploy/templates/railway/deploy"
+    },
+    {
+      "source": "/templates/agent-infra-railway/run-local",
+      "destination": "/deploy/templates/railway/deploy"
+    },
+    {
+      "source": "/templates/agent-infra-railway/run-prd",
+      "destination": "/deploy/templates/railway/deploy"
+    },
+    {
+      "source": "/templates/apps/examples",
+      "destination": "/deploy/introduction"
+    },
+    {
+      "source": "/templates/apps/features",
+      "destination": "/deploy/introduction"
+    },
+    {
+      "source": "/templates/apps/introduction",
+      "destination": "/deploy/introduction"
+    },
+    {
+      "source": "/templates/cli/ag/auth",
+      "destination": "/agent-os/cli/overview"
+    },
+    {
+      "source": "/templates/cli/ag/config",
+      "destination": "/agent-os/cli/overview"
+    },
+    {
+      "source": "/templates/cli/ag/init",
+      "destination": "/agent-os/cli/overview"
+    },
+    {
+      "source": "/templates/cli/ag/patch",
+      "destination": "/agent-os/cli/overview"
+    },
+    {
+      "source": "/templates/cli/ag/reset",
+      "destination": "/agent-os/cli/overview"
+    },
+    {
+      "source": "/templates/cli/ag/restart",
+      "destination": "/agent-os/cli/overview"
+    },
+    {
+      "source": "/templates/cli/ag/set",
+      "destination": "/agent-os/cli/overview"
+    },
+    {
+      "source": "/templates/cli/ag/start",
+      "destination": "/agent-os/cli/overview"
+    },
+    {
+      "source": "/templates/cli/ag/stop",
+      "destination": "/agent-os/cli/overview"
+    },
+    {
+      "source": "/templates/cli/ws/config",
+      "destination": "/reference/agno-infra/cli/ws/config"
+    },
+    {
+      "source": "/templates/cli/ws/create",
+      "destination": "/reference/agno-infra/cli/ws/create"
+    },
+    {
+      "source": "/templates/cli/ws/delete",
+      "destination": "/reference/agno-infra/cli/ws/delete"
+    },
+    {
+      "source": "/templates/cli/ws/down",
+      "destination": "/reference/agno-infra/cli/ws/down"
+    },
+    {
+      "source": "/templates/cli/ws/patch",
+      "destination": "/reference/agno-infra/cli/ws/patch"
+    },
+    {
+      "source": "/templates/cli/ws/restart",
+      "destination": "/reference/agno-infra/cli/ws/restart"
+    },
+    {
+      "source": "/templates/cli/ws/setup",
+      "destination": "/reference/agno-infra/cli/ws/up"
+    },
+    {
+      "source": "/templates/cli/ws/up",
+      "destination": "/reference/agno-infra/cli/ws/up"
+    },
+    {
+      "source": "/templates/infra-management/ci-cd",
+      "destination": "/deploy/templates/aws/reference"
+    },
+    {
+      "source": "/templates/infra-management/database-tables",
+      "destination": "/deploy/templates/aws/reference"
+    },
+    {
+      "source": "/templates/infra-management/domain-https",
+      "destination": "/deploy/templates/aws/reference"
+    },
+    {
+      "source": "/templates/infra-management/env-vars",
+      "destination": "/deploy/templates/aws/reference"
+    },
+    {
+      "source": "/templates/infra-management/format-and-validate",
+      "destination": "/deploy/templates/aws/reference"
+    },
+    {
+      "source": "/templates/infra-management/git-repo",
+      "destination": "/deploy/templates/aws/deploy"
+    },
+    {
+      "source": "/templates/infra-management/infra-settings",
+      "destination": "/deploy/templates/aws/reference"
+    },
+    {
+      "source": "/templates/infra-management/install",
+      "destination": "/deploy/templates/aws/deploy"
+    },
+    {
+      "source": "/templates/infra-management/python-packages",
+      "destination": "/deploy/templates/aws/reference"
+    },
+    {
+      "source": "/templates/infra-management/secrets",
+      "destination": "/deploy/templates/aws/reference"
+    },
+    {
+      "source": "/templates/infra-management/ssh-access",
+      "destination": "/deploy/templates/aws/reference"
+    },
+    {
+      "source": "/templates/infra/resources",
+      "destination": "/deploy/templates/aws/reference"
+    },
+    {
+      "source": "/templates/infra/settings",
+      "destination": "/deploy/templates/aws/reference"
+    },
+    {
+      "source": "/templates/introduction",
+      "destination": "/deploy/introduction"
+    },
+    {
+      "source": "/templates/resources/aws/ecs",
+      "destination": "/deploy/templates/aws/reference"
+    },
+    {
+      "source": "/templates/resources/aws/introduction",
+      "destination": "/deploy/templates/aws/reference"
+    },
+    {
+      "source": "/templates/resources/aws/rds",
+      "destination": "/deploy/templates/aws/reference"
+    },
+    {
+      "source": "/templates/resources/docker/container",
+      "destination": "/deploy/templates/docker/reference"
+    },
+    {
+      "source": "/templates/resources/docker/introduction",
+      "destination": "/deploy/templates/docker/reference"
+    },
+    {
+      "source": "/templates/resources/introduction",
+      "destination": "/deploy/introduction"
+    },
+    {
+      "source": "/cookbook/overview",
+      "destination": "/examples/introduction"
+    },
+    {
+      "source": "/cookbook/agents/overview",
+      "destination": "/examples/agents/overview"
+    },
+    {
+      "source": "/cookbook/agents/agno-assist",
+      "destination": "/examples/agent-os/agno-assist"
+    },
+    {
+      "source": "/cookbook/agents/airbnb_mcp",
+      "destination": "/examples/tools/mcp/airbnb"
+    },
+    {
+      "source": "/cookbook/agents/competitor-analysis-agent",
+      "destination": "/examples/tools/parallel/competitor-tracker"
+    },
+    {
+      "source": "/cookbook/agents/deep_knowledge",
+      "destination": "/examples/models/groq/deep-knowledge"
+    },
+    {
+      "source": "/cookbook/agents/research-agent",
+      "destination": "/examples/agents/overview"
+    },
+    {
+      "source": "/cookbook/agents/social_media_agent",
+      "destination": "/examples/tools/x-tools"
+    },
+    {
+      "source": "/cookbook/agents/speech-to-text-agent",
+      "destination": "/examples/agents/multimodal/audio-input-output"
+    },
+    {
+      "source": "/cookbook/agents/startup-analyst-agent",
+      "destination": "/examples/tools/scrapegraph-tools"
+    },
+    {
+      "source": "/cookbook/agents/translation_agent",
+      "destination": "/examples/models/groq/translation-agent"
+    },
+    {
+      "source": "/cookbook/agents/web-extraction-agent",
+      "destination": "/examples/tools/firecrawl-tools"
+    },
+    {
+      "source": "/cookbook/agents/youtube-agent",
+      "destination": "/examples/tools/youtube-tools"
+    },
+    {
+      "source": "/cookbook/knowledge/overview",
+      "destination": "/examples/knowledge/overview"
+    },
+    {
+      "source": "/cookbook/knowledge/chunking",
+      "destination": "/examples/knowledge/building-blocks/chunking-strategies"
+    },
+    {
+      "source": "/cookbook/knowledge/embedders",
+      "destination": "/examples/knowledge/building-blocks/embedders"
+    },
+    {
+      "source": "/cookbook/knowledge/readers",
+      "destination": "/knowledge/concepts/readers/overview"
+    },
+    {
+      "source": "/cookbook/knowledge/vector-databases",
+      "destination": "/knowledge/concepts/vector-db"
+    },
+    {
+      "source": "/cookbook/learning/overview",
+      "destination": "/examples/learning/overview"
+    },
+    {
+      "source": "/cookbook/learning/personal-assistant",
+      "destination": "/examples/learning/patterns/personal-assistant"
+    },
+    {
+      "source": "/cookbook/learning/support-agent",
+      "destination": "/examples/learning/patterns/support-agent"
+    },
+    {
+      "source": "/cookbook/models/overview",
+      "destination": "/examples/models/overview"
+    },
+    {
+      "source": "/cookbook/models/openai",
+      "destination": "/examples/models/openai/chat/basic"
+    },
+    {
+      "source": "/cookbook/models/anthropic",
+      "destination": "/examples/models/anthropic/basic"
+    },
+    {
+      "source": "/cookbook/models/google",
+      "destination": "/examples/models/google/overview"
+    },
+    {
+      "source": "/cookbook/models/enterprise/aws-bedrock",
+      "destination": "/examples/models/aws/overview"
+    },
+    {
+      "source": "/cookbook/models/enterprise/azure",
+      "destination": "/examples/models/azure/overview"
+    },
+    {
+      "source": "/cookbook/models/enterprise/ibm",
+      "destination": "/examples/models/ibm/watsonx/overview"
+    },
+    {
+      "source": "/cookbook/models/enterprise/nvidia",
+      "destination": "/examples/models/nvidia/overview"
+    },
+    {
+      "source": "/cookbook/models/enterprise/vertex-ai",
+      "destination": "/examples/models/vertexai/overview"
+    },
+    {
+      "source": "/cookbook/models/local/llama-cpp",
+      "destination": "/examples/models/llama-cpp/overview"
+    },
+    {
+      "source": "/cookbook/models/local/lmstudio",
+      "destination": "/examples/models/lmstudio/overview"
+    },
+    {
+      "source": "/cookbook/models/local/ollama",
+      "destination": "/examples/models/ollama/chat/basic"
+    },
+    {
+      "source": "/cookbook/models/local/vllm",
+      "destination": "/examples/models/vllm/overview"
+    },
+    {
+      "source": "/cookbook/models/open-source/cohere",
+      "destination": "/examples/models/cohere/overview"
+    },
+    {
+      "source": "/cookbook/models/open-source/deepseek",
+      "destination": "/examples/models/deepseek/overview"
+    },
+    {
+      "source": "/cookbook/models/open-source/fireworks",
+      "destination": "/examples/models/fireworks/overview"
+    },
+    {
+      "source": "/cookbook/models/open-source/groq",
+      "destination": "/examples/models/groq/basic"
+    },
+    {
+      "source": "/cookbook/models/open-source/mistral",
+      "destination": "/examples/models/mistral/overview"
+    },
+    {
+      "source": "/cookbook/models/open-source/together",
+      "destination": "/examples/models/together/overview"
+    },
+    {
+      "source": "/cookbook/storage/overview",
+      "destination": "/examples/storage/overview"
+    },
+    {
+      "source": "/cookbook/streamlit/overview",
+      "destination": "/examples/introduction"
+    },
+    {
+      "source": "/cookbook/streamlit/agentic-rag",
+      "destination": "/examples/agents/knowledge/agentic-rag"
+    },
+    {
+      "source": "/cookbook/streamlit/answer-engine",
+      "destination": "/examples/agents/overview"
+    },
+    {
+      "source": "/cookbook/streamlit/text-to-sql",
+      "destination": "/examples/tools/sql-tools"
+    },
+    {
+      "source": "/cookbook/teams/overview",
+      "destination": "/examples/teams/overview"
+    },
+    {
+      "source": "/cookbook/teams/ai_support_team",
+      "destination": "/examples/teams/overview"
+    },
+    {
+      "source": "/cookbook/teams/content_team",
+      "destination": "/examples/teams/overview"
+    },
+    {
+      "source": "/cookbook/teams/hackernews_team",
+      "destination": "/examples/teams/overview"
+    },
+    {
+      "source": "/cookbook/teams/news_agency_team",
+      "destination": "/examples/teams/overview"
+    },
+    {
+      "source": "/cookbook/teams/reasoning_team",
+      "destination": "/examples/reasoning/teams/overview"
+    },
+    {
+      "source": "/cookbook/tools/overview",
+      "destination": "/examples/tools/overview"
+    },
+    {
+      "source": "/cookbook/tools/built-in",
+      "destination": "/examples/tools/overview"
+    },
+    {
+      "source": "/cookbook/tools/custom-tools",
+      "destination": "/examples/tools/custom-tools"
+    },
+    {
+      "source": "/cookbook/tools/mcp",
+      "destination": "/examples/tools/mcp/overview"
+    },
+    {
+      "source": "/cookbook/tools/tool-hooks",
+      "destination": "/examples/tools/tool-hooks/overview"
+    },
+    {
+      "source": "/cookbook/workflows/overview",
+      "destination": "/examples/workflows/overview"
+    },
+    {
+      "source": "/cookbook/workflows/blog-post-generator",
+      "destination": "/examples/workflows/overview"
+    },
+    {
+      "source": "/cookbook/workflows/company-description",
+      "destination": "/examples/workflows/overview"
+    },
+    {
+      "source": "/cookbook/workflows/employee-recruiter",
+      "destination": "/examples/workflows/overview"
+    },
+    {
+      "source": "/cookbook/workflows/notion-knowledge-manager",
+      "destination": "/examples/tools/notion-tools"
+    },
+    {
+      "source": "/knowledge/agents/agentic-rag-with-reranking",
+      "destination": "/examples/agents/knowledge/agentic-rag-with-reranking"
+    },
+    {
+      "source": "/knowledge/agents/rag-sentence-transformer",
+      "destination": "/examples/knowledge/building-blocks/reranking"
+    },
+    {
+      "source": "/knowledge/agents/rag-with-lance-db-and-sqlite",
+      "destination": "/knowledge/agents/traditional-rag-lancedb"
+    },
+    {
+      "source": "/knowledge/concepts/embedder/aws-bedrock/overview",
+      "destination": "/knowledge/concepts/embedder/aws-bedrock/aws-bedrock-embedder"
+    },
+    {
+      "source": "/knowledge/concepts/embedder/azure-openai/overview",
+      "destination": "/knowledge/concepts/embedder/azure-openai/azure-embedder"
+    },
+    {
+      "source": "/knowledge/concepts/embedder/cohere/overview",
+      "destination": "/knowledge/concepts/embedder/cohere/cohere-embedder"
+    },
+    {
+      "source": "/knowledge/concepts/embedder/fireworks/overview",
+      "destination": "/knowledge/concepts/embedder/fireworks/fireworks-embedder"
+    },
+    {
+      "source": "/knowledge/concepts/embedder/gemini/overview",
+      "destination": "/knowledge/concepts/embedder/gemini/gemini-embedder"
+    },
+    {
+      "source": "/knowledge/concepts/embedder/huggingface/overview",
+      "destination": "/knowledge/concepts/embedder/huggingface/huggingface-embedder"
+    },
+    {
+      "source": "/knowledge/concepts/embedder/jina/overview",
+      "destination": "/knowledge/concepts/embedder/jina/jina-embedder"
+    },
+    {
+      "source": "/knowledge/concepts/embedder/langdb/overview",
+      "destination": "/knowledge/concepts/embedder/langdb/langdb-embedder"
+    },
+    {
+      "source": "/knowledge/concepts/embedder/mistral/overview",
+      "destination": "/knowledge/concepts/embedder/mistral/mistral-embedder"
+    },
+    {
+      "source": "/knowledge/concepts/embedder/nebius/overview",
+      "destination": "/knowledge/concepts/embedder/nebius/nebius-embedder"
+    },
+    {
+      "source": "/knowledge/concepts/embedder/ollama/overview",
+      "destination": "/knowledge/concepts/embedder/ollama/ollama-embedder"
+    },
+    {
+      "source": "/knowledge/concepts/embedder/openai/overview",
+      "destination": "/knowledge/concepts/embedder/openai/openai-embedder"
+    },
+    {
+      "source": "/knowledge/concepts/embedder/qdrant-fastembed/overview",
+      "destination": "/knowledge/concepts/embedder/qdrant-fastembed/qdrant-fastembed"
+    },
+    {
+      "source": "/knowledge/concepts/embedder/sentencetransformers/overview",
+      "destination": "/knowledge/concepts/embedder/sentencetransformers/sentence-transformer-embedder"
+    },
+    {
+      "source": "/knowledge/concepts/embedder/together/overview",
+      "destination": "/knowledge/concepts/embedder/together/together-embedder"
+    },
+    {
+      "source": "/knowledge/concepts/embedder/vllm/overview",
+      "destination": "/knowledge/concepts/embedder/vllm/vllm-embedder"
+    },
+    {
+      "source": "/knowledge/concepts/embedder/voyageai/overview",
+      "destination": "/knowledge/concepts/embedder/voyageai/voyageai-embedder"
+    },
+    {
+      "source": "/knowledge/concepts/filters/agentic-filtering",
+      "destination": "/examples/knowledge/building-blocks/agentic-filtering"
+    },
+    {
+      "source": "/knowledge/concepts/filters/agentic-filters",
+      "destination": "/knowledge/concepts/filters/overview"
+    },
+    {
+      "source": "/knowledge/concepts/filters/async-filtering",
+      "destination": "/examples/knowledge/building-blocks/filtering"
+    },
+    {
+      "source": "/knowledge/concepts/filters/filter-expressions",
+      "destination": "/knowledge/concepts/filters/advanced-filtering"
+    },
+    {
+      "source": "/knowledge/concepts/filters/filtering",
+      "destination": "/examples/knowledge/building-blocks/filtering"
+    },
+    {
+      "source": "/knowledge/concepts/filters/filtering-chroma-db",
+      "destination": "/examples/knowledge/building-blocks/filtering"
+    },
+    {
+      "source": "/knowledge/concepts/filters/filtering-lance-db",
+      "destination": "/examples/knowledge/building-blocks/filtering"
+    },
+    {
+      "source": "/knowledge/concepts/filters/filtering-milvus-db",
+      "destination": "/examples/knowledge/building-blocks/filtering"
+    },
+    {
+      "source": "/knowledge/concepts/filters/filtering-mongo-db",
+      "destination": "/examples/knowledge/building-blocks/filtering"
+    },
+    {
+      "source": "/knowledge/concepts/filters/filtering-on-load",
+      "destination": "/examples/knowledge/building-blocks/filtering"
+    },
+    {
+      "source": "/knowledge/concepts/filters/filtering-pgvector",
+      "destination": "/examples/knowledge/building-blocks/filtering"
+    },
+    {
+      "source": "/knowledge/concepts/filters/filtering-pinecone",
+      "destination": "/examples/knowledge/building-blocks/filtering"
+    },
+    {
+      "source": "/knowledge/concepts/filters/filtering-qdrant-db",
+      "destination": "/examples/knowledge/building-blocks/filtering"
+    },
+    {
+      "source": "/knowledge/concepts/filters/filtering-surreal-db",
+      "destination": "/examples/knowledge/building-blocks/filtering"
+    },
+    {
+      "source": "/knowledge/concepts/filters/filtering-weaviate",
+      "destination": "/examples/knowledge/building-blocks/filtering"
+    },
+    {
+      "source": "/knowledge/concepts/filters/filtering-with-invalid-keys",
+      "destination": "/examples/knowledge/building-blocks/filtering"
+    },
+    {
+      "source": "/knowledge/concepts/filters/manual-filters",
+      "destination": "/knowledge/concepts/filters/overview"
+    },
+    {
+      "source": "/knowledge/concepts/overview",
+      "destination": "/knowledge/overview"
+    },
+    {
+      "source": "/knowledge/concepts/protocol/overview",
+      "destination": "/examples/knowledge/advanced/knowledge-protocol"
+    },
+    {
+      "source": "/knowledge/concepts/readers/arxiv-reader",
+      "destination": "/examples/knowledge/integrations/readers/web"
+    },
+    {
+      "source": "/knowledge/concepts/readers/arxiv-reader-async",
+      "destination": "/examples/knowledge/integrations/readers/web"
+    },
+    {
+      "source": "/knowledge/concepts/readers/csv-reader-async",
+      "destination": "/knowledge/concepts/readers/csv-reader"
+    },
+    {
+      "source": "/knowledge/concepts/readers/csv-url-reader",
+      "destination": "/knowledge/concepts/readers/csv-reader"
+    },
+    {
+      "source": "/knowledge/concepts/readers/field-labeled-csv-reader",
+      "destination": "/reference/knowledge/reader/field-labeled-csv"
+    },
+    {
+      "source": "/knowledge/concepts/readers/firecrawl-reader",
+      "destination": "/examples/knowledge/integrations/readers/web"
+    },
+    {
+      "source": "/knowledge/concepts/readers/firecrawl-reader-async",
+      "destination": "/examples/knowledge/integrations/readers/web"
+    },
+    {
+      "source": "/knowledge/concepts/readers/json-reader-async",
+      "destination": "/knowledge/concepts/readers/json-reader"
+    },
+    {
+      "source": "/knowledge/concepts/readers/markdown-reader-async",
+      "destination": "/knowledge/concepts/readers/markdown-reader"
+    },
+    {
+      "source": "/knowledge/concepts/readers/pdf-password-reader",
+      "destination": "/knowledge/concepts/readers/pdf-reader"
+    },
+    {
+      "source": "/knowledge/concepts/readers/pdf-reader-async",
+      "destination": "/knowledge/concepts/readers/pdf-reader"
+    },
+    {
+      "source": "/knowledge/concepts/readers/pdf-url-password-reader",
+      "destination": "/knowledge/concepts/readers/pdf-reader"
+    },
+    {
+      "source": "/knowledge/concepts/readers/pptx-reader",
+      "destination": "/examples/knowledge/integrations/readers/documents"
+    },
+    {
+      "source": "/knowledge/concepts/readers/pptx-reader-async",
+      "destination": "/examples/knowledge/integrations/readers/documents"
+    },
+    {
+      "source": "/knowledge/concepts/readers/web-search-reader",
+      "destination": "/reference/knowledge/reader/web-search"
+    },
+    {
+      "source": "/knowledge/concepts/readers/web-search-reader-async",
+      "destination": "/reference/knowledge/reader/web-search"
+    },
+    {
+      "source": "/knowledge/concepts/readers/website-reader-async",
+      "destination": "/knowledge/concepts/readers/website-reader"
+    },
+    {
+      "source": "/knowledge/concepts/readers/wikipedia-reader",
+      "destination": "/reference/knowledge/reader/wikipedia"
+    },
+    {
+      "source": "/knowledge/concepts/readers/wikipedia-reader-async",
+      "destination": "/reference/knowledge/reader/wikipedia"
+    },
+    {
+      "source": "/knowledge/concepts/readers/youtube-reader-async",
+      "destination": "/knowledge/concepts/readers/youtube-reader"
+    },
+    {
+      "source": "/knowledge/concepts/search-and-retrieval/agentic-rag-infinity-reranker",
+      "destination": "/examples/knowledge/integrations/rag/agentic-rag-infinity-reranker"
+    },
+    {
+      "source": "/knowledge/concepts/search-and-retrieval/agentic-rag-lancedb",
+      "destination": "/knowledge/agents/agentic-rag-lancedb"
+    },
+    {
+      "source": "/knowledge/concepts/search-and-retrieval/agentic-rag-pgvector",
+      "destination": "/knowledge/agents/agentic-rag-pgvector"
+    },
+    {
+      "source": "/knowledge/concepts/search-and-retrieval/agentic-rag-with-lightrag",
+      "destination": "/examples/knowledge/integrations/rag/agentic-rag-with-lightrag"
+    },
+    {
+      "source": "/knowledge/concepts/search-and-retrieval/agentic-rag-with-reasoning",
+      "destination": "/examples/agents/knowledge/agentic-rag-with-reasoning"
+    },
+    {
+      "source": "/knowledge/concepts/search-and-retrieval/agentic-rag-with-reranking",
+      "destination": "/examples/agents/knowledge/agentic-rag-with-reranking"
+    },
+    {
+      "source": "/knowledge/concepts/search-and-retrieval/async-custom-retriever",
+      "destination": "/knowledge/concepts/search-and-retrieval/custom-retriever"
+    },
+    {
+      "source": "/knowledge/concepts/search-and-retrieval/rag-sentence-transformer",
+      "destination": "/examples/knowledge/building-blocks/reranking"
+    },
+    {
+      "source": "/knowledge/concepts/search-and-retrieval/rag-with-lance-db-and-sqlite",
+      "destination": "/knowledge/agents/traditional-rag-lancedb"
+    },
+    {
+      "source": "/knowledge/concepts/search-and-retrieval/traditional-rag-lancedb",
+      "destination": "/knowledge/agents/traditional-rag-lancedb"
+    },
+    {
+      "source": "/knowledge/concepts/search-and-retrieval/traditional-rag-pgvector",
+      "destination": "/knowledge/agents/traditional-rag-pgvector"
+    },
+    {
+      "source": "/knowledge/knowledge-bases",
+      "destination": "/knowledge/overview"
+    },
+    {
+      "source": "/knowledge/teams/coordinated-agentic-rag",
+      "destination": "/examples/teams/search-coordination/coordinated-agentic-rag"
+    },
+    {
+      "source": "/knowledge/teams/coordinated-reasoning-rag",
+      "destination": "/examples/teams/search-coordination/coordinated-reasoning-rag"
+    },
+    {
+      "source": "/knowledge/teams/distributed-infinity-search",
+      "destination": "/examples/teams/search-coordination/distributed-infinity-search"
+    },
+    {
+      "source": "/knowledge/teams/distributed-rag-with-reranking",
+      "destination": "/examples/teams/distributed-rag/distributed-rag-with-reranking"
+    },
+    {
+      "source": "/knowledge/teams/team-with-agentic-knowledge-filters",
+      "destination": "/examples/teams/knowledge/team-with-agentic-knowledge-filters"
+    },
+    {
+      "source": "/knowledge/teams/team-with-knowledge-filters",
+      "destination": "/examples/teams/knowledge/team-with-knowledge-filters"
+    },
+    {
+      "source": "/knowledge/terminology",
+      "destination": "/knowledge/overview"
+    },
+    {
+      "source": "/knowledge/vector-stores/mongodb/usage/cosmos-mongodb-vcore",
+      "destination": "/knowledge/vector-stores/azure_cosmos_mongodb/overview"
+    },
+    {
+      "source": "/deploy/verify",
+      "destination": "/deploy/introduction"
+    },
+    {
+      "source": "/database/async-mongo",
+      "destination": "/database/providers/async-mongo/overview"
+    },
+    {
+      "source": "/database/async-postgres",
+      "destination": "/database/providers/async-postgres/overview"
+    },
+    {
+      "source": "/database/async-sqlite",
+      "destination": "/database/providers/async-sqlite/overview"
+    },
+    {
+      "source": "/database/dynamodb",
+      "destination": "/database/providers/dynamodb/overview"
+    },
+    {
+      "source": "/database/firestore",
+      "destination": "/database/providers/firestore/overview"
+    },
+    {
+      "source": "/database/gcs",
+      "destination": "/database/providers/gcs/overview"
+    },
+    {
+      "source": "/database/in-memory",
+      "destination": "/database/providers/in-memory/overview"
+    },
+    {
+      "source": "/database/json",
+      "destination": "/database/providers/json/overview"
+    },
+    {
+      "source": "/database/mongodb",
+      "destination": "/database/providers/mongo/overview"
+    },
+    {
+      "source": "/database/mysql",
+      "destination": "/database/providers/mysql/overview"
+    },
+    {
+      "source": "/database/neon",
+      "destination": "/database/providers/neon/overview"
+    },
+    {
+      "source": "/database/postgres",
+      "destination": "/database/providers/postgres/overview"
+    },
+    {
+      "source": "/database/redis",
+      "destination": "/database/providers/redis/overview"
+    },
+    {
+      "source": "/database/singlestore",
+      "destination": "/database/providers/singlestore/overview"
+    },
+    {
+      "source": "/database/sqlite",
+      "destination": "/database/providers/sqlite/overview"
+    },
+    {
+      "source": "/database/supabase",
+      "destination": "/database/providers/supabase/overview"
+    },
+    {
+      "source": "/database/surreabdb",
+      "destination": "/database/providers/surrealdb/overview"
+    },
+    {
+      "source": "/tutorials/scout/overview",
+      "destination": "/deploy/templates/scout/overview"
+    },
+    {
+      "source": "/tutorials/scout/setup",
+      "destination": "/deploy/templates/scout/overview"
+    },
+    {
+      "source": "/tutorials/scout/knowledge-and-crm",
+      "destination": "/deploy/templates/scout/overview"
+    },
+    {
+      "source": "/tutorials/scout/connect-slack",
+      "destination": "/deploy/templates/scout/overview"
+    },
+    {
+      "source": "/tutorials/scout/connect-google-drive",
+      "destination": "/deploy/templates/scout/overview"
+    },
+    {
+      "source": "/tutorials/scout/connect-mcp-servers",
+      "destination": "/deploy/templates/scout/overview"
+    },
+    {
+      "source": "/tutorials/scout/deploy-to-railway",
+      "destination": "/deploy/templates/scout/overview"
+    },
+    {
+      "source": "/tutorials/dash/overview",
+      "destination": "/deploy/templates/dash/overview"
+    },
+    {
+      "source": "/tutorials/dash/setup",
+      "destination": "/deploy/templates/dash/overview"
+    },
+    {
+      "source": "/tutorials/dash/connect-slack",
+      "destination": "/deploy/templates/dash/overview"
+    },
+    {
+      "source": "/tutorials/dash/deploy-to-railway",
+      "destination": "/deploy/templates/dash/overview"
+    },
+    {
+      "source": "/tutorials/dash/next-steps",
+      "destination": "/deploy/templates/dash/overview"
+    },
+    {
+      "source": "/agent-os/api/authentication",
+      "destination": "/agent-os/security/authorization/overview"
+    },
+    {
+      "source": "/agent-os/api/usage",
+      "destination": "/agent-os/using-the-api"
+    },
+    {
+      "source": "/agent-os/features/knowledge-management",
+      "destination": "/agent-os/knowledge/manage-knowledge"
+    },
+    {
+      "source": "/features/context",
+      "destination": "/context-providers/overview"
+    },
+    {
+      "source": "/features/deploy",
+      "destination": "/deploy/introduction"
+    },
+    {
+      "source": "/features/human-approval",
+      "destination": "/hitl/overview"
+    },
+    {
+      "source": "/models/providers/native/openai/responses/usage/storage",
+      "destination": "/models/providers/native/openai/responses/usage/db"
+    },
+    {
+      "source": "/models/providers/native/xai/usage/async-basic",
+      "destination": "/models/providers/native/xai/usage/basic-async"
+    },
+    {
+      "source": "/models/providers/native/xai/usage/async-basic-stream",
+      "destination": "/models/providers/native/xai/usage/basic-async-stream"
+    },
+    {
+      "source": "/performance",
+      "destination": "/evals/performance/overview"
+    },
+    {
+      "source": "/templates/infra-management/development-app",
+      "destination": "/deploy/templates/docker/deploy"
+    },
+    {
+      "source": "/templates/infra-management/new-users",
+      "destination": "/deploy/introduction"
+    },
+    {
+      "source": "/templates/infra-management/production-app",
+      "destination": "/deploy/templates/aws/deploy"
+    },
+    {
+      "source": "/tools/async-tools",
+      "destination": "/tools/overview"
+    },
+    {
+      "source": "/tools/team",
+      "destination": "/tools/attaching-tools"
+    },
+    {
+      "source": "/tools/toolkits/others/agentql",
+      "destination": "/tools/toolkits/web-scrape/agentql"
+    },
+    {
+      "source": "/deploy/interfaces/overview",
+      "destination": "/agent-os/interfaces/overview"
+    },
+    {
+      "source": "/deploy/interfaces/slack/overview",
+      "destination": "/agent-os/interfaces/slack/introduction"
+    },
+    {
+      "source": "/deploy/interfaces/telegram/overview",
+      "destination": "/agent-os/interfaces/telegram/introduction"
+    },
+    {
+      "source": "/deploy/interfaces/whatsapp/overview",
+      "destination": "/agent-os/interfaces/whatsapp/introduction"
+    },
+    {
+      "source": "/deploy/interfaces/discord/overview",
+      "destination": "/agent-os/interfaces/discord/introduction"
+    },
+    {
+      "source": "/deploy/interfaces/ag-ui/overview",
+      "destination": "/agent-os/interfaces/ag-ui/introduction"
+    },
+    {
+      "source": "/deploy/interfaces/a2a/overview",
+      "destination": "/agent-os/interfaces/a2a/introduction"
     }
   ]
 }

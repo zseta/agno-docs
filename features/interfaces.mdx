@@ -18,7 +18,7 @@ Two categories. Chat surfaces meet humans where they already are. Protocol surfa
 | **Slack** | Team chat, DMs, channel mentions, thread sessions | [Slack](/agent-os/interfaces/slack/introduction) |
 | **Telegram** | Personal assistants, mobile chat | [Telegram](/agent-os/interfaces/telegram/introduction) |
 | **WhatsApp** | Customer support, mobile chat with E2E encryption support | [WhatsApp](/agent-os/interfaces/whatsapp/introduction) |
-| **Discord** | Community servers, gaming, custom commands. Runs in its own process via `agno.integrations.discord`. | [Discord](/deploy/interfaces/discord/overview) |
+| **Discord** | Community servers, gaming, custom commands. Runs in its own process via `agno.integrations.discord`. | [Discord](/agent-os/interfaces/discord/introduction) |
 
 ### Protocol surfaces
 
@@ -119,7 +119,7 @@ if TELEGRAM_TOKEN:
 agent_os = AgentOS(agents=[agent], db=db, interfaces=interfaces)
 ```
 
-The [Scout](/tutorials/scout/connect-slack), [Dash](/tutorials/dash/connect-slack), and [Coda](/deploy/templates/coda/overview) tutorials use this pattern. Slack only loads when both env vars are set, so dev runs without credentials don't crash.
+The [Scout](/deploy/templates/scout/overview), [Dash](/deploy/templates/dash/overview), and [Coda](/deploy/templates/coda/overview) apps use this pattern. Slack only loads when both env vars are set, so dev runs without credentials don't crash.
 
 ## Custom interfaces and one-off webhooks
 
