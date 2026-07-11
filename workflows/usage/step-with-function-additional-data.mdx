@@ -1,6 +1,6 @@
 ---
 title: Step with Function using Additional Data
-description: This example demonstrates support for passing metadata and contextual information to steps via `additional_data`.
+description: Pass metadata and contextual information to steps via `additional_data`.
 ---
 
 This example shows how to pass metadata and contextual information to steps via `additional_data`. This allows separation of workflow logic from configuration, enabling dynamic behavior based on external context.
@@ -9,6 +9,12 @@ This example shows how to pass metadata and contextual information to steps via 
 - **Context-Aware Steps**: Access `step_input.additional_data` in custom functions
 - **Flexible Metadata**: Pass user info, priorities, settings, etc.
 - **Clean Separation**: Keep workflow logic focused while enriching steps with context
+
+Install dependencies:
+
+```shell
+uv pip install agno openai yfinance sqlalchemy
+```
 
 ```python step_with_function_additional_data.py
 from agno.agent import Agent

@@ -8,18 +8,24 @@ Use AWS Bedrock to access various foundation models on AWS. Manage your access t
 
 See all the [AWS Bedrock foundational models](https://docs.aws.amazon.com/bedrock/latest/userguide/models-supported.html). Not all Bedrock models support all features. See the [supported features for each model](https://docs.aws.amazon.com/bedrock/latest/userguide/conversation-inference-supported-models-features.html).
 
+We recommend experimenting to find the best-suited model for your use-case. Here are some general recommendations:
+
+- For a Mistral model with generally good performance, look at `mistral.mistral-large-2402-v1:0`.
+- You can play with Amazon Nova models. Use `amazon.nova-pro-v1:0` for general purpose tasks.
+- For Claude models, see our [Claude integration](/models/providers/cloud/aws-claude/overview).
+
+## Installation
+
+```bash
+uv pip install -U boto3 agno
+```
+
 <Note>
 For async support with AWS Bedrock, you need to install `aioboto3`:
 ```bash
 uv pip install aioboto3
 ```
 </Note>
-
-We recommend experimenting to find the best-suited model for your use-case. Here are some general recommendations:
-
-- For a Mistral model with generally good performance, look at `mistral.mistral-large-2402-v1:0`.
-- You can play with Amazon Nova models. Use `amazon.nova-pro-v1:0` for general purpose tasks.
-- For Claude models, see our [Claude integration](/models/providers/cloud/aws-claude/overview).
 
 ## Authentication
 
@@ -149,7 +155,7 @@ agent.print_response("Share a 2 sentence horror story.")
 | `top_p`             | `Optional[float]`          | `None`                                       | The nucleus sampling parameter. The model considers the results of the tokens with top_p probability mass.                                                                |
 | `stop_sequences`    | `Optional[List[str]]`      | `None`                                       | A list of sequences where the API will stop generating further tokens.                                                                                                    |
 | `request_params`    | `Optional[Dict[str, Any]]` | `None`                                       | Additional parameters for the request, provided as a dictionary.                                                                                                          |
-| `append_trailing_user_message` | `Optional[bool]` | `None`                                       | Append a trailing user message when the conversation ends with an assistant message. Defaults based on whether the model supports assistant message prefill.              |
+| `append_trailing_user_message` | `Optional[bool]` | `None`                                       | Append a trailing user message when the conversation ends with an assistant message. The default depends on whether the model supports assistant message prefill.              |
 | `trailing_user_message_content` | `str`         | `"continue"`                                 | Content of the appended trailing user message.                                                                                                                            |
 | `client`            | `Optional[AwsClient]`      | `None`                                       | A pre-configured AWS client instance.                                                                                                                                     |
 

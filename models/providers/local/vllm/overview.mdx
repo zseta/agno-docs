@@ -1,6 +1,7 @@
 ---
 title: vLLM
 sidebarTitle: Overview
+description: Run models served by vLLM's OpenAI-compatible API in Agno agents.
 ---
 
 [vLLM](https://docs.vllm.ai/en/latest/) is a fast and easy-to-use library for LLM inference and serving, designed for high-throughput and memory-efficient LLM serving.
@@ -10,7 +11,7 @@ sidebarTitle: Overview
 Install vLLM and start serving a model:
 
 ```bash install vLLM
-uv pip install vllm
+uv pip install vllm openai
 ```
 
 ```bash start vLLM server
@@ -24,7 +25,7 @@ vllm serve Qwen/Qwen2.5-7B-Instruct \
 
 This spins up the vLLM server with an OpenAI-compatible API.
 
-Set the `VLLM_API_KEY` environment variable. `VLLM` raises an error without it. Servers started without `--api-key` accept any value:
+Set the `VLLM_API_KEY` environment variable. `VLLM` raises an error without it. If you started the server without `--api-key`, any value works:
 
 ```bash set API key
 export VLLM_API_KEY=xxx

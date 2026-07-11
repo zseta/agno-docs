@@ -5,7 +5,7 @@ sidebarTitle: Overview
 keywords: [accuracy evals, accuracy evaluation, accuracy evaluation example, accuracy evaluation guide]
 ---
 
-Accuracy evaluations compare your Agent's actual responses against expected outputs. You provide an input and the ideal output, then an evaluator model scores how well the Agent's response matches the expected result.
+Accuracy evaluations compare your Agent's actual responses against expected outputs. You provide an input and the ideal output. Then an evaluator model scores how well the Agent's response matches the expected result.
 
 
 
@@ -219,7 +219,7 @@ assert result is not None and result.avg_score >= 8
 
 ## Accuracy with Number Comparison
 
-This example demonstrates evaluating an agent's ability to make correct numerical comparisons, which can be tricky for LLMs when dealing with decimal numbers:
+Decimal comparisons can trip up LLMs. This eval checks that the agent gets them right:
 
 ```python accuracy_comparison.py
 from typing import Optional

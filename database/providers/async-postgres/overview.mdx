@@ -8,6 +8,12 @@ Agno supports using [PostgreSQL](https://www.postgresql.org/) asynchronously, wi
 
 ## Usage
 
+Install the `sqlalchemy`, `psycopg`, and `openai` packages:
+
+```shell
+uv pip install sqlalchemy psycopg openai
+```
+
 ```python async_postgres_for_agent.py
 from agno.agent import Agent
 from agno.db.postgres import AsyncPostgresDb
